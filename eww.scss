@@ -1,4 +1,4 @@
-@import "./scss/_colors.scss";
+@import "./theme";
 @import "./scss/_scale.scss";
 
 $padding: dpi(8px);
@@ -7,18 +7,18 @@ $barheight: dpi(56px);
 
 * {
   all: unset;
-  color: $fg;
+  color: $xfg;
   font-family: "Fairfax HD";
   font-size: dpi(25px);
   font-weight: bold;
 }
 
 tooltip {
-  background: linear-gradient(135deg, transparent 10%, $bg 10%, $bg 90%,transparent 90%);
+  background: linear-gradient(135deg, transparent 10%, $xbg 10%, $xbg 90%,transparent 90%);
 }
 
 .window {
-  background-color: $bg;
+  background-color: $xbg;
   &.cont {
     padding: $padding;
   }
@@ -26,7 +26,7 @@ tooltip {
     padding: dpi(0px) 2 * $padding;
   }
   &.sub {
-    background-color: $bg2;
+    background-color: $x0;
   }
   &.trans {
     background-color: transparent
@@ -39,7 +39,7 @@ label {
     font-size: dpi(30px);
   }
   &.hard {
-    color: $fg2;
+    color: $x7;
   }
 }
 
@@ -52,28 +52,28 @@ label {
    border-color: transparent;
    &.topleft {
      border-width: dpi(20px) dpi(20px) 0 0;
-     border-color: $bg transparent transparent transparent;
+     border-color: $xbg transparent transparent transparent;
      &.large {
        border-width: dpi(40px) dpi(40px) 0 0;
      }
    }
    &.topright {
      border-width: 0 dpi(20px) dpi(20px) 0;
-     border-color: transparent $bg transparent transparent;
+     border-color: transparent $xbg transparent transparent;
      &.large {
        border-width: 0 dpi(40px) dpi(40px) 0;
      }
    }
    &.bottomright {
      border-width: 0 0 dpi(20px) dpi(20px);
-     border-color: transparent transparent $bg transparent;
+     border-color: transparent transparent $xbg transparent;
      &.large {
        border-width: 0 0 dpi(40px) dpi(40px);
      }
    }
    &.bottomleft {
      border-width: dpi(20px) 0 0 dpi(20px);
-     border-color: transparent transparent transparent $bg;
+     border-color: transparent transparent transparent $xbg;
      &.large {
        border-width: dpi(40px) 0 0 dpi(40px);
      }
@@ -85,28 +85,28 @@ label {
    border-color: transparent;
    &.topleft {
      border-width: dpi(20px) dpi(20px) 0 0;
-     border-color: $bg2 transparent transparent transparent;
+     border-color: $x0 transparent transparent transparent;
      &.large {
        border-width: dpi(40px) dpi(40px) 0 0;
      }
    }
    &.topright {
      border-width: 0 dpi(20px) dpi(20px) 0;
-     border-color: transparent $bg2 transparent transparent;
+     border-color: transparent $x0 transparent transparent;
      &.large {
        border-width: 0 dpi(40px) dpi(40px) 0;
      }
    }
    &.bottomright {
      border-width: 0 0 dpi(20px) dpi(20px);
-     border-color: transparent transparent $bg2 transparent;
+     border-color: transparent transparent $x0 transparent;
      &.large {
        border-width: 0 0 dpi(40px) dpi(40px);
      }
    }
    &.bottomleft {
      border-width: dpi(20px) 0 0 dpi(20px);
-     border-color: transparent transparent transparent $bg2;
+     border-color: transparent transparent transparent $x0;
      &.large {
        border-width: dpi(40px) 0 0 dpi(40px);
      }
@@ -115,8 +115,8 @@ label {
 
 
 entry {
-  color: $fg;
-  background-color: $bg2;
+  color: $xfg;
+  background-color: $x0;
   padding: $padding;
   margin: dpi(14px) dpi(0px) dpi(14px) dpi(0px);
   transition: 500ms;

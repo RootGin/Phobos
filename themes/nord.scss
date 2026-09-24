@@ -1,4 +1,4 @@
-// _colors.scss — Nord palette single source of truth
+// themes/nord.scss — Nord palette single source of truth
 // Swap values here to re-theme entire eww config
 
 $xbg: #2E3440;  // Polar Night (Darkest Background)
@@ -19,10 +19,3 @@ $x12: #81A1C1;  // Frost (Bright Blue)
 $x13: #B48EAD;  // Aurora (Bright Magenta)
 $x14: #8FBCBB;  // Frost (Bright Cyan)
 $x15: #ECEFF4;  // Snow Storm (Bright White)
-
-// legacy aliases — keep old names working, mapped to Nord
-$bg:  $xbg;
-$bg2: $x0;
-$fg:  $xfg;
-$fg2: $x7;
-$red: $x1;

@@ -3,14 +3,14 @@
   border-style: solid;
   border-color: transparent;
   border-width: dpi(20px) dpi(20px) dpi(0px) dpi(0px);
-  border-color: $red transparent transparent transparent;
+  border-color: $x1 transparent transparent transparent;
 }
 .brred {
   margin: $margin;
   border-style: solid;
   border-color: transparent;
   border-width: dpi(0px) dpi(0px) dpi(20px) dpi(20px);
-  border-color: transparent transparent $red transparent;
+  border-color: transparent transparent $x1 transparent;
 }
 
 .trred {
@@ -20,7 +20,7 @@
   margin: $margin;
   box-shadow: none;
   &.active {
-    box-shadow: dpi(5px) dpi(-5px) dpi(0px) dpi(0px) $red;
+    box-shadow: dpi(5px) dpi(-5px) dpi(0px) dpi(0px) $x1;
   }
 }
 
@@ -31,6 +31,6 @@
   margin: $margin;
   box-shadow: none;
   &.active {
-    box-shadow: dpi(-5px) dpi(5px) dpi(0px) dpi(0px) $red;
+    box-shadow: dpi(-5px) dpi(5px) dpi(0px) dpi(0px) $x1;
   }
 }
