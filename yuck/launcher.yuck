@@ -19,6 +19,10 @@
 (defwindow launcherint 
   :geometry (geometry
               :x 0 
+              ;; -70 = tuned (measure closed vs open pixel rows) so this
+              ;; bottomleftstruct copy lands exactly on the real bar, else the
+              ;; search icon/label jump when the panel opens. Re-tune if the bar's
+              ;; rendered height changes (font metrics, $scale).
               :y -70 
               :width 0
               :height 70

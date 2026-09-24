@@ -43,18 +43,9 @@
         :spacing 20
         :class "window bar"
         :tooltip "${EWW_BATTERY.BAT0.capacity}%"
-        (overlay
-          (image 
-            :image-width 35
-            :path "./assets/icons/bat${ EWW_BATTERY.BAT0.status == 'Charging' ? 'c' : 0}.svg")
-          (scale 
-            :visible {EWW_BATTERY.BAT0.status != "Charging"}
-            :halign "start"
-            :valign "start"
-            :orientation "h"
-            :class "batscale"
-            :value {EWW_BATTERY.BAT0.capacity}))
-            
+        (image 
+          :image-width 35
+          :path "./assets/icons/bat${ EWW_BATTERY.BAT0.status != 'Discharging' ? 'c' : (EWW_BATTERY.BAT0.capacity < 25 ? '0' : (EWW_BATTERY.BAT0.capacity < 50 ? '1' : (EWW_BATTERY.BAT0.capacity < 75 ? '2' : '3'))) }.svg")
         (label 
           :class "large"
           :text {formattime(EWW_TIME, '%-d/%-m/%Y')}) 

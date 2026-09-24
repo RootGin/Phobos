@@ -3,7 +3,7 @@
 (defwindow mediaint 
   :geometry (geometry
               :x 0 
-              :y -70 
+              :y -56 
               :width "50%"
               :height 70
               :anchor "top left")

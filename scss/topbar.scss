@@ -35,21 +35,3 @@
   background-color: $x8;
   border-radius: dpi(4px);
 }
-
-.batscale {
-  all: unset;
-  trough {
-    margin: dpi(29px) dpi(8px);
-    min-height: dpi(11px);
-    min-width: dpi(16px);
-    background-color: transparent;
-    slider {
-      min-width: dpi(0px);
-      min-height: dpi(0px);
-      margin: dpi(0px);
-    }
-    highlight {
-      background-color: $fg;
-    }
-  }
-}
