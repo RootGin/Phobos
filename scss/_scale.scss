@@ -1,0 +1,14 @@
+// _scale.scss — resolution scaling single source of truth
+// 1980x1080 -> 1, bump for higher DPI (e.g. 1.25 on 2560x1440)
+
+$scale: 1;
+
+@function dpi($value) {
+  $unit: if(unitless($value), null, unit($value));
+
+  @if ($unit == "px" or $unit == "pt") {
+    @return ($value * $scale);
+  } @else {
+    @return $value;
+  }
+}

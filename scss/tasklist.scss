@@ -1,0 +1,36 @@
+.tlred {
+  margin: $margin;
+  border-style: solid;
+  border-color: transparent;
+  border-width: dpi(20px) dpi(20px) dpi(0px) dpi(0px);
+  border-color: $red transparent transparent transparent;
+}
+.brred {
+  margin: $margin;
+  border-style: solid;
+  border-color: transparent;
+  border-width: dpi(0px) dpi(0px) dpi(20px) dpi(20px);
+  border-color: transparent transparent $red transparent;
+}
+
+.trred {
+  transition: 500ms;
+  min-width: dpi(30px);
+  min-height: dpi(30px);
+  margin: $margin;
+  box-shadow: none;
+  &.active {
+    box-shadow: dpi(5px) dpi(-5px) dpi(0px) dpi(0px) $red;
+  }
+}
+
+.blred {
+  transition: 500ms;
+  min-width: dpi(30px);
+  min-height: dpi(30px);
+  margin: $margin;
+  box-shadow: none;
+  &.active {
+    box-shadow: dpi(-5px) dpi(5px) dpi(0px) dpi(0px) $red;
+  }
+}

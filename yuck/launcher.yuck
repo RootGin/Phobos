@@ -1,0 +1,77 @@
+
+(defwidget app [a]
+  (eventbox
+    :cursor "pointer"
+    :onclick "(cd && ${a.desktop}) & ./scripts/hackslide.sh launcherint &"
+    (subboxl 
+      :class "sub"
+      (box 
+        :class "window sub cont"
+        :orientation "h" 
+        (label 
+          :xalign 0 
+          :truncate true
+          :style "font-size: 25px;"
+          :markup "${a.name}")))))
+        
+(defvar reveallauncherint false)
+
+(defwindow launcherint 
+  :geometry (geometry
+              :x 0 
+              :y -70 
+              :width 0
+              :height 70
+              :anchor "bottom left")
+  :stacking "overlay"
+  :exclusive true 
+  :focusable true
+  :monitor '["<primary>", 0]'
+  (box 
+    :orientation "v"
+    :space-evenly false
+    :height 70
+      (revealer 
+        :halign "start"
+        :reveal reveallauncherint 
+        :transition "slideright"
+        (box 
+          :width 397
+          :orientation "v"
+          :space-evenly false 
+          :style "margin-right: 20px;"
+
+          ;; triangle corner thing
+          (box 
+            :height 20
+            :orientation "h"
+            :space-evenly false 
+            (box 
+              :class "window"
+              :hexpand true)
+            (box 
+              :orientation "v"
+              :space-evenly false 
+              (box 
+                :class "triangle bottomleft")
+              (box 
+                :class "window"
+                :vexpand true)))
+          (box 
+            :class "window"
+            (box 
+              :style "margin: -20px 0px;"
+              (box 
+                :class "window cont trans"
+                :orientation "v"
+                (scroll 
+                  :hscroll false
+                  :vscroll true
+                  :height 500
+                  (box 
+                    :orientation "v"
+                    :space-evenly false
+                    (for app in {appsjson.apps}
+                      (app :a app)))))))))
+          
+    (bottomleftstruct)))

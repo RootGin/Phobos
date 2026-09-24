@@ -1,0 +1,19 @@
+// bottombar.scss — bottom bar chrome (FOBOS-minimal)
+// Flat Nord strip. The stepped middle + $bg chamfers are geometry and stay;
+// the only accent is hover feedback on the interactive items.
+
+.bb-gap {
+  margin-top: dpi(20px);
+}
+
+.bb-search {
+  margin-right: dpi(10px);
+}
+
+.bb-item {
+  min-height: dpi(42px);
+  transition: 200ms;
+  &:hover {
+    background-color: rgba($x4, 0.15);
+  }
+}

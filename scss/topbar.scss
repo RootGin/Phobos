@@ -1,0 +1,55 @@
+
+.animtime {
+  label {
+    margin: dpi(0px);
+  }
+}
+
+.tb-gap {
+  margin-bottom: dpi(20px);
+}
+
+.hideslide {
+  all: unset;
+  trough {
+    min-width: dpi(400px);
+    background-color: transparent;
+    slider {
+      min-width: dpi(400px);
+      min-height: dpi(10px);
+      background-color: transparent;
+      margin: dpi(-100px) dpi(0px);
+    }
+    highlight {
+      background-color: transparent;
+    }
+  }
+}
+
+.fakehandle {
+  min-width: dpi(200px);
+  min-height: dpi(8px);
+  margin: dpi(4px);
+  background-color: transparent;
+  transition: 500ms;
+  background-color: $x8;
+  border-radius: dpi(4px);
+}
+
+.batscale {
+  all: unset;
+  trough {
+    margin: dpi(29px) dpi(8px);
+    min-height: dpi(11px);
+    min-width: dpi(16px);
+    background-color: transparent;
+    slider {
+      min-width: dpi(0px);
+      min-height: dpi(0px);
+      margin: dpi(0px);
+    }
+    highlight {
+      background-color: $fg;
+    }
+  }
+}

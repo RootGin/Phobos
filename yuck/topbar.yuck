@@ -1,0 +1,140 @@
+
+(defwindow topbar 
+  :geometry (geometry 
+              :x 0
+              :y 0
+              :width "100%"
+              :height 0
+              :anchor "top center")
+  :stacking "bottom"
+  :exclusive true 
+  :monitor '["<primary>", 0]'
+  :wm-ignore false
+  (topbarstruct))
+
+(defwidget topbarstruct [] 
+  (revealer
+    :reveal {revealbar == 1}
+    :transition "slidedown"
+    (box
+      :orientation "h"
+      :space-evenly false
+      :class "barheight"
+      (topleftstruct)
+      (box 
+        :orientation "h"
+        :space-evenly false 
+        :class "window bar tb-gap"
+        :hexpand true
+        (label 
+          :visible false
+          :text "${playerctl} ${pcover}"))
+      (box
+        :orientation "v"
+        :space-evenly false
+        (box
+          :class "window"
+          :vexpand true)
+        (box 
+          :class "triangle topright"))
+      (box 
+        :orientation "h"
+        :space-evenly false 
+        :spacing 20
+        :class "window bar"
+        :tooltip "${EWW_BATTERY.BAT0.capacity}%"
+        (overlay
+          (image 
+            :image-width 35
+            :path "./assets/icons/bat${ EWW_BATTERY.BAT0.status == 'Charging' ? 'c' : 0}.svg")
+          (scale 
+            :visible {EWW_BATTERY.BAT0.status != "Charging"}
+            :halign "start"
+            :valign "start"
+            :orientation "h"
+            :class "batscale"
+            :value {EWW_BATTERY.BAT0.capacity}))
+            
+        (label 
+          :class "large"
+          :text {formattime(EWW_TIME, '%-d/%-m/%Y')}) 
+        (box 
+          :orientation "h"
+          :space-evenly false
+          :valign "center"
+          :class "animtime"
+          (animdigit 
+            :class "hard large"
+            :cur {substring(formattime(EWW_TIME, '%H'), 0, 1)})
+          (animdigit 
+            :class "hard large"
+            :cur {substring(formattime(EWW_TIME, '%H'), 1, 1)})
+          (label 
+            :class "hard large"
+            :text ":")
+          (animdigit  
+            :class "hard large"
+            :cur {substring(formattime(EWW_TIME, '%M'), 0, 1)})
+          (animdigit
+            :class "hard large"
+            :cur {substring(formattime(EWW_TIME, '%M'), 1, 1)}))))))
+
+(defwidget topleftstruct [] 
+  (box 
+    :orientation "h"
+    :space-evenly false 
+    :vexpand true
+    (box 
+      :class "window bar barheight"
+      :orientation "h"
+      :space-evenly false
+      (revealer 
+        :reveal {playerctl.song == ""}
+        :transition "slideright"
+        (label 
+          :class "large"
+          :text "PHOBOS v${version}"))
+      (revealer 
+        :reveal {playerctl.song != ""}
+        :transition "slideleft"
+        (eventbox
+          :cursor "pointer"
+          :width 400
+          :onclick "./scripts/hackslide.sh mediaint &"
+          (box 
+            :orientation "h"
+            :hexpand true
+            :space-evenly false
+            (image 
+              :image-width 35 
+              :path "./assets/icons/libmedia.svg")
+            (scroll 
+              :hscroll true 
+              :hexpand true
+              (label 
+                ; :limit-width 30
+                :class "large"
+                :truncate true
+                :text {playerctl.song}))))))
+    (box
+      :orientation "v"
+      :space-evenly false
+      (box
+        :class "window"
+        :vexpand true)
+      (box 
+        :class "triangle topleft"))))
+(defwidget animdigit [cur class]
+  (stack 
+    :selected cur
+    :transition "slidedown"
+    (label :class class :text 0)
+    (label :class class :text 1)
+    (label :class class :text 2)
+    (label :class class :text 3)
+    (label :class class :text 4)
+    (label :class class :text 5)
+    (label :class class :text 6)
+    (label :class class :text 7)
+    (label :class class :text 8)
+    (label :class class :text 9)))

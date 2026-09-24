@@ -1,0 +1,37 @@
+
+(defvar bshover false)
+
+(defwindow barslide 
+  :geometry (geometry 
+              :x 0 
+              :y -70 
+              :width 400
+              :height 85
+              :anchor "top left")
+  :stacking "bottom"
+  :exclusive false 
+  :monitor '["<primary>", 0]'
+  (box
+    :orientation "v"
+    :space-evenly false
+    (overlay
+      (eventbox
+        :height 85
+        :cursor "row-resize"
+        :onhover "${EWW_CMD} update bshover=true"
+        :onhoverlost "${EWW_CMD} update bshover=false"
+        (scale 
+          :class "hideslide"
+          :hexpand true
+          :min 0 
+          :max 2
+          :value revealbar 
+          :onchange "${EWW_CMD} update revealbar={}"
+          :orientation "v"))
+      (box 
+        :halign "center"
+        :valign "end"
+        :style "opacity: ${bshover ? 1 : 0};"
+        :class "fakehandle"))))
+        
+  

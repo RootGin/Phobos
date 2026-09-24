@@ -1,0 +1,89 @@
+
+(defwidget floatwin [?title] 
+  (box 
+    :orientation "v"
+    :space-evenly false 
+    (box 
+      :orientation "h"
+      :space-evenly false 
+      (box 
+        :class "triangle bottomright large")
+      (box 
+        :class "window"
+        :hexpand true
+        (label 
+          :class "large"
+          :halign "center"
+          :valign "end"
+          :text title))
+      (box 
+        :class "window"
+        :width 40)) 
+         
+    (children)
+        
+    (box 
+      :orientation "h"
+      :space-evenly false 
+      (box 
+        :class "window"
+        :hexpand true)
+      (box 
+        :class "triangle topleft large"))))
+
+(defwidget subbox [?class ?hexpand ?vexpand ?rmargin]
+  (box 
+    :style "margin: 8px;"
+    :orientation "v"
+    :space-evenly false 
+    :hexpand {hexpand == true}
+    (box 
+      :orientation "h"
+      :space-evenly false 
+      (box 
+        :class "triangle${class} bottomright")
+      (box 
+        :class "window ${class}"
+        :hexpand true))
+         
+
+    (box 
+      :class "window ${class}"
+      :vexpand {vexpand == true}
+      (box 
+        :style "margin: -${rmargin ?: 0}px 0px;"
+        (children)))
+        
+    (box 
+      :orientation "h"
+      :space-evenly false 
+      (box 
+        :class "window ${class}"
+        :hexpand true)
+      (box 
+        :class "triangle${class} topleft"))))
+
+(defwidget subboxl [?class]
+  (box 
+    :style "margin: 8px;"
+    :orientation "v"
+    :space-evenly false 
+    (box 
+      :orientation "h"
+      :space-evenly false 
+      (box 
+        :class "window ${class}"
+        :hexpand true)
+      (box 
+        :class "triangle${class} bottomleft"))
+         
+    (children)
+        
+    (box 
+      :orientation "h"
+      :space-evenly false 
+      (box 
+        :class "triangle${class} topright")
+      (box 
+        :class "window ${class}"
+        :hexpand true))))
