@@ -36,7 +36,7 @@ $nw-card-leg-sm: dpi(12px);
 
 .nw-card {
   padding: dpi(12px) dpi(14px);
-  @include octagon($x0, $nw-card-leg);
+  @include cut2($x0, $nw-card-leg);
 }
 
 .nw-title {
@@ -49,7 +49,7 @@ $nw-card-leg-sm: dpi(12px);
 
 .nw-closecard {
   padding: dpi(4px) dpi(16px);
-  @include octagon($x0, $nw-card-leg-sm);
+  @include cut2($x0, $nw-card-leg-sm);
 }
 
 .nw-close-x {
@@ -58,7 +58,7 @@ $nw-card-leg-sm: dpi(12px);
 }
 
 .nw-close:hover .nw-closecard {
-  @include octagon($x1, $nw-card-leg-sm);
+  @include cut2($x1, $nw-card-leg-sm);
 }
 
 .nw-close:hover .nw-close-x {
@@ -162,10 +162,10 @@ $nw-card-leg-sm: dpi(12px);
     padding: dpi(10px) dpi(12px);
     margin: dpi(3px) 0 dpi(5px) 0;
     border-radius: 0;
-    @include octagon($x3, $nw-card-leg-sm);
+    @include cut2($x4, $nw-card-leg-sm);
 
     &:hover {
-      background-color: $x3;
+      background-color: $x4;
     }
 
     .nw-row-ico {
@@ -254,7 +254,7 @@ $nw-card-leg-sm: dpi(12px);
 .nw-dico {
   min-width: dpi(46px);
   min-height: dpi(46px);
-  @include octagon(mix($x4, $x0, 20%), $nw-card-leg-sm);
+  @include cut2(mix($x4, $x0, 20%), $nw-card-leg-sm);
   margin-right: $margin;
 
   image {
@@ -364,10 +364,10 @@ $nw-card-leg-sm: dpi(12px);
     padding: dpi(8px) dpi(10px);
     margin-bottom: dpi(8px);
     border-radius: 0;
-    @include octagon(mix($x4, $x0, 16%), dpi(12px));
+    @include cut2(mix($x4, $x0, 16%), dpi(12px));
 
     &:hover {
-      @include octagon(mix($x4, $x0, 28%), dpi(12px));
+      @include cut2(mix($x4, $x0, 28%), dpi(12px));
     }
   }
 }
@@ -440,6 +440,7 @@ $nw-card-leg-sm: dpi(12px);
 
 $nw-btn-on: mix($x4, $x0, 30%);
 $nw-btn-disc: mix($x1, $x0, 30%);
+$nw-btn-off: mix($x8, $x0, 30%);
 
 .nw-connect {
   padding: dpi(12px);
@@ -484,7 +485,7 @@ $nw-btn-disc: mix($x1, $x0, 30%);
   }
 
   &.off {
-    background-color: transparent;
+    background-color: $nw-btn-off;
 
     image,
     label {
