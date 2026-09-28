@@ -351,14 +351,8 @@
     (revealer
       :class "nw-leadpad"
       :reveal {netssid == ""}
-      :transition "slidedown"
-      (box :class "nw-leadpad-in"))
-    (revealer
-      :class "nw-dslide"
-      :reveal {netssid != ""}
       :transition "slideleft"
-      :vexpand true
-      (nw_panel2))
+      (box :class "nw-leadpad-in"))
     (box
       :class "nw-lcol"
       :orientation "v"
@@ -387,4 +381,10 @@
         :orientation "v"
         :space-evenly false
         :vexpand true
-        (nw_panel1)))))
+        (nw_panel1)))
+    (revealer
+      :class "nw-dslide"
+      :reveal {netssid != ""}
+      :transition "slideright"
+      :vexpand true
+      (nw_panel2))))
