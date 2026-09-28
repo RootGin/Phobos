@@ -38,32 +38,19 @@ window.powermenu {
   min-width: dpi(26px);
 }
 
-@mixin pm-octagon($color, $leg) {
-  $stop: $leg * 0.70710678;
-
-  background-image:
-    linear-gradient(135deg, transparent $stop, $color $stop),
-    linear-gradient(-135deg, transparent $stop, $color $stop),
-    linear-gradient(45deg, transparent $stop, $color $stop),
-    linear-gradient(-45deg, transparent $stop, $color $stop);
-  background-size: 50.6% 50.6%;
-  background-position: top left, top right, bottom left, bottom right;
-  background-repeat: no-repeat;
-}
-
 $pm-chamfer: dpi(26px);
 $pm-fill-leg: dpi(25px);
 $pm-border-w: dpi(2px);
 
 .pm-card {
   padding: 0;
-  @include pm-octagon($x4, $pm-chamfer);
+  @include octagon($x4, $pm-chamfer);
 }
 
 .pm-fill {
   margin: $pm-border-w;
   padding: dpi(22px) dpi(30px);
-  @include pm-octagon($xbg, $pm-fill-leg);
+  @include octagon($xbg, $pm-fill-leg);
 }
 
 .pm-left {

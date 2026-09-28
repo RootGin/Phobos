@@ -99,7 +99,7 @@
     :space-evenly false
     (eventbox
       :cursor "pointer"
-      :onclick "./scripts/hackslide.sh systemint close & ${EWW_CMD} open network --arg nww='${netssid == '' ? '454px' : '1180px'}' &"
+      :onclick "./scripts/hackslide.sh systemint close & ${EWW_CMD} open network &"
       (box
         :orientation "h"
         :space-evenly false

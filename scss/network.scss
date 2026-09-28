@@ -3,6 +3,20 @@
   padding: $padding;
 }
 
+.nw-root {
+  background-color: transparent;
+  padding: 0;
+}
+
+.nw-lcol {
+  background-color: $xbg;
+  padding: $padding;
+}
+
+.nw-leadpad-in {
+  min-width: dpi(316px);
+}
+
 .nw-titlebar {
   padding: dpi(4px) dpi(4px) dpi(12px) dpi(4px);
 }
@@ -17,20 +31,34 @@
   color: $x7;
 }
 
-.nw-close {
-  min-width: dpi(28px);
-  min-height: dpi(28px);
-  padding: dpi(2px) dpi(8px);
-  border-radius: dpi(6px);
+$nw-card-leg: dpi(20px);
+$nw-card-leg-sm: dpi(12px);
 
-  &:hover {
-    background-color: $x1;
+.nw-card {
+  padding: dpi(12px) dpi(14px);
+  @include octagon($x0, $nw-card-leg);
+}
+
+.nw-title {
+  padding: dpi(6px) dpi(22px);
+
+  .nw-head-title {
+    font-size: dpi(24px);
   }
+}
+
+.nw-closecard {
+  padding: dpi(4px) dpi(16px);
+  @include octagon($x0, $nw-card-leg-sm);
 }
 
 .nw-close-x {
   font-size: dpi(18px);
   color: rgba($x7, 0.6);
+}
+
+.nw-close:hover .nw-closecard {
+  @include octagon($x1, $nw-card-leg-sm);
 }
 
 .nw-close:hover .nw-close-x {
@@ -41,23 +69,14 @@
   min-height: dpi(560px);
 }
 
-.nw-pane {
-  background-color: $x0;
-  border: dpi(1px) solid $x8;
-  padding: dpi(12px);
+.nw-vgap {
+  min-height: dpi(10px);
 }
 
-.nw-gap {
-  min-width: dpi(12px);
+.nw-listcard {
+  min-width: dpi(508px);
 }
 
-.nw-listpane {
-  min-width: dpi(400px);
-}
-
-.nw-detailpane {
-  min-width: dpi(430px);
-}
 .nw-panehead {
   padding: dpi(2px) dpi(2px) dpi(12px) dpi(2px);
 }
@@ -139,11 +158,30 @@
     }
   }
 
-  &.selected {
-    background-color: rgba($x4, 0.32);
+  &.sel {
+    padding: dpi(10px) dpi(12px);
+    margin: dpi(3px) 0 dpi(5px) 0;
+    border-radius: 0;
+    @include octagon($x3, $nw-card-leg-sm);
+
+    &:hover {
+      background-color: $x3;
+    }
+
+    .nw-row-ico {
+      color: $xbg;
+    }
 
     .nw-row-ssid {
-      color: $x7;
+      color: $xbg;
+    }
+
+    .nw-sec {
+      color: rgba($xbg, 0.7);
+    }
+
+    .nw-sig .nw-bar {
+      background-color: rgba($xbg, 0.75);
     }
   }
 }
@@ -200,18 +238,23 @@
 }
 
 .nw-dwrap {
-  padding: 0;
+  min-width: dpi(616px);
+  background-color: $xbg;
+  padding: $padding;
+}
+
+.nw-dcol {
+  padding: dpi(2px) 0;
 }
 
 .nw-dhead {
-  padding: dpi(4px) dpi(2px) dpi(12px) dpi(2px);
+  padding: dpi(10px) dpi(14px);
 }
 
 .nw-dico {
   min-width: dpi(46px);
   min-height: dpi(46px);
-  border-radius: dpi(8px);
-  background-color: rgba($x4, 0.16);
+  @include octagon(mix($x4, $x0, 20%), $nw-card-leg-sm);
   margin-right: $margin;
 
   image {
@@ -229,12 +272,8 @@
   color: rgba($x7, 0.5);
 }
 
-.nw-detail {
-  padding: dpi(6px) dpi(2px);
-}
-
-.nw-pwblock {
-  margin-bottom: dpi(10px);
+.nw-pwcard {
+  padding: dpi(10px) dpi(14px) dpi(12px) dpi(14px);
 }
 
 .nw-pwlabel {
@@ -288,8 +327,7 @@
 }
 
 .nw-advhead {
-  padding: dpi(10px) dpi(6px);
-  margin-top: dpi(6px);
+  padding: dpi(4px) dpi(2px) dpi(8px) dpi(2px);
   border-radius: dpi(6px);
 
   &:hover {
@@ -308,7 +346,10 @@
 }
 
 .nw-advbox {
-  border-top: dpi(1px) solid $x8;
+}
+
+.nw-advcol {
+  padding-top: dpi(2px);
 }
 
 .nw-advrow {
@@ -317,6 +358,17 @@
 
   &:hover {
     background-color: rgba($x7, 0.05);
+  }
+
+  &.sub {
+    padding: dpi(8px) dpi(10px);
+    margin-bottom: dpi(8px);
+    border-radius: 0;
+    @include octagon(mix($x4, $x0, 16%), dpi(12px));
+
+    &:hover {
+      @include octagon(mix($x4, $x0, 28%), dpi(12px));
+    }
   }
 }
 
@@ -333,7 +385,7 @@
 .nw-advval {
   font-size: dpi(17px);
   color: rgba($x7, 0.55);
-  margin-right: dpi(10px);
+  margin-right: dpi(16px);
 }
 
 .nw-chev {
@@ -341,7 +393,7 @@
 }
 
 .nw-manual {
-  padding: 0 dpi(6px) dpi(8px) dpi(34px);
+  padding: 0 dpi(2px) dpi(4px) dpi(34px);
 }
 
 .nw-minput {
@@ -386,12 +438,13 @@
   }
 }
 
+$nw-btn-on: mix($x4, $x0, 30%);
+$nw-btn-disc: mix($x1, $x0, 30%);
+
 .nw-connect {
   padding: dpi(12px);
-  margin-top: dpi(10px);
-  border: dpi(1px) solid $x4;
   border-radius: dpi(8px);
-  background-color: rgba($x4, 0.12);
+  background-color: $nw-btn-on;
 
   image {
     color: $x4;
@@ -413,8 +466,7 @@
   }
 
   &.disc {
-    border-color: $x1;
-    background-color: rgba($x1, 0.1);
+    background-color: $nw-btn-disc;
 
     image,
     label {
@@ -432,7 +484,6 @@
   }
 
   &.off {
-    border-color: $x8;
     background-color: transparent;
 
     image,
@@ -443,49 +494,29 @@
 }
 
 $nw-wedge-leg: dpi(26px);
-$nw-wedge-dim: $x8;
+$nw-wedge-dim: $xbg;
 $nw-wedge-lit: $x6;
 
 .triangle.nw-wedge {
   &.topleft     { border-width: $nw-wedge-leg $nw-wedge-leg 0 0; border-color: $nw-wedge-dim transparent transparent transparent; }
-  &.topright    { border-width: 0 $nw-wedge-leg $nw-wedge-leg 0; border-color: transparent $nw-wedge-dim transparent transparent; }
   &.bottomright { border-width: 0 0 $nw-wedge-leg $nw-wedge-leg; border-color: transparent transparent $nw-wedge-dim transparent; }
-  &.bottomleft  { border-width: $nw-wedge-leg 0 0 $nw-wedge-leg; border-color: transparent transparent transparent $nw-wedge-dim; }
 }
 
 $nw-charge-dur: 1.2s;
 
 @keyframes nw-charge-tl {
   0%   { border-color: $nw-wedge-lit transparent transparent transparent; }
-  24%  { border-color: $nw-wedge-lit transparent transparent transparent; }
-  25%  { border-color: $nw-wedge-dim transparent transparent transparent; }
+  49%  { border-color: $nw-wedge-lit transparent transparent transparent; }
+  50%  { border-color: $nw-wedge-dim transparent transparent transparent; }
   100% { border-color: $nw-wedge-dim transparent transparent transparent; }
-}
-
-@keyframes nw-charge-tr {
-  0%   { border-color: transparent $nw-wedge-dim transparent transparent; }
-  24%  { border-color: transparent $nw-wedge-dim transparent transparent; }
-  25%  { border-color: transparent $nw-wedge-lit transparent transparent; }
-  49%  { border-color: transparent $nw-wedge-lit transparent transparent; }
-  50%  { border-color: transparent $nw-wedge-dim transparent transparent; }
-  100% { border-color: transparent $nw-wedge-dim transparent transparent; }
 }
 
 @keyframes nw-charge-br {
   0%   { border-color: transparent transparent $nw-wedge-dim transparent; }
   49%  { border-color: transparent transparent $nw-wedge-dim transparent; }
   50%  { border-color: transparent transparent $nw-wedge-lit transparent; }
-  74%  { border-color: transparent transparent $nw-wedge-lit transparent; }
-  75%  { border-color: transparent transparent $nw-wedge-dim transparent; }
+  99%  { border-color: transparent transparent $nw-wedge-lit transparent; }
   100% { border-color: transparent transparent $nw-wedge-dim transparent; }
-}
-
-@keyframes nw-charge-bl {
-  0%   { border-color: transparent transparent transparent $nw-wedge-dim; }
-  74%  { border-color: transparent transparent transparent $nw-wedge-dim; }
-  75%  { border-color: transparent transparent transparent $nw-wedge-lit; }
-  99%  { border-color: transparent transparent transparent $nw-wedge-lit; }
-  100% { border-color: transparent transparent transparent $nw-wedge-dim; }
 }
 
 .nw-charging .nw-dslide {
@@ -495,20 +526,8 @@ $nw-charge-dur: 1.2s;
     animation-iteration-count: infinite;
   }
 
-  .nw-wedge.topright {
-    animation-name: nw-charge-tr;
-    animation-duration: $nw-charge-dur;
-    animation-iteration-count: infinite;
-  }
-
   .nw-wedge.bottomright {
     animation-name: nw-charge-br;
-    animation-duration: $nw-charge-dur;
-    animation-iteration-count: infinite;
-  }
-
-  .nw-wedge.bottomleft {
-    animation-name: nw-charge-bl;
     animation-duration: $nw-charge-dur;
     animation-iteration-count: infinite;
   }
@@ -540,15 +559,15 @@ $nw-charge-dur: 1.2s;
   100% { opacity: 0.25; }
 }
 
-.nw-charging .nw-row.selected .nw-sig .nw-bar {
+.nw-charging .nw-row.sel .nw-sig .nw-bar {
   animation-duration: 1.2s;
   animation-iteration-count: infinite;
 }
 
-.nw-charging .nw-row.selected .nw-sig .nw-bar.b1 { animation-name: nw-pulse-1; }
-.nw-charging .nw-row.selected .nw-sig .nw-bar.b2 { animation-name: nw-pulse-2; }
-.nw-charging .nw-row.selected .nw-sig .nw-bar.b3 { animation-name: nw-pulse-3; }
-.nw-charging .nw-row.selected .nw-sig .nw-bar.b4 { animation-name: nw-pulse-4; }
+.nw-charging .nw-row.sel .nw-sig .nw-bar.b1 { animation-name: nw-pulse-1; }
+.nw-charging .nw-row.sel .nw-sig .nw-bar.b2 { animation-name: nw-pulse-2; }
+.nw-charging .nw-row.sel .nw-sig .nw-bar.b3 { animation-name: nw-pulse-3; }
+.nw-charging .nw-row.sel .nw-sig .nw-bar.b4 { animation-name: nw-pulse-4; }
 
 @keyframes nw-wipe {
   0%   { background-size: 0% 100%; }
