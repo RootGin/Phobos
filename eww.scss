@@ -1,3 +1,4 @@
+
 @import "./theme";
 @import "./scss/_scale.scss";
 
@@ -113,7 +114,6 @@ label {
    }
 }
 
-
 entry {
   color: $xfg;
   background-color: $x0;
@@ -126,3 +126,5 @@ entry {
 @import "./scss/bottombar.scss";
 @import "./scss/tasklist.scss";
 @import "./scss/system.scss";
+@import "./scss/network.scss";
+@import "./scss/powermenu.scss";

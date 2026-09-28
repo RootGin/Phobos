@@ -1,0 +1,497 @@
+$pm-round-max: dpi(999px);
+$pm-mono: "Fairfax HD";
+$pm-sans: "Fairfax HD";
+
+$pm-action-colors: (
+  poweroff: $x1,
+  reboot: $x2,
+  suspend: $x6,
+  hibernate: $x4,
+  exit: $x5,
+  lock: $x15,
+);
+
+window.powermenu {
+  background: transparent;
+}
+
+.powermenu {
+  background: rgba($xbg, 0.2);
+
+  label {
+    margin: 0;
+  }
+
+  &.locked {
+    background: rgba($xbg, 0.3);
+    animation-name: pm-diagonal-fade;
+    animation-duration: 1.2s;
+    animation-timing-function: cubic-bezier(0.3, 1, 1, 0);
+  }
+}
+
+.pm-stage {
+  padding: dpi(24px);
+}
+
+.pm-gap {
+  min-width: dpi(26px);
+}
+
+@mixin pm-octagon($color, $leg) {
+  $stop: $leg * 0.70710678;
+
+  background-image:
+    linear-gradient(135deg, transparent $stop, $color $stop),
+    linear-gradient(-135deg, transparent $stop, $color $stop),
+    linear-gradient(45deg, transparent $stop, $color $stop),
+    linear-gradient(-45deg, transparent $stop, $color $stop);
+  background-size: 50.6% 50.6%;
+  background-position: top left, top right, bottom left, bottom right;
+  background-repeat: no-repeat;
+}
+
+$pm-chamfer: dpi(26px);
+$pm-fill-leg: dpi(25px);
+$pm-border-w: dpi(2px);
+
+.pm-card {
+  padding: 0;
+  @include pm-octagon($x4, $pm-chamfer);
+}
+
+.pm-fill {
+  margin: $pm-border-w;
+  padding: dpi(22px) dpi(30px);
+  @include pm-octagon($xbg, $pm-fill-leg);
+}
+
+.pm-left {
+  min-width: dpi(898px);
+}
+
+.pm-right {
+  min-width: dpi(522px);
+}
+
+$pm-dash: dpi(12px);
+$pm-dash-gap: dpi(7px);
+
+.pm-dash {
+  background-color: $xbg;
+}
+
+.pm-dash-h {
+  min-height: dpi(2px);
+  margin: 0 dpi(26px);
+  background-image: repeating-linear-gradient(
+    to right,
+    $x4 0, $x4 $pm-dash,
+    transparent $pm-dash, transparent ($pm-dash + $pm-dash-gap)
+  );
+}
+
+.pm-dash-v {
+  min-width: dpi(2px);
+  margin: dpi(26px) 0;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    $x4 0, $x4 $pm-dash,
+    transparent $pm-dash, transparent ($pm-dash + $pm-dash-gap)
+  );
+}
+
+.pm-cardhead {
+  padding-bottom: dpi(16px);
+}
+
+.pm-head-brand {
+  color: $x7;
+  font-family: $pm-mono;
+  font-size: dpi(22px);
+  letter-spacing: dpi(3px);
+}
+
+.pm-head-title {
+  color: $x4;
+  font-family: $pm-mono;
+  font-size: dpi(22px);
+  letter-spacing: dpi(3px);
+  margin-left: dpi(10px);
+}
+
+.pm-head-ico {
+  color: $x4;
+  margin-right: dpi(10px);
+}
+
+.pm-head-rule {
+  min-height: dpi(2px);
+  background: $x8;
+  margin: 0 dpi(12px);
+}
+
+.pm-head-slash {
+  color: $x4;
+  font-family: $pm-mono;
+  font-size: dpi(22px);
+  letter-spacing: dpi(-2px);
+}
+
+.pm-left-body {
+  padding-top: 0;
+}
+
+.pm-left-col {
+  padding-right: dpi(34px);
+  padding-top: dpi(62px);
+}
+
+.pm-greet-hi {
+  color: $x6;
+  font-family: $pm-mono;
+  font-size: dpi(31px);
+  letter-spacing: dpi(4px);
+}
+
+.pm-greet-name {
+  color: $x4;
+  font-family: $pm-mono;
+  font-size: dpi(52px);
+  letter-spacing: dpi(4px);
+}
+
+.pm-sub {
+  color: rgba($x7, 0.5);
+  font-family: $pm-mono;
+  font-size: dpi(18px);
+}
+
+.pm-shortrule {
+  min-width: dpi(80px);
+  min-height: dpi(3px);
+  background: $x4;
+  margin: dpi(10px) 0;
+}
+
+.pm-spec {
+  margin-right: dpi(6px);
+}
+
+.pm-spec-ico {
+  color: $x4;
+  margin-right: dpi(7px);
+}
+
+.pm-spec-text {
+  color: rgba($x7, 0.75);
+  font-family: $pm-mono;
+  font-size: dpi(14px);
+}
+
+.pm-spec-sep {
+  color: $x8;
+  font-family: $pm-mono;
+  font-size: dpi(14px);
+  margin: 0 dpi(6px);
+}
+
+.pm-wordmark {
+  margin-top: 0;
+}
+
+.pm-word-a {
+  color: $x7;
+  font-family: $pm-mono;
+  font-size: dpi(58px);
+  letter-spacing: dpi(0px);
+}
+
+.pm-word-b {
+  color: $x4;
+  font-family: $pm-mono;
+  font-size: dpi(58px);
+  letter-spacing: dpi(0px);
+}
+
+.pm-word-tm {
+  color: rgba($x7, 0.6);
+  font-size: dpi(16px);
+}
+
+.pm-view {
+  min-width: dpi(320px);
+  margin-left: dpi(10px);
+}
+
+.pm-view-in {
+  min-width: dpi(284px);
+  min-height: dpi(430px);
+  padding: dpi(18px) dpi(18px) 0 dpi(18px);
+  background: rgba($x0, 0.35);
+  border: dpi(1px) solid rgba($x8, 0.5);
+}
+
+.pm-brk {
+  min-width: dpi(16px);
+  min-height: dpi(16px);
+  border: 0 solid $x4;
+
+  &.tl {
+    border-top-width: dpi(3px);
+    border-left-width: dpi(3px);
+  }
+
+  &.tr {
+    border-top-width: dpi(3px);
+    border-right-width: dpi(3px);
+  }
+
+  &.bl {
+    border-bottom-width: dpi(3px);
+    border-left-width: dpi(3px);
+  }
+
+  &.br {
+    border-bottom-width: dpi(3px);
+    border-right-width: dpi(3px);
+  }
+}
+
+.pm-bunny {
+  color: $xfg;
+  font-family: $pm-mono;
+}
+
+.pm-bunny label {
+  font-size: dpi(60px);
+}
+
+.pm-bunny-top {
+  min-height: dpi(40px);
+}
+
+.pm-bunny-feet {
+  color: $x1;
+}
+
+$pm-batt-band: dpi(55px);
+
+.pm-batt-wrap {
+  margin: dpi(0px) dpi(-18px) 0 dpi(-18px);
+}
+
+.pm-batt {
+}
+
+.pm-batt-hold {
+  min-height: $pm-batt-band;
+}
+
+.pm-seg {
+  min-width: dpi(13px);
+  min-height: dpi(29px);
+  margin-right: dpi(2px);
+  background: $x8;
+
+  &.on {
+    background: $x4;
+  }
+}
+
+.pm-batt-cap {
+  margin: dpi(0px) dpi(-1px) dpi(-1px) dpi(0px);
+}
+
+.pm-cap-tri {
+  border-style: solid;
+  border-width: 0 0 $pm-batt-band $pm-batt-band;
+  border-color: transparent transparent $x4 transparent;
+}
+
+.pm-batt-num {
+  color: $xbg;
+  font-family: $pm-mono;
+  font-size: dpi(11px);
+  padding: 0 dpi(9px) dpi(8px) 0;
+}
+
+.pm-actions {
+  padding: dpi(12px) 0;
+}
+
+.pm-action {
+  padding: dpi(10px) dpi(14px);
+  margin-bottom: dpi(5px);
+  background: rgba($x0, 0.4);
+  transition: background-color 0.2s;
+}
+
+.pm-action-disc {
+  min-width: dpi(44px);
+  min-height: dpi(44px);
+  border: dpi(2px) solid $x8;
+  border-radius: $pm-round-max;
+  margin-right: dpi(14px);
+}
+
+.pm-action-label {
+  color: $xfg;
+  font-family: $pm-mono;
+  font-size: dpi(22px);
+  letter-spacing: dpi(1px);
+}
+
+.pm-action-sub {
+  color: rgba($x7, 0.5);
+  font-size: dpi(16px);
+}
+
+.pm-action-chev {
+  color: $x4;
+  font-family: $pm-mono;
+  font-size: dpi(20px);
+  margin-left: dpi(12px);
+}
+
+@each $name, $col in $pm-action-colors {
+  .pm-action.#{$name} {
+    .pm-action-icon {
+      color: $col;
+    }
+
+    .pm-action-disc {
+      border-color: rgba($col, 0.55);
+    }
+  }
+}
+
+.pm-action.this-selected {
+  background: $x4;
+
+  .pm-action-label,
+  .pm-action-chev,
+  .pm-action-icon {
+    color: $xbg;
+  }
+
+  .pm-action-sub {
+    color: rgba($xbg, 0.75);
+  }
+
+  .pm-action-disc {
+    border-color: $xbg;
+  }
+}
+
+.pm-action.disabled {
+  opacity: 0.35;
+
+  .pm-action-icon {
+    color: $x8;
+  }
+
+  .pm-action-disc {
+    border-color: $x8;
+  }
+}
+
+.pm-lock {
+  min-height: dpi(462px);
+}
+
+.pm-lock-body {
+  padding: dpi(24px) 0;
+}
+
+.pm-lock-ring {
+  padding: dpi(16px);
+  color: $x6;
+  border: dpi(6px) solid $x8;
+  border-radius: $pm-round-max;
+  transition: border-color 0.3s;
+
+  &.clear {
+    border-color: $x0;
+  }
+
+  &.insert {
+    &.style1 { border-color: $x1; }
+    &.style2 { border-color: $x2; }
+    &.style3 { border-color: $x3; }
+    &.style4 { border-color: $x4; }
+    &.style5 { border-color: $x5; }
+    &.style6 { border-color: $x6; }
+  }
+
+  &.delete {
+    &.style1,
+    &.style3,
+    &.style5 {
+      border-color: $x8;
+    }
+
+    &.style2,
+    &.style4,
+    &.style6 {
+      border-color: rgba($x8, 0.5);
+    }
+  }
+}
+
+.pm-lock-line {
+  margin-top: dpi(20px);
+  color: $xfg;
+  font-family: $pm-mono;
+  font-size: dpi(22px);
+}
+
+.pm-lock-prompt {
+  color: $x4;
+}
+
+.pm-foot {
+  margin-top: dpi(12px);
+  padding-top: dpi(12px);
+  border-top: dpi(2px) solid $x8;
+  font-family: $pm-mono;
+  font-size: dpi(18px);
+}
+
+.pm-foot-key {
+  color: $x4;
+}
+
+.pm-foot-sep {
+  margin: 0 dpi(10px);
+  color: $x8;
+}
+
+.pm-foot-lbl {
+  color: rgba($x7, 0.55);
+}
+
+.pm-keybuf {
+  min-width: dpi(1px);
+  min-height: dpi(1px);
+}
+
+.pm-keys {
+  min-width: dpi(1px);
+  min-height: dpi(1px);
+  padding: dpi(0px);
+  margin: dpi(0px);
+  opacity: 0;
+  background-color: transparent;
+}
+
+@keyframes pm-blink {
+  0%   { opacity: 1; }
+  50%  { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes pm-diagonal-fade {
+  0%   { opacity: 0.4; }
+  100% { opacity: 1; }
+}

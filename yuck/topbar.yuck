@@ -28,7 +28,7 @@
         :hexpand true
         (label 
           :visible false
-          :text "${playerctl} ${pcover}"))
+          :text "${playerctl} ${pcover} ${inputpipe} ${wifi}"))
       (box
         :orientation "v"
         :space-evenly false
@@ -103,7 +103,6 @@
               :hscroll true 
               :hexpand true
               (label 
-                ; :limit-width 30
                 :class "large"
                 :truncate true
                 :text {playerctl.song}))))))

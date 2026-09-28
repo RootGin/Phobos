@@ -1,0 +1,375 @@
+(defvar netssid "")
+(defvar netsec "")
+(defvar netopen false)
+(defvar netpass "")
+(defvar netpassshow false)
+(defvar netadv false)        ; advanced options expanded
+(defvar netipmode "auto")    ; auto | manual
+(defvar netip "")
+(defvar netsubnet "")
+(defvar netgw "")
+(defvar netdns "")
+(defvar netproxy "none")     ; none | auto | manual
+(defvar netproxyval "")
+(defvar netmtu "")
+(defvar netauto true)        ; connect automatically
+(defvar net8021x false)      ; reflects detected 802.1X security (display only)
+
+(defwidget nw_sig [bucket]
+  (box
+    :class "nw-sig ${bucket}"
+    :orientation "h"
+    :space-evenly false
+    :valign "end"
+    (box :class "nw-bar b1" :valign "end")
+    (box :class "nw-bar b2" :valign "end")
+    (box :class "nw-bar b3" :valign "end")
+    (box :class "nw-bar b4" :valign "end")))
+
+(defwidget nw_row [ssid security bucket open connected]
+  (eventbox
+    :cursor "pointer"
+    :onclick "${EWW_CMD} update netssid='${netssid == ssid ? '' : ssid}' netsec='${security}' netopen=${open} netpass= netpassshow=false netadv=false netipmode=auto netip= netsubnet= netgw= netdns= netproxy=none netproxyval= netmtu= netauto=true net8021x=false && ./scripts/wifi.py getpass '${ssid}' && ${EWW_CMD} open network --arg nww='${netssid == ssid ? '454px' : '1180px'}' &"
+    (box
+      :class "nw-row ${ssid == netssid ? 'selected' : (connected ? 'connected' : 'idle')}"
+      :orientation "h"
+      :space-evenly false
+      :hexpand true
+      (image
+        :class "nw-row-ico"
+        :image-width 24
+        :path "./assets/icons/wifi.svg")
+      (label
+        :class "nw-row-ssid"
+        :xalign 0
+        :truncate true
+        :limit-width 30
+        :hexpand true
+        :text ssid)
+      (nw_sig :bucket bucket)
+      (label :class "nw-sec" :text {open ? "Open" : security}))))
+
+(defwidget nw_adv [icon label value]
+  (box
+    :class "nw-advrow"
+    :orientation "h"
+    :space-evenly false
+    :hexpand true
+    (image :class "nw-advico" :image-width 20 :path "./assets/icons/${icon}.svg")
+    (label :class "nw-advlbl" :xalign 0 :hexpand true :text label)
+    (label :class "nw-advval" :text value)
+    (label :class "nw-chev" :text "v")))
+
+(defwidget nw_choice [icon label value onclick]
+  (eventbox
+    :cursor "pointer"
+    :onclick onclick
+    (box
+      :class "nw-advrow"
+      :orientation "h"
+      :space-evenly false
+      :hexpand true
+      (image :class "nw-advico" :image-width 20 :path "./assets/icons/${icon}.svg")
+      (label :class "nw-advlbl" :xalign 0 :hexpand true :text label)
+      (label :class "nw-advval" :text value)
+      (label :class "nw-chev" :text "v"))))
+
+(defwidget nw_toggle [icon label val onclick]
+  (eventbox
+    :cursor "pointer"
+    :onclick onclick
+    (box
+      :class "nw-advrow"
+      :orientation "h"
+      :space-evenly false
+      :hexpand true
+      (image :class "nw-advico" :image-width 20 :path "./assets/icons/${icon}.svg")
+      (label :class "nw-advlbl" :xalign 0 :hexpand true :text label)
+      (box
+        :class "nw-switch ${val ? 'on' : 'off'}"
+        (box :class "nw-knob")))))
+
+(defwidget nw_panel1 []
+  (overlay
+    (box
+      :class "nw-pane nw-listpane"
+      :orientation "v"
+      :space-evenly false
+      :hexpand true
+      :vexpand true
+      (box
+      :class "nw-panehead"
+      :orientation "h"
+      :space-evenly false
+      (image :class "nw-phead-ico" :image-width 24 :path "./assets/icons/wifi.svg")
+      (label :class "nw-phead-t" :text "Available Networks")
+      (box :hexpand true)
+      (label
+        :class "nw-connecting"
+        :visible {wifi.connecting}
+        :text "Connecting...")
+      (eventbox
+        :class "nw-scan"
+        :cursor "pointer"
+        :onclick "./scripts/wifi.py rescan &"
+        (image :class "nw-scan-ico" :image-width 22 :path "./assets/icons/scan.svg")))
+    (box
+      :class "nw-empty"
+      :orientation "v"
+      :vexpand true
+      :space-evenly false
+      :visible {wifi.state == "airplane-mode"}
+      (box :vexpand true)
+      (image :image-width 48 :path "./assets/icons/wifioff.svg")
+      (label :class "nw-empty-t" :text "Wi-Fi is turned off")
+      (eventbox
+        :class "nw-btn"
+        :cursor "pointer"
+        :onclick "nmcli radio wifi on &"
+        (label :text "Turn on Wi-Fi"))
+      (box :vexpand true))
+    (box
+      :class "nw-empty"
+      :orientation "v"
+      :vexpand true
+      :space-evenly false
+      :visible {wifi.state == "no-interface"}
+      (box :vexpand true)
+      (image :image-width 48 :path "./assets/icons/wifioff.svg")
+      (label :class "nw-empty-t" :text "No Wi-Fi interface found")
+      (box :vexpand true))
+    (box
+      :class "nw-listwrap"
+      :vexpand true
+      :visible {wifi.state != "airplane-mode" && wifi.state != "no-interface"}
+      (scroll
+        :class "nw-scroll"
+        :vexpand true
+        :hscroll false
+        :vscroll true
+        (box
+          :class "nw-list"
+          :orientation "v"
+          :space-evenly false
+          (for net in {wifi.networks}
+            (nw_row
+              :ssid {net.ssid}
+              :security {net.security}
+              :bucket {net.bucket}
+              :open {net.open}
+              :connected {net.connected}))))))
+      (box :class "triangle nw-wedge topleft" :halign "start" :valign "start")
+      (box :class "triangle nw-wedge topright" :halign "end" :valign "start")
+      (box :class "triangle nw-wedge bottomright" :halign "end" :valign "end")
+      (box :class "triangle nw-wedge bottomleft" :halign "start" :valign "end")))
+
+(defwidget nw_panel2 []
+  (revealer
+    :class "nw-dslide"
+    :reveal {netssid != ""}
+    :transition "slideright"
+    :duration "250ms"
+    :hexpand {netssid != ""}
+    :vexpand true
+    (overlay
+      (box
+        :class "nw-pane nw-detailpane"
+        :orientation "v"
+        :space-evenly false
+        :hexpand true
+        :vexpand true
+      (box
+        :class "nw-dwrap"
+        :orientation "v"
+        :space-evenly false
+        :hexpand true
+        :vexpand true
+        (box
+          :class "nw-dhead"
+          :orientation "h"
+          :space-evenly false
+          (box
+            :class "nw-dico"
+            (image :image-width 26 :path "./assets/icons/wifi.svg"))
+          (box
+            :class "nw-dhead-txt"
+            :orientation "v"
+            :space-evenly false
+            :hexpand true
+            (label :class "nw-dhead-ssid" :xalign 0 :truncate true :text "${netssid}")
+            (label
+              :class "nw-dhead-sub"
+              :xalign 0
+              :text "${wifi.connected && wifi.ssid == netssid ? 'Connected' : (wifi.connecting ? 'Preparing connection...' : 'Not connected')}  ·  ${netopen ? 'Open' : netsec}")))
+        (scroll
+          :class "nw-scroll"
+          :vexpand true
+          :hscroll false
+          :vscroll true
+          (box
+            :class "nw-detail"
+            :orientation "v"
+            :space-evenly false
+            (box
+              :class "nw-pwblock"
+              :orientation "v"
+              :space-evenly false
+              :visible {!netopen}
+              (box
+                :class "nw-pwlabel"
+                :orientation "h"
+                :space-evenly false
+                (image :class "nw-advico" :image-width 18 :path "./assets/icons/pm-lock.svg")
+                (label :text "Password"))
+              (box
+                :class "nw-field"
+                :orientation "h"
+                :space-evenly false
+                :hexpand true
+                (overlay
+                  :class "nw-inputwrap"
+                  :hexpand true
+                  (input
+                    :class "nw-input"
+                    :hexpand true
+                    :password {!netpassshow}
+                    :value {netpass} :onchange "${EWW_CMD} update netpass='{}'")
+                  (label
+                    :class "nw-ph"
+                    :halign "start"
+                    :valign "center"
+                    :visible {netpass == ""}
+                    :text "Enter Wi-Fi password"))
+                (eventbox
+                  :class "nw-eye"
+                  :cursor "pointer"
+                  :onclick "${EWW_CMD} update netpassshow=${!netpassshow} &"
+                  (image
+                    :class "nw-eye-ico"
+                    :image-width 22
+                    :path {netpassshow ? "./assets/icons/eyeoff.svg" : "./assets/icons/eye.svg"}))))
+            (eventbox
+              :class "nw-advhead"
+              :cursor "pointer"
+              :onclick "${EWW_CMD} update netadv=${!netadv} &"
+              (box
+                :orientation "h"
+                :space-evenly false
+                :hexpand true
+                (label :class "nw-advcaret" :text {netadv ? "v" : ">"})
+                (label :class "nw-advtitle" :text "Advanced Options")))
+            (box
+              :class "nw-advbox"
+              :orientation "v"
+              :space-evenly false
+              :visible {netadv}
+              (nw_adv :icon "shield" :label "Security Type" :value {netopen ? "Open" : netsec})
+              (nw_choice
+                :icon "ipnet"
+                :label "IP Assignment"
+                :value {netipmode == "manual" ? "Manual" : "Automatic (DHCP)"}
+                :onclick "${EWW_CMD} update netipmode=${netipmode == 'manual' ? 'auto' : 'manual'} &")
+              (box
+                :class "nw-manual"
+                :orientation "v"
+                :space-evenly false
+                :visible {netipmode == "manual"}
+                (box :class "nw-minput" :orientation "h"
+                  (label :class "nw-mlabel" :text "IP")
+                  (input :class "nw-input nw-min" :hexpand true :value {netip} :onchange "${EWW_CMD} update netip='{}'"))
+                (box :class "nw-minput" :orientation "h"
+                  (label :class "nw-mlabel" :text "Subnet")
+                  (input :class "nw-input nw-min" :hexpand true :value {netsubnet} :onchange "${EWW_CMD} update netsubnet='{}'"))
+                (box :class "nw-minput" :orientation "h"
+                  (label :class "nw-mlabel" :text "Gateway")
+                  (input :class "nw-input nw-min" :hexpand true :value {netgw} :onchange "${EWW_CMD} update netgw='{}'"))
+                (box :class "nw-minput" :orientation "h"
+                  (label :class "nw-mlabel" :text "DNS")
+                  (input :class "nw-input nw-min" :hexpand true :value {netdns} :onchange "${EWW_CMD} update netdns='{}'")))
+              (nw_choice
+                :icon "globe"
+                :label "Proxy"
+                :value {netproxy == "manual" ? "Manual" : (netproxy == "auto" ? "Automatic" : "None")}
+                :onclick "${EWW_CMD} update netproxy=${netproxy == 'none' ? 'auto' : (netproxy == 'auto' ? 'manual' : 'none')} &")
+              (box
+                :class "nw-manual"
+                :orientation "v"
+                :space-evenly false
+                :visible {netproxy == "manual"}
+                (box :class "nw-minput" :orientation "h"
+                  (label :class "nw-mlabel" :text "PAC URL")
+                  (input :class "nw-input nw-min" :hexpand true :value {netproxyval} :onchange "${EWW_CMD} update netproxyval='{}'")))
+              (nw_choice
+                :icon "sliders"
+                :label "MTU"
+                :value {netmtu == "" ? "Automatic" : netmtu}
+                :onclick "${EWW_CMD} update netmtu=${netmtu == '' ? '1500' : ''} &")
+              (box
+                :class "nw-manual"
+                :orientation "v"
+                :space-evenly false
+                :visible {netmtu != ""}
+                (box :class "nw-minput" :orientation "h"
+                  (label :class "nw-mlabel" :text "Size")
+                  (input :class "nw-input nw-min" :hexpand true :value {netmtu} :onchange "${EWW_CMD} update netmtu='{}'")))
+              (nw_toggle
+                :icon "user"
+                :label "802.1x Authentication"
+                :val {net8021x}
+                :onclick "${EWW_CMD} update net8021x=${!net8021x} &")
+              (nw_toggle
+                :icon "scan"
+                :label "Connect Automatically"
+                :val {netauto}
+                :onclick "${EWW_CMD} update netauto=${!netauto} &"))))
+        (eventbox
+          :class "nw-connect ${wifi.connected && wifi.ssid == netssid ? 'disc' : ((netopen || netpass != '') && (netipmode == 'auto' || (netip != '' && netgw != '')) ? 'on' : 'off')}"
+          :cursor {(wifi.connected && wifi.ssid == netssid) || ((netopen || netpass != '') && (netipmode == 'auto' || (netip != '' && netgw != ''))) ? "pointer" : "not-allowed"}
+          :onclick {(wifi.connected && wifi.ssid == netssid) ? "./scripts/wifi.py disconnect '${netssid}' &" : (((netopen || netpass != '') && (netipmode == 'auto' || (netip != '' && netgw != ''))) ? "./scripts/wifi.py connect '${netssid}' '${netsec}' '${netpass}' '${netipmode}' '${netip}' '${netsubnet}' '${netgw}' '${netdns}' '${netproxy}' '${netproxyval}' '${netmtu}' '${netauto}' &" : "true")}
+          (box
+            :orientation "h"
+            :space-evenly false
+            :halign "center"
+            (image :class "nw-connect-ico" :image-width 22 :path "./assets/icons/wifi.svg")
+            (label :text {(wifi.connected && wifi.ssid == netssid) ? "Disconnect" : "Connect"})))))
+      (box :class "triangle nw-wedge topleft" :halign "start" :valign "start")
+      (box :class "triangle nw-wedge topright" :halign "end" :valign "start")
+      (box :class "triangle nw-wedge bottomright" :halign "end" :valign "end")
+      (box :class "triangle nw-wedge bottomleft" :halign "start" :valign "end"))))
+
+(defwindow network [nww]
+  :monitor '["<primary>", 0]'
+  :geometry (geometry
+              :x 0
+              :y 0
+              :width {nww}
+              :height "720px"
+              :anchor "center")
+  :stacking "overlay"
+  :exclusive false
+  :focusable true
+  :namespace "phobos-network"
+  (box
+    :class "nw-screen ${wifi.connecting ? 'nw-charging' : ''}"
+    :orientation "v"
+    :space-evenly false
+    (box
+      :class "nw-titlebar"
+      :orientation "h"
+      :space-evenly false
+      (image :class "nw-head-ico" :image-width 24 :path "./assets/icons/wifi.svg")
+      (label :class "nw-head-title" :text "Network Manager")
+      (box :hexpand true)
+      (eventbox
+        :class "nw-close"
+        :cursor "pointer"
+        :onclick "${EWW_CMD} close network &"
+        (label :class "nw-close-x" :text "X")))
+    (box
+      :class "nw-body"
+      :orientation "h"
+      :space-evenly false
+      :vexpand true
+      (nw_panel1)
+      (box :class "nw-gap")
+      (nw_panel2))))
