@@ -1,5 +1,6 @@
 $pm-round-max: dpi(999px);
 $pm-mono: "Fairfax HD";
+$pm-grid-cell: dpi(28px);
 
 window.powermenu {
   background: transparent;
@@ -103,30 +104,54 @@ $pm-chamfer: dpi(26px);
   letter-spacing: dpi(4px);
 }
 
-.pm-sub {
+.pm-stats {
+  margin-top: dpi(6px);
+}
+
+.pm-stat {
+  min-height: dpi(20px);
+}
+
+.pm-stat-label {
   color: rgba($x7, 0.5);
   font-family: $pm-mono;
-  font-size: dpi(18px);
+  font-size: dpi(15px);
+  letter-spacing: dpi(2px);
+  margin-right: dpi(14px);
 }
 
-.pm-shortrule {
-  min-width: dpi(80px);
-  min-height: dpi(3px);
-  background: $x4;
-  margin: dpi(10px) 0;
+.pm-stat-body {
+  min-width: dpi(240px);
 }
 
-.pm-spec {
-  margin-right: dpi(6px);
-}
-
-.pm-spec-ico {
+.pm-stat-value {
   color: $x4;
-  margin-right: dpi(7px);
+  font-family: $pm-mono;
+  font-size: dpi(18px);
+  min-width: dpi(90px);
+}
+
+.pm-meter {
+  margin-left: dpi(0px);
+}
+
+.pm-mseg {
+  min-width: dpi(9px);
+  min-height: dpi(9px);
+  margin: 0 dpi(2px) 0 dpi(12px);
+  background: $x8;
+
+  &.on {
+    background: $x4;
+  }
+}
+
+.pm-specs {
+  margin-top: dpi(4px);
 }
 
 .pm-spec-text {
-  color: rgba($x7, 0.75);
+  color: rgba($x7, 0.7);
   font-family: $pm-mono;
   font-size: dpi(14px);
 }
@@ -170,8 +195,11 @@ $pm-chamfer: dpi(26px);
   min-width: dpi(284px);
   min-height: dpi(430px);
   padding: dpi(18px) dpi(18px) 0 dpi(18px);
-  background: rgba($x0, 0.35);
   border: dpi(1px) solid $x8;
+  background-color: rgba($x0, 0.35);
+  background-image:
+    repeating-linear-gradient(0deg, rgba($x8, 0.3) 0, rgba($x8, 0.3) dpi(1px), transparent dpi(1px), transparent $pm-grid-cell),
+    repeating-linear-gradient(90deg, rgba($x8, 0.3) 0, rgba($x8, 0.3) dpi(1px), transparent dpi(1px), transparent $pm-grid-cell);
 }
 
 .pm-brk {
@@ -198,6 +226,13 @@ $pm-chamfer: dpi(26px);
     border-bottom-width: dpi(3px);
     border-right-width: dpi(3px);
   }
+}
+
+.powermenu .pm-xhair {
+  color: rgba($x4, 0.8);
+  font-family: $pm-mono;
+  font-size: dpi(18px);
+  margin: dpi(22px) dpi(10px);
 }
 
 .pm-bunny {
@@ -262,92 +297,69 @@ $pm-batt-band: dpi(55px);
   padding: dpi(12px) 0;
 }
 
-.pm-action {
-  padding: dpi(10px) dpi(14px);
-  margin-bottom: dpi(5px);
+$pm-tile-h: dpi(118px);
+$pm-lock-h: dpi(398px);   // = 3 × $pm-tile-h + 2 × dpi(10px) gaps + 2 × dpi(12px) .pm-actions padding
+
+.pm-row {
+  min-height: $pm-tile-h;
+}
+
+.pm-row:not(:last-child) {
+  margin-bottom: dpi(10px);
+}
+
+.pm-tile {
+  padding: dpi(14px) dpi(10px);
+  margin-right: dpi(10px);
   background: rgba($x0, 0.4);
   transition: background-color 0.2s;
 }
 
-.pm-action-disc {
-  min-width: dpi(44px);
-  min-height: dpi(44px);
-  border: dpi(2px) solid rgba($x4, 0.45);
-  border-radius: $pm-round-max;
-  margin-right: dpi(14px);
+.pm-row > .pm-tile:last-child {
+  margin-right: dpi(0px);
 }
 
-.pm-action-label {
+.pm-tile-icon {
+  color: $x4;
+}
+
+.pm-tile-label {
   color: $xfg;
   font-family: $pm-mono;
-  font-size: dpi(22px);
+  font-size: dpi(19px);
   letter-spacing: dpi(1px);
+  margin-top: dpi(12px);
 }
 
-.pm-action-sub {
-  color: rgba($x7, 0.5);
-  font-size: dpi(16px);
-}
-
-.pm-action-chev {
-  color: $x4;
-  font-family: $pm-mono;
-  font-size: dpi(20px);
-  margin-left: dpi(12px);
-}
-
-.pm-action-icon {
-  color: $x4;
-}
-
-.pm-action.poweroff {
-  .pm-action-icon {
+.pm-tile.poweroff {
+  .pm-tile-icon {
     color: $x1;
   }
-
-  .pm-action-disc {
-    border-color: rgba($x1, 0.45);
-  }
 }
 
-.pm-action.this-selected {
+.pm-tile.this-selected {
   background: $x4;
 
-  .pm-action-label,
-  .pm-action-chev,
-  .pm-action-icon {
+  .pm-tile-label,
+  .pm-tile-icon {
     color: $xbg;
-  }
-
-  .pm-action-sub {
-    color: rgba($xbg, 0.75);
-  }
-
-  .pm-action-disc {
-    border-color: $xbg;
   }
 }
 
-.pm-action.disabled {
-  .pm-action-icon {
+.pm-tile.disabled {
+  background: rgba($x0, 0.25);
+
+  .pm-tile-icon {
     color: $x8;
   }
 
-  .pm-action-disc {
-    border-color: $x8;
-  }
-
-  .pm-action-label {
-    color: rgba($x7, 0.45);
-  }
-
-  .pm-action-sub {
-    color: rgba($x7, 0.25);
+  .pm-tile-label {
+    color: rgba($x7, 0.4);
   }
 }
 
 .pm-lock {
-  min-height: dpi(462px);
+  min-height: $pm-lock-h;
 }
 
 .pm-lock-body {

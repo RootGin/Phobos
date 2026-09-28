@@ -20,44 +20,52 @@
 (defvar power-reason-hibernate "")
 
 (defpoll pm-info
-  :initial '{"greeting":"HELLO,","user":"USER","os":"NixOS","cpu":"CPU","ram":"0 GiB","batt":"000","segments":[]}'
+  :initial '{"greeting":"HELLO,","user":"USER","os":"NixOS","cpu":"CPU","ram":"0 GiB","uptime":"0m","upfrac":0,"kernel":"0.0","batt":"000","segments":[],"upsegs":[]}'
   :interval "30s"
   :run-while revealpowermenu
   "./scripts/helper/powermenu-info.py")
 
 (defpoll power-caps :initial "ok" :interval "5s" :run-while revealpowermenu "./scripts/helper/check-power-capabilities.sh")
 
-(defwidget pm-spec [icon info]
+(defwidget pm-meter [segs]
   (box
-    :class "pm-spec"
+    :class "pm-meter"
     :orientation "h"
     :space-evenly false
-    (image :class "pm-spec-ico" :image-width 20 :path "./assets/icons/${icon}.svg")
-    (label :class "pm-spec-text" :text info)))
+    (for seg in {segs}
+      (box :class "pm-mseg ${seg}"))))
 
-(defwidget powermenu-row [extra-class symbol title subtitle cap reason]
+(defwidget pm-stat [label value ?segs]
+  (box
+    :class "pm-stat"
+    :orientation "h"
+    :space-evenly false
+    (label :class "pm-stat-label" :text label)
+    (box
+      :class "pm-stat-body"
+      :orientation "h"
+      :space-evenly false
+      (label :class "pm-stat-value" :text value)
+      (pm-meter :segs {segs}))
+    (box :vexpand true)))
+
+(defwidget powermenu-tile [extra-class symbol title cap reason]
   (eventbox
     :onhover "(sleep 0.02 && ${EWW_CMD} update powermenu-button-hovered=true; ./scripts/helper/do-powermenu-action.sh ${extra-class}) &"
     :onhoverlost "${EWW_CMD} update powermenu-button-hovered=false powermenu-button-selected= powermenu-status="
     :onclick "./scripts/helper/do-powermenu-action.sh ${extra-class} click &"
     :cursor {cap ? "hand2" : "not-allowed"}
     :tooltip {cap ? '' : reason}
+    :hexpand true
+    :vexpand true
     (box
-      :class "pm-action ${extra-class} ${(powermenu-button-selected == extra-class) ? 'this-selected' : (powermenu-button-selected == '') ? 'nothing-selected' : 'not-selected'}${cap ? '' : ' disabled'}"
-      :orientation "h"
+      :class "pm-tile ${extra-class} ${(powermenu-button-selected == extra-class) ? 'this-selected' : (powermenu-button-selected == '') ? 'nothing-selected' : 'not-selected'}${cap ? '' : ' disabled'}"
+      :orientation "v"
       :space-evenly false
       :hexpand true
-      (box
-        :class "pm-action-disc"
-        (image :class "pm-action-icon" :image-width 30 :path "./assets/icons/${symbol}.svg"))
-      (box
-        :class "pm-action-txt"
-        :orientation "v"
-        :space-evenly false
-        :hexpand true
-        (label :class "pm-action-label" :xalign 0 :text title)
-        (label :class "pm-action-sub" :xalign 0 :text subtitle))
-      (label :class "pm-action-chev" :text ">"))))
+      :vexpand true
+      (image :class "pm-tile-icon" :image-width 40 :path "./assets/icons/${symbol}.svg")
+      (label :class "pm-tile-label" :text title))))
 
 (defwindow powermenu
   :geometry (geometry
@@ -120,22 +128,22 @@
                   (label :class "pm-greet-hi" :xalign 0 :text "${pm-info.greeting}")
                   (label :class "pm-greet-name" :xalign 0 :text "${pm-info.user}_"))
                 (box
-                  :class "pm-subs"
+                  :class "pm-stats"
                   :orientation "v"
                   :space-evenly false
-                  :spacing 2
-                  (label :class "pm-sub" :xalign 0 :text "Another day, another step")
-                  (label :class "pm-sub" :xalign 0 :text "towards a better tomorrow."))
-                (box :class "pm-shortrule" :halign "start")
+                  :spacing 10
+                  (pm-stat :label "UPTIME" :value "${pm-info.uptime}" :segs {pm-info.upsegs})
+                  (pm-stat :label "KERNEL" :value "${pm-info.kernel}" :segs {[]})
+                  (pm-stat :label "BATT" :value "${pm-info.batt}%" :segs {pm-info.segments}))
                 (box
                   :class "pm-specs"
                   :orientation "h"
                   :space-evenly false
-                  (pm-spec :icon "spec-os" :info "${pm-info.os}")
+                  (label :class "pm-spec-text" :xalign 0 :text "${pm-info.os}")
                   (label :class "pm-spec-sep" :text "//")
-                  (pm-spec :icon "spec-cpu" :info "${pm-info.cpu}")
+                  (label :class "pm-spec-text" :xalign 0 :text "${pm-info.cpu}")
                   (label :class "pm-spec-sep" :text "//")
-                  (pm-spec :icon "spec-ram" :info "${pm-info.ram}"))
+                  (label :class "pm-spec-text" :xalign 0 :text "${pm-info.ram}"))
                 (box :vexpand true)
                 (box
                   :class "pm-wordmark"
@@ -181,7 +189,11 @@
                     (box :class "pm-brk tl" :halign "start" :valign "start")
                     (box :class "pm-brk tr" :halign "end" :valign "start")
                     (box :class "pm-brk bl" :halign "start" :valign "end")
-                    (box :class "pm-brk br" :halign "end" :valign "end"))
+                    (box :class "pm-brk br" :halign "end" :valign "end")
+                    (label :class "pm-xhair tl" :text "«" :halign "start" :valign "start")
+                    (label :class "pm-xhair tr" :text "»" :halign "end" :valign "start")
+                    (label :class "pm-xhair bl" :text "«" :halign "start" :valign "end")
+                    (label :class "pm-xhair br" :text "»" :halign "end" :valign "end"))
                   (box
                     :class "pm-batt-wrap"
                     (overlay
@@ -229,12 +241,30 @@
               :hexpand true
               :vexpand true
               :visible {!screen-locked}
-              (powermenu-row :extra-class "poweroff" :symbol "pm-poweroff" :title "SHUT DOWN" :subtitle "Power off your system." :cap {power-can-poweroff} :reason "")
-              (powermenu-row :extra-class "reboot" :symbol "pm-reboot" :title "RESTART" :subtitle "Restart your system." :cap {power-can-reboot} :reason "")
-              (powermenu-row :extra-class "suspend" :symbol "pm-suspend" :title "SLEEP" :subtitle "Put your system to sleep." :cap {power-can-suspend} :reason {power-reason-suspend})
-              (powermenu-row :extra-class "hibernate" :symbol "pm-hibernate" :title "HIBERNATE" :subtitle "Hibernate your system." :cap {power-can-hibernate} :reason {power-reason-hibernate})
-              (powermenu-row :extra-class "exit" :symbol "pm-exit" :title "LOG OUT" :subtitle "Sign out from your session." :cap {power-can-exit} :reason "")
-              (powermenu-row :extra-class "lock" :symbol "pm-lock" :title "LOCK" :subtitle "Lock your screen." :cap {power-can-lock} :reason ""))
+              (box
+                :class "pm-row"
+                :orientation "h"
+                :space-evenly false
+                :hexpand true
+                :vexpand true
+                (powermenu-tile :extra-class "poweroff" :symbol "pm-poweroff" :title "SHUT DOWN" :cap {power-can-poweroff} :reason "")
+                (powermenu-tile :extra-class "reboot" :symbol "pm-reboot" :title "RESTART" :cap {power-can-reboot} :reason ""))
+              (box
+                :class "pm-row"
+                :orientation "h"
+                :space-evenly false
+                :hexpand true
+                :vexpand true
+                (powermenu-tile :extra-class "suspend" :symbol "pm-suspend" :title "SLEEP" :cap {power-can-suspend} :reason {power-reason-suspend})
+                (powermenu-tile :extra-class "hibernate" :symbol "pm-hibernate" :title "HIBERNATE" :cap {power-can-hibernate} :reason {power-reason-hibernate}))
+              (box
+                :class "pm-row"
+                :orientation "h"
+                :space-evenly false
+                :hexpand true
+                :vexpand true
+                (powermenu-tile :extra-class "exit" :symbol "pm-exit" :title "LOG OUT" :cap {power-can-exit} :reason "")
+                (powermenu-tile :extra-class "lock" :symbol "pm-lock" :title "LOCK" :cap {power-can-lock} :reason "")))
             (box
               :class "pm-lock"
               :orientation "v"
