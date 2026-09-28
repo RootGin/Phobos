@@ -99,15 +99,15 @@
     :space-evenly false
     (eventbox
       :cursor "pointer"
+      :hexpand true
       :onclick "./scripts/hackslide.sh systemint close & ${EWW_CMD} open network &"
       (box
         :orientation "h"
         :space-evenly false
-        :hexpand true
         (image :image-width 35 :path icon)
-        (label :truncate true :limit-width 20 :text label)
-        (box :hexpand true)
-        (label :text ">")))
+        (label :truncate true :limit-width 20 :text label)))
+    (box
+      :hexpand true)
     (eventbox
       :cursor "pointer"
       :onclick {on ? "nmcli radio wifi off" : "nmcli radio wifi on"}
