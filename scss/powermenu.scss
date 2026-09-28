@@ -55,7 +55,7 @@ $pm-chamfer: dpi(26px);
   letter-spacing: dpi(3px);
 }
 
-.pm-head-title {
+.powermenu .pm-head-title {
   color: $x4;
   font-family: $pm-mono;
   font-size: dpi(22px);
@@ -63,7 +63,7 @@ $pm-chamfer: dpi(26px);
   margin-left: dpi(10px);
 }
 
-.pm-head-ico {
+.powermenu .pm-head-ico {
   color: $x4;
   margin-right: dpi(10px);
 }
@@ -112,7 +112,7 @@ $pm-chamfer: dpi(26px);
   min-height: dpi(20px);
 }
 
-.pm-stat-label {
+.powermenu .pm-stat-label {
   color: rgba($x7, 0.5);
   font-family: $pm-mono;
   font-size: dpi(15px);
@@ -129,21 +129,6 @@ $pm-chamfer: dpi(26px);
   font-family: $pm-mono;
   font-size: dpi(18px);
   min-width: dpi(90px);
-}
-
-.pm-meter {
-  margin-left: dpi(0px);
-}
-
-.pm-mseg {
-  min-width: dpi(9px);
-  min-height: dpi(9px);
-  margin: 0 dpi(2px) 0 dpi(12px);
-  background: $x8;
-
-  &.on {
-    background: $x4;
-  }
 }
 
 .pm-specs {
@@ -310,20 +295,15 @@ $pm-lock-h: dpi(398px);   // = 3 × $pm-tile-h + 2 × dpi(10px) gaps + 2 × dpi(
 
 .pm-tile {
   padding: dpi(14px) dpi(10px);
-  margin-right: dpi(10px);
   background: rgba($x0, 0.4);
   transition: background-color 0.2s;
-}
-
-.pm-row > .pm-tile:last-child {
-  margin-right: dpi(0px);
 }
 
 .pm-tile-icon {
   color: $x4;
 }
 
-.pm-tile-label {
+.powermenu .pm-tile-label {
   color: $xfg;
   font-family: $pm-mono;
   font-size: dpi(19px);

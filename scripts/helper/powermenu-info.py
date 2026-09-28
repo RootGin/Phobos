@@ -11,7 +11,6 @@ import time
 
 BAT = "/sys/class/power_supply/BAT0/capacity"
 SEGMENTS = 20
-DAY = 86400
 
 def read(path, default=""):
     try:
@@ -51,7 +50,7 @@ def fmt_uptime(secs):
         return f"{h}h {m:02d}m"
     return f"{m}m"
 
-def os_name():
+def os_release():
     data = {}
     try:
         with open("/etc/os-release") as fh:
@@ -61,7 +60,17 @@ def os_name():
                     data[k] = v.strip('"')
     except OSError:
         pass
-    return f"{data.get('NAME', 'Linux')} {data.get('VERSION_ID', '')}".strip()
+    return data
+
+def os_name():
+    d = os_release()
+    return f"{d.get('NAME', 'Linux')} {d.get('VERSION_ID', '')}".strip()
+
+def generation():
+    """NixOS system generation, e.g. 26.11.20260919.20b1ddd. BUILD_ID is that
+    string; on anything else fall back to the plain version."""
+    d = os_release()
+    return d.get("BUILD_ID") or d.get("VERSION_ID", "")
 
 hour = time.localtime().tm_hour
 greeting = (
@@ -95,9 +104,7 @@ if __name__ == "__main__":
         "cpu": f"{model} @ {ghz:.2f}GHz" if ghz else model,
         "ram": f"{ram_gib():.2f} GiB",
         "uptime": fmt_uptime(up),
-        "upfrac": round(min(up, DAY) / DAY, 3),
-        "upsegs": ["on" if (i + 1) / SEGMENTS <= min(up, DAY) / DAY else "off"
-                   for i in range(SEGMENTS)],
+        "generation": generation(),
         "kernel": rel,
         "batt": f"{cap:03d}",
         "segments": ["on" if (i + 1) * (100 / SEGMENTS) <= cap else "off"

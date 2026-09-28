@@ -20,33 +20,20 @@
 (defvar power-reason-hibernate "")
 
 (defpoll pm-info
-  :initial '{"greeting":"HELLO,","user":"USER","os":"NixOS","cpu":"CPU","ram":"0 GiB","uptime":"0m","upfrac":0,"kernel":"0.0","batt":"000","segments":[],"upsegs":[]}'
+  :initial '{"greeting":"HELLO,","user":"USER","os":"NixOS","cpu":"CPU","ram":"0 GiB","uptime":"0m","generation":"-","kernel":"0.0","batt":"000","segments":[]}'
   :interval "30s"
   :run-while revealpowermenu
   "./scripts/helper/powermenu-info.py")
 
 (defpoll power-caps :initial "ok" :interval "5s" :run-while revealpowermenu "./scripts/helper/check-power-capabilities.sh")
 
-(defwidget pm-meter [segs]
-  (box
-    :class "pm-meter"
-    :orientation "h"
-    :space-evenly false
-    (for seg in {segs}
-      (box :class "pm-mseg ${seg}"))))
-
-(defwidget pm-stat [label value ?segs]
+(defwidget pm-stat [label value]
   (box
     :class "pm-stat"
     :orientation "h"
     :space-evenly false
     (label :class "pm-stat-label" :text label)
-    (box
-      :class "pm-stat-body"
-      :orientation "h"
-      :space-evenly false
-      (label :class "pm-stat-value" :text value)
-      (pm-meter :segs {segs}))
+    (label :class "pm-stat-value" :text value)
     (box :vexpand true)))
 
 (defwidget powermenu-tile [extra-class symbol title cap reason]
@@ -132,15 +119,13 @@
                   :orientation "v"
                   :space-evenly false
                   :spacing 10
-                  (pm-stat :label "UPTIME" :value "${pm-info.uptime}" :segs {pm-info.upsegs})
-                  (pm-stat :label "KERNEL" :value "${pm-info.kernel}" :segs {[]})
-                  (pm-stat :label "BATT" :value "${pm-info.batt}%" :segs {pm-info.segments}))
+                  (pm-stat :label "UPTIME" :value "${pm-info.uptime}")
+                  (pm-stat :label "NIXOS" :value "${pm-info.generation}")
+                  (pm-stat :label "KERNEL" :value "${pm-info.kernel}"))
                 (box
                   :class "pm-specs"
                   :orientation "h"
                   :space-evenly false
-                  (label :class "pm-spec-text" :xalign 0 :text "${pm-info.os}")
-                  (label :class "pm-spec-sep" :text "//")
                   (label :class "pm-spec-text" :xalign 0 :text "${pm-info.cpu}")
                   (label :class "pm-spec-sep" :text "//")
                   (label :class "pm-spec-text" :xalign 0 :text "${pm-info.ram}"))
@@ -244,7 +229,8 @@
               (box
                 :class "pm-row"
                 :orientation "h"
-                :space-evenly false
+                :space-evenly true
+                :spacing 10
                 :hexpand true
                 :vexpand true
                 (powermenu-tile :extra-class "poweroff" :symbol "pm-poweroff" :title "SHUT DOWN" :cap {power-can-poweroff} :reason "")
@@ -252,7 +238,8 @@
               (box
                 :class "pm-row"
                 :orientation "h"
-                :space-evenly false
+                :space-evenly true
+                :spacing 10
                 :hexpand true
                 :vexpand true
                 (powermenu-tile :extra-class "suspend" :symbol "pm-suspend" :title "SLEEP" :cap {power-can-suspend} :reason {power-reason-suspend})
@@ -260,7 +247,8 @@
               (box
                 :class "pm-row"
                 :orientation "h"
-                :space-evenly false
+                :space-evenly true
+                :spacing 10
                 :hexpand true
                 :vexpand true
                 (powermenu-tile :extra-class "exit" :symbol "pm-exit" :title "LOG OUT" :cap {power-can-exit} :reason "")
