@@ -28,6 +28,11 @@ case "${1:-show}" in
   hide)
     kill_key_reader
     [[ "$("${EWW[@]}" get revealpowermenu)" == "true" ]] && "$DIR/scripts/hackslide.sh" powermenu
+    # Always unmap unless we are the lockscreen: a mapped powermenu holds
+    # keyboard interactivity (exclusive focus) and niri keeps its blur layer-rule
+    # applied, so a window that fails to close leaves the desktop blurred and
+    # input-swallowed. Never do it while locked or the lock is just dropped.
+    [[ "$("${EWW[@]}" get screen-locked)" == "true" ]] || "${EWW[@]}" close powermenu 2>/dev/null
     "${EWW[@]}" open-many topbar bottombar 2>/dev/null
     ;;
 
