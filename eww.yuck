@@ -1,4 +1,4 @@
-(defvar version "0.4.16")
+(defvar version "0.4.17")
 
 (defpoll volumemute :initial "false" :interval "2s" "wpctl get-volume @DEFAULT_AUDIO_SINK@ | grep -q '\\[MUTED\\]' && echo true || echo false")
 (defpoll volume :initial "0" :interval "2s" "wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print int($NF*100)}'")

@@ -1,15 +1,5 @@
 $pm-round-max: dpi(999px);
 $pm-mono: "Fairfax HD";
-$pm-sans: "Fairfax HD";
-
-$pm-action-colors: (
-  poweroff: $x1,
-  reboot: $x2,
-  suspend: $x6,
-  hibernate: $x4,
-  exit: $x5,
-  lock: $x15,
-);
 
 window.powermenu {
   background: transparent;
@@ -39,18 +29,10 @@ window.powermenu {
 }
 
 $pm-chamfer: dpi(26px);
-$pm-fill-leg: dpi(25px);
-$pm-border-w: dpi(2px);
 
 .pm-card {
-  padding: 0;
-  @include octagon($x4, $pm-chamfer);
-}
-
-.pm-fill {
-  margin: $pm-border-w;
   padding: dpi(22px) dpi(30px);
-  @include octagon($xbg, $pm-fill-leg);
+  @include cut2($xbg, $pm-chamfer);
 }
 
 .pm-left {
@@ -59,33 +41,6 @@ $pm-border-w: dpi(2px);
 
 .pm-right {
   min-width: dpi(522px);
-}
-
-$pm-dash: dpi(12px);
-$pm-dash-gap: dpi(7px);
-
-.pm-dash {
-  background-color: $xbg;
-}
-
-.pm-dash-h {
-  min-height: dpi(2px);
-  margin: 0 dpi(26px);
-  background-image: repeating-linear-gradient(
-    to right,
-    $x4 0, $x4 $pm-dash,
-    transparent $pm-dash, transparent ($pm-dash + $pm-dash-gap)
-  );
-}
-
-.pm-dash-v {
-  min-width: dpi(2px);
-  margin: dpi(26px) 0;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    $x4 0, $x4 $pm-dash,
-    transparent $pm-dash, transparent ($pm-dash + $pm-dash-gap)
-  );
 }
 
 .pm-cardhead {
@@ -216,7 +171,7 @@ $pm-dash-gap: dpi(7px);
   min-height: dpi(430px);
   padding: dpi(18px) dpi(18px) 0 dpi(18px);
   background: rgba($x0, 0.35);
-  border: dpi(1px) solid rgba($x8, 0.5);
+  border: dpi(1px) solid $x8;
 }
 
 .pm-brk {
@@ -317,7 +272,7 @@ $pm-batt-band: dpi(55px);
 .pm-action-disc {
   min-width: dpi(44px);
   min-height: dpi(44px);
-  border: dpi(2px) solid $x8;
+  border: dpi(2px) solid rgba($x4, 0.45);
   border-radius: $pm-round-max;
   margin-right: dpi(14px);
 }
@@ -341,15 +296,17 @@ $pm-batt-band: dpi(55px);
   margin-left: dpi(12px);
 }
 
-@each $name, $col in $pm-action-colors {
-  .pm-action.#{$name} {
-    .pm-action-icon {
-      color: $col;
-    }
+.pm-action-icon {
+  color: $x4;
+}
 
-    .pm-action-disc {
-      border-color: rgba($col, 0.55);
-    }
+.pm-action.poweroff {
+  .pm-action-icon {
+    color: $x1;
+  }
+
+  .pm-action-disc {
+    border-color: rgba($x1, 0.45);
   }
 }
 
@@ -372,14 +329,20 @@ $pm-batt-band: dpi(55px);
 }
 
 .pm-action.disabled {
-  opacity: 0.35;
-
   .pm-action-icon {
     color: $x8;
   }
 
   .pm-action-disc {
     border-color: $x8;
+  }
+
+  .pm-action-label {
+    color: rgba($x7, 0.45);
+  }
+
+  .pm-action-sub {
+    color: rgba($x7, 0.25);
   }
 }
 
@@ -403,26 +366,11 @@ $pm-batt-band: dpi(55px);
   }
 
   &.insert {
-    &.style1 { border-color: $x1; }
-    &.style2 { border-color: $x2; }
-    &.style3 { border-color: $x3; }
-    &.style4 { border-color: $x4; }
-    &.style5 { border-color: $x5; }
-    &.style6 { border-color: $x6; }
+    border-color: $x4;
   }
 
   &.delete {
-    &.style1,
-    &.style3,
-    &.style5 {
-      border-color: $x8;
-    }
-
-    &.style2,
-    &.style4,
-    &.style6 {
-      border-color: rgba($x8, 0.5);
-    }
+    border-color: rgba($x8, 0.5);
   }
 }
 

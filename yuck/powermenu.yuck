@@ -94,122 +94,116 @@
             :orientation "v"
             :space-evenly false
             (box
-              :class "pm-fill"
-              :orientation "v"
+              :class "pm-cardhead"
+              :orientation "h"
               :space-evenly false
-              :hexpand true
+              (label :class "pm-head-brand" :text "FOBOS")
+              (label :class "pm-head-title" :text "// POWER MENU")
+              (box :class "pm-head-rule" :hexpand true :valign "center")
+              (label :class "pm-head-slash" :text "///"))
+            (box
+              :class "pm-left-body"
+              :orientation "h"
+              :space-evenly false
               :vexpand true
               (box
-                :class "pm-cardhead"
-                :orientation "h"
+                :class "pm-left-col"
+                :orientation "v"
                 :space-evenly false
-                (label :class "pm-head-brand" :text "FOBOS")
-                (label :class "pm-head-title" :text "// POWER MENU")
-                (box :class "pm-head-rule" :hexpand true :valign "center")
-                (label :class "pm-head-slash" :text "///"))
+                :spacing 14
+                :hexpand true
+                (box
+                  :class "pm-greet"
+                  :orientation "v"
+                  :space-evenly false
+                  :spacing 2
+                  (label :class "pm-greet-hi" :xalign 0 :text "${pm-info.greeting}")
+                  (label :class "pm-greet-name" :xalign 0 :text "${pm-info.user}_"))
+                (box
+                  :class "pm-subs"
+                  :orientation "v"
+                  :space-evenly false
+                  :spacing 2
+                  (label :class "pm-sub" :xalign 0 :text "Another day, another step")
+                  (label :class "pm-sub" :xalign 0 :text "towards a better tomorrow."))
+                (box :class "pm-shortrule" :halign "start")
+                (box
+                  :class "pm-specs"
+                  :orientation "h"
+                  :space-evenly false
+                  (pm-spec :icon "spec-os" :info "${pm-info.os}")
+                  (label :class "pm-spec-sep" :text "//")
+                  (pm-spec :icon "spec-cpu" :info "${pm-info.cpu}")
+                  (label :class "pm-spec-sep" :text "//")
+                  (pm-spec :icon "spec-ram" :info "${pm-info.ram}"))
+                (box :vexpand true)
+                (box
+                  :class "pm-wordmark"
+                  :orientation "h"
+                  :space-evenly false
+                  (label :class "pm-word-a" :text "FO")
+                  (label :class "pm-word-b" :text "BOS")
+                  (label :class "pm-word-tm" :text "™")))
               (box
-                :class "pm-left-body"
-                :orientation "h"
+                :class "pm-view"
+                :orientation "v"
                 :space-evenly false
                 :vexpand true
                 (box
-                  :class "pm-left-col"
+                  :class "pm-view-in"
                   :orientation "v"
                   :space-evenly false
-                  :spacing 14
                   :hexpand true
-                  (box
-                    :class "pm-greet"
-                    :orientation "v"
-                    :space-evenly false
-                    :spacing 2
-                    (label :class "pm-greet-hi" :xalign 0 :text "${pm-info.greeting}")
-                    (label :class "pm-greet-name" :xalign 0 :text "${pm-info.user}_"))
-                  (box
-                    :class "pm-subs"
-                    :orientation "v"
-                    :space-evenly false
-                    :spacing 2
-                    (label :class "pm-sub" :xalign 0 :text "Another day, another step")
-                    (label :class "pm-sub" :xalign 0 :text "towards a better tomorrow."))
-                  (box :class "pm-shortrule" :halign "start")
-                  (box
-                    :class "pm-specs"
-                    :orientation "h"
-                    :space-evenly false
-                    (pm-spec :icon "spec-os" :info "${pm-info.os}")
-                    (label :class "pm-spec-sep" :text "//")
-                    (pm-spec :icon "spec-cpu" :info "${pm-info.cpu}")
-                    (label :class "pm-spec-sep" :text "//")
-                    (pm-spec :icon "spec-ram" :info "${pm-info.ram}"))
-                  (box :vexpand true)
-                  (box
-                    :class "pm-wordmark"
-                    :orientation "h"
-                    :space-evenly false
-                    (label :class "pm-word-a" :text "FO")
-                    (label :class "pm-word-b" :text "BOS")
-                    (label :class "pm-word-tm" :text "™")))
-                (box
-                  :class "pm-view"
-                  :orientation "v"
-                  :space-evenly false
                   :vexpand true
-                  (box
-                    :class "pm-view-in"
-                    :orientation "v"
-                    :space-evenly false
-                    :hexpand true
+                  (overlay
                     :vexpand true
-                    (overlay
-                      :vexpand true
-                      (box
-                        :class "pm-bunny-wrap"
-                        :orientation "v"
-                        :space-evenly false
-                        :vexpand true
-                        :halign "center"
-                        :valign "center"
-                        (box :class "pm-bunny-top" :vexpand true)
-                        (eventbox
-                          :onhover "${EWW_CMD} update bunny-head='( ^ ^) '"
-                          :onhoverlost "${EWW_CMD} update bunny-head='( . .) '"
-                          (box
-                            :class "pm-bunny"
-                            :orientation "v"
-                            :space-evenly false
-                            :spacing 20
-                            :halign "center"
-                            (label :text "(\\\\ /)")
-                            (label :text "${bunny-head}")
-                            (label :class "pm-bunny-feet" :text "c(\")(\")")))
-                        (box :vexpand true))
-                      (box :class "pm-brk tl" :halign "start" :valign "start")
-                      (box :class "pm-brk tr" :halign "end" :valign "start")
-                      (box :class "pm-brk bl" :halign "start" :valign "end")
-                      (box :class "pm-brk br" :halign "end" :valign "end"))
                     (box
-                      :class "pm-batt-wrap"
-                      (overlay
-                        :class "pm-batt"
+                      :class "pm-bunny-wrap"
+                      :orientation "v"
+                      :space-evenly false
+                      :vexpand true
+                      :halign "center"
+                      :valign "center"
+                      (box :class "pm-bunny-top" :vexpand true)
+                      (eventbox
+                        :onhover "${EWW_CMD} update bunny-head='( ^ ^) '"
+                        :onhoverlost "${EWW_CMD} update bunny-head='( . .) '"
                         (box
-                          :class "pm-batt-hold"
+                          :class "pm-bunny"
                           :orientation "v"
                           :space-evenly false
-                          (box :vexpand true)
-                          (box
-                            :class "pm-batt-segs"
-                            :orientation "h"
-                            :space-evenly false
-                            :valign "end"
-                            (for seg in {pm-info.segments}
-                              (box :class "pm-seg ${seg}"))))
-                        (overlay
-                          :class "pm-batt-cap"
-                          :halign "end"
+                          :spacing 20
+                          :halign "center"
+                          (label :text "(\\\\ /)")
+                          (label :text "${bunny-head}")
+                          (label :class "pm-bunny-feet" :text "c(\")(\")")))
+                      (box :vexpand true))
+                    (box :class "pm-brk tl" :halign "start" :valign "start")
+                    (box :class "pm-brk tr" :halign "end" :valign "start")
+                    (box :class "pm-brk bl" :halign "start" :valign "end")
+                    (box :class "pm-brk br" :halign "end" :valign "end"))
+                  (box
+                    :class "pm-batt-wrap"
+                    (overlay
+                      :class "pm-batt"
+                      (box
+                        :class "pm-batt-hold"
+                        :orientation "v"
+                        :space-evenly false
+                        (box :vexpand true)
+                        (box
+                          :class "pm-batt-segs"
+                          :orientation "h"
+                          :space-evenly false
                           :valign "end"
-                          (box :class "pm-cap-tri")
-                          (label :class "pm-batt-num" :halign "end" :valign "end" :text "${pm-info.batt}")))))))))
+                          (for seg in {pm-info.segments}
+                            (box :class "pm-seg ${seg}"))))
+                      (overlay
+                        :class "pm-batt-cap"
+                        :halign "end"
+                        :valign "end"
+                        (box :class "pm-cap-tri")
+                        (label :class "pm-batt-num" :halign "end" :valign "end" :text "${pm-info.batt}"))))))))
 
           (box :class "pm-gap")
 
@@ -217,83 +211,72 @@
             :class "pm-card pm-right"
             :orientation "v"
             :space-evenly false
-            (overlay
             (box
-              :class "pm-fill"
+              :class "pm-cardhead"
+              :orientation "h"
+              :space-evenly false
+              (image
+                :class "pm-head-ico"
+                :image-width 22
+                :path {screen-locked ? "./assets/icons/pm-lock.svg" : "./assets/icons/settings.svg"})
+              (label :class "pm-head-title" :text {screen-locked ? "SYSTEM LOCK" : "QUICK ACTIONS"})
+              (box :class "pm-head-rule" :hexpand true :valign "center")
+              (label :class "pm-head-slash" :text "///"))
+            (box
+              :class "pm-actions"
               :orientation "v"
               :space-evenly false
               :hexpand true
               :vexpand true
+              :visible {!screen-locked}
+              (powermenu-row :extra-class "poweroff" :symbol "pm-poweroff" :title "SHUT DOWN" :subtitle "Power off your system." :cap {power-can-poweroff} :reason "")
+              (powermenu-row :extra-class "reboot" :symbol "pm-reboot" :title "RESTART" :subtitle "Restart your system." :cap {power-can-reboot} :reason "")
+              (powermenu-row :extra-class "suspend" :symbol "pm-suspend" :title "SLEEP" :subtitle "Put your system to sleep." :cap {power-can-suspend} :reason {power-reason-suspend})
+              (powermenu-row :extra-class "hibernate" :symbol "pm-hibernate" :title "HIBERNATE" :subtitle "Hibernate your system." :cap {power-can-hibernate} :reason {power-reason-hibernate})
+              (powermenu-row :extra-class "exit" :symbol "pm-exit" :title "LOG OUT" :subtitle "Sign out from your session." :cap {power-can-exit} :reason "")
+              (powermenu-row :extra-class "lock" :symbol "pm-lock" :title "LOCK" :subtitle "Lock your screen." :cap {power-can-lock} :reason ""))
+            (box
+              :class "pm-lock"
+              :orientation "v"
+              :space-evenly false
+              :halign "fill"
+              :vexpand true
+              :visible {screen-locked}
               (box
-                :class "pm-cardhead"
-                :orientation "h"
-                :space-evenly false
-                (image
-                  :class "pm-head-ico"
-                  :image-width 22
-                  :path {screen-locked ? "./assets/icons/pm-lock.svg" : "./assets/icons/settings.svg"})
-                (label :class "pm-head-title" :text {screen-locked ? "SYSTEM LOCK" : "QUICK ACTIONS"})
-                (box :class "pm-head-rule" :hexpand true :valign "center")
-                (label :class "pm-head-slash" :text "///"))
-              (box
-                :class "pm-actions"
+                :class "pm-lock-body"
                 :orientation "v"
                 :space-evenly false
-                :hexpand true
+                :halign "center"
+                :valign "center"
                 :vexpand true
-                :visible {!screen-locked}
-                (powermenu-row :extra-class "poweroff" :symbol "pm-poweroff" :title "SHUT DOWN" :subtitle "Power off your system." :cap {power-can-poweroff} :reason "")
-                (powermenu-row :extra-class "reboot" :symbol "pm-reboot" :title "RESTART" :subtitle "Restart your system." :cap {power-can-reboot} :reason "")
-                (powermenu-row :extra-class "suspend" :symbol "pm-suspend" :title "SLEEP" :subtitle "Put your system to sleep." :cap {power-can-suspend} :reason {power-reason-suspend})
-                (powermenu-row :extra-class "hibernate" :symbol "pm-hibernate" :title "HIBERNATE" :subtitle "Hibernate your system." :cap {power-can-hibernate} :reason {power-reason-hibernate})
-                (powermenu-row :extra-class "exit" :symbol "pm-exit" :title "LOG OUT" :subtitle "Sign out from your session." :cap {power-can-exit} :reason "")
-                (powermenu-row :extra-class "lock" :symbol "pm-lock" :title "LOCK" :subtitle "Lock your screen." :cap {power-can-lock} :reason ""))
-              (box
-                :class "pm-lock"
-                :orientation "v"
-                :space-evenly false
-                :halign "fill"
-                :vexpand true
-                :visible {screen-locked}
                 (box
-                  :class "pm-lock-body"
-                  :orientation "v"
+                  :class "pm-lock-ring ${screen-lock-input-last-action}"
+                  (image
+                    :image-width 64
+                    :path {screen-lock-auth-failed ? "./assets/icons/pm-denied.svg" : "./assets/icons/pm-lock.svg"}))
+                (box
+                  :class "pm-lock-line"
+                  :orientation "h"
                   :space-evenly false
-                  :halign "center"
-                  :valign "center"
-                  :vexpand true
-                  (box
-                    :class "pm-lock-ring ${screen-lock-input-last-action} style${((strlength(screen-lock-input) - 1) % 6) + 1}"
-                    (image
-                      :image-width 64
-                      :path {screen-lock-auth-failed ? "./assets/icons/pm-denied.svg" : "./assets/icons/pm-lock.svg"}))
-                  (box
-                    :class "pm-lock-line"
-                    :orientation "h"
-                    :space-evenly false
-                    (label :class "pm-lock-prompt" :text "> ")
-                    (label :text "${screen-lock-input-masked}")
-                    (box :class "blink" (label :text "_"))))
-                )
-              (box
-                :class "pm-foot"
-                :orientation "h"
-                :space-evenly false
-                (label :class "pm-foot-key" :text "ESC")
-                (label :class "pm-foot-sep" :text "|")
-                (label :class "pm-foot-lbl" :text "CANCEL"))
+                  (label :class "pm-lock-prompt" :text "> ")
+                  (label :text "${screen-lock-input-masked}")
+                  (box :class "blink" (label :text "_"))))
               )
-              (box :halign "fill" :valign "start" (box :class "pm-dash pm-dash-h"))
-              (box :halign "fill" :valign "end"   (box :class "pm-dash pm-dash-h"))
-              (box :halign "start" :valign "fill" (box :class "pm-dash pm-dash-v"))
-              (box :halign "end" :valign "fill"   (box :class "pm-dash pm-dash-v"))
-              )))
-      )
-      )
-    (box
-      :class "pm-keybuf"
-      :halign "start"
-      :valign "start"
+            (box
+              :class "pm-foot"
+              :orientation "h"
+              :space-evenly false
+              (label :class "pm-foot-key" :text "ESC")
+              (label :class "pm-foot-sep" :text "|")
+              (label :class "pm-foot-lbl" :text "CANCEL"))
+            )
+          )
+    )
+    )
+  (box
+    :class "pm-keybuf"
+    :halign "start"
+    :valign "start"
       (label :visible false :text "${inputpipe}")
       (input
         :class "pm-keys"
