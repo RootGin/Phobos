@@ -52,6 +52,9 @@ scale {
     padding-left: dpi(25px);
     padding-right: dpi(0px);
   }
+  &.dim {
+    opacity: 0.35;
+  }
 }
 
 $auto-tag-fill: mix($x0, $xbg, 65%);

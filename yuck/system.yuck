@@ -178,13 +178,13 @@
             :class "auto-tag"
             :text "AUTO"))))
     (eventbox
-      :cursor "pointer"
+      :cursor {auto == "true" ? "default" : "pointer"}
       :timeout "10s"
-      :tooltip "Click to cycle profile"
+      :tooltip {auto == "true" ? "Auto is on: profile follows charger. Click to turn off auto." : "Click to cycle profile"}
       :onclick "setsid -f /home/rootgin/.config/eww/Phobos-dev/scripts/powerprofile.sh cycle"
       (overlay
         (box
-          :class "tri p${val}"
+          :class "tri p${val} ${auto == "true" ? "dim" : ""}"
           (box 
             :width 30
             :class "knob"))
