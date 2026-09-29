@@ -104,13 +104,13 @@
       :hexpand true)
     (eventbox
       :cursor "pointer"
-      :onclick "${EWW_CMD} update sysect={(sysect + 2) % 3}"
+      :onclick "${EWW_CMD} update sysect=${(sysect + 2) % 3}"
       (image
         :image-width 25
         :path "./assets/icons/chevron-left.svg"))
     (eventbox
       :cursor "pointer"
-      :onclick "${EWW_CMD} update sysect={(sysect + 1) % 3}"
+      :onclick "${EWW_CMD} update sysect=${(sysect + 1) % 3}"
       (image
         :image-width 25
         :path "./assets/icons/chevron-right.svg"))))
