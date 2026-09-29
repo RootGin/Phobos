@@ -7,14 +7,14 @@ window.powermenu {
 }
 
 .powermenu {
-  background: rgba($xbg, 0.2);
+  background: rgba($xbg, 0.72);
 
   label {
     margin: 0;
   }
 
   &.locked {
-    background: rgba($xbg, 0.3);
+    background: rgba($xbg, 0.85);
     animation-name: pm-diagonal-fade;
     animation-duration: 1.2s;
     animation-timing-function: cubic-bezier(0.3, 1, 1, 0);
@@ -33,7 +33,7 @@ $pm-chamfer: dpi(26px);
 
 .pm-card {
   padding: dpi(22px) dpi(30px);
-  @include cut2($xbg, $pm-chamfer);
+  @include cut2($x0, $pm-chamfer);
 }
 
 .pm-left {
