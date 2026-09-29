@@ -91,7 +91,7 @@
       :val {powerprofile == "power-saver" ? 0 : (powerprofile == "performance" ? 2 : 1)}
       :auto powerauto
       :name {powerprofile == "power-saver" ? "Power saver" : (powerprofile == "performance" ? "Performance" : "Balanced")}
-      :command "./scripts/powerprofile.sh auto")
+      :command "setsid -f /home/rootgin/.config/eww/Phobos-dev/scripts/powerprofile.sh auto")
     (togglectl 
       :icon "./assets/icons/bell.svg"
       :val {dnd == "false"} 
@@ -160,6 +160,7 @@
     (eventbox
       :cursor "pointer"
       :hexpand true
+      :timeout "10s"
       :tooltip "${auto == "true" ? "Auto: saver on battery, performance on AC. Click to disable." : "Auto off. Click to enable."}"
       :onclick command
       (box 
@@ -178,8 +179,9 @@
             :text "AUTO"))))
     (eventbox
       :cursor "pointer"
+      :timeout "10s"
       :tooltip "Click to cycle profile"
-      :onclick "./scripts/powerprofile.sh cycle"
+      :onclick "setsid -f /home/rootgin/.config/eww/Phobos-dev/scripts/powerprofile.sh cycle"
       (overlay
         (box
           :class "tri p${val}"
