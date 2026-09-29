@@ -1,4 +1,4 @@
-(defvar version "0.4.37")
+(defvar version "0.4.38")
 
 (defvar volumejson '{"volume":0,"volumemute":false}')
 (defvar brightness "0")
