@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-CFG="$(cd "$(dirname "$0")" && pwd)"
+CFG="$(cd "$(dirname "$0")/.." && pwd)"
 EWW=(eww -c "$CFG")
 
 while true; do
-    vol="$("$CFG/volume-status.sh" 2>/dev/null)"
+    vol="$("$CFG/scripts/volume-status.sh" 2>/dev/null)"
     [[ "$vol" == \{* ]] || vol='{"volume": 0, "volumemute": false}'
 
     bright="$(brightnessctl -m 2>/dev/null | awk -F, '{print $4}' | tr -d '%')"
