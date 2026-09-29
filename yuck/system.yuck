@@ -1,4 +1,5 @@
 (defvar revealsystemint false)
+(defvar sysect 0)
 
 (defwindow systemint 
   :geometry (geometry
@@ -55,17 +56,8 @@
     :width 404
     :vexpand true 
     :class "window cont trans"
-    (box 
-      :orientation "h"
-      :space-evenly false 
-      :class "window cont"
-      :visible {playerctl.song != ""}
-      (image 
-        :image-width 35 
-        :path "./assets/icons/libmedia.svg")
-      (label 
-        :text "Media"))
-    (mediawid)
+    (sysecthead)
+    (sysectbody)
     (slidectl
       :icon {volumejson.volumemute ? "./assets/icons/volumemute.svg" : "./assets/icons/volume.svg"}
       :val "${volumejson.volume}"
@@ -97,6 +89,49 @@
       :val {dnd == "false"} 
       :name "Notifications"
       :command "setsid -f /home/rootgin/.config/eww/Phobos-dev/scripts/dunstctl.sh set-paused toggle")))
+
+(defwidget sysecthead []
+  (box
+    :class "window cont"
+    :orientation "h"
+    :space-evenly false
+    (image
+      :image-width 35
+      :path "./assets/icons/sliders.svg")
+    (label
+      :text {sysect == 0 ? "Section 0" : (sysect == 1 ? "Section 1" : "Section 2")})
+    (box
+      :hexpand true)
+    (eventbox
+      :cursor "pointer"
+      :onclick "${EWW_CMD} update sysect={(sysect + 2) % 3}"
+      (image
+        :image-width 25
+        :path "./assets/icons/chevron-left.svg"))
+    (eventbox
+      :cursor "pointer"
+      :onclick "${EWW_CMD} update sysect={(sysect + 1) % 3}"
+      (image
+        :image-width 25
+        :path "./assets/icons/chevron-right.svg"))))
+
+(defwidget sysectbody []
+  (box
+    :class "window cont"
+    :orientation "v"
+    :space-evenly false
+    (box
+      :visible {sysect == 0}
+      (label
+        :text "Section 0"))
+    (box
+      :visible {sysect == 1}
+      (label
+        :text "Section 1"))
+    (box
+      :visible {sysect == 2}
+      (label
+        :text "Section 2"))))
 
 (defwidget wifinav [icon label state on]
   (box
