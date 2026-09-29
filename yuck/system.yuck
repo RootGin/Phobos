@@ -82,7 +82,7 @@
       :icon {powerprofile == "power-saver" ? "./assets/icons/pp-save.svg" : (powerprofile == "performance" ? "./assets/icons/pp-perf.svg" : "./assets/icons/pp-balance.svg")}
       :val {powerprofile == "power-saver" ? 0 : (powerprofile == "performance" ? 2 : 1)}
       :auto powerauto
-      :name {powerprofile == "power-saver" ? "Power saver" : (powerprofile == "performance" ? "Performance" : "Balanced")}
+      :name {powerprofile == "power-saver" ? "Reactor sleep" : (powerprofile == "performance" ? "Razgon" : "Stabilization")}
       :command "setsid -f /home/rootgin/.config/eww/Phobos-dev/scripts/powerprofile.sh auto")
     (togglectl 
       :icon "./assets/icons/bell.svg"
