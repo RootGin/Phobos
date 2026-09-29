@@ -22,6 +22,7 @@ Specifications are cited as [Vol 3] Part <letter>, section <n>.
 import json
 import os
 import sys
+import time
 
 try:
     import gi
@@ -252,8 +253,11 @@ class Bluez:
                 continue
             props = ifaces["org.bluez.Device1"]
             dev = {"path": path, "addr": path.split("dev_")[-1].replace("_", ":").upper()}
-            for key, variant in props.items():
-                dev[key] = variant.unpack()
+            for key, value in props.items():
+                # GetManagedObjects replies a{oa{sa{sv}}}; GLib unwraps the nested
+                # containers itself, but whether the leaf is still a Variant
+                # depends on how deep the tree went, so accept either.
+                dev[key] = value.unpack() if hasattr(value, "unpack") else value
             out.append(dev)
         out.sort(key=lambda d: d.get("Address", ""))
         return out
@@ -720,9 +724,71 @@ def agent_watch(agent, addr, bz, loop):
     return True
 
 
+def cmd_scan(bz, seconds):
+    """Find devices to pair with. Discovery is the prerequisite for everything
+    else here, and the address is the only thing a later command accepts."""
+    adapter = bz.adapter()
+    if not adapter["powered"]:
+        print("adapter is powered off; powering it on")
+        bz.set(ADAPTER, "org.bluez.Adapter1", "Powered", "b", True)
+        for _ in range(20):
+            if bz.adapter()["powered"]:
+                break
+            time.sleep(0.5)
+        else:
+            sys.exit("could not power on the adapter (rfkill or missing capability?)")
+
+    found = {}
+    bz.adapter_call("StartDiscovery")
+    try:
+        print("scanning for %ds ..." % seconds)
+        deadline = time.time() + seconds
+        while time.time() < deadline:
+            for dev in bz.devices():
+                addr = dev.get("Address", "")
+                if addr:
+                    found[addr] = dev
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print()
+    finally:
+        bz.adapter_call("StopDiscovery")
+
+    if not found:
+        print("nothing found. If devices are in range, check that the adapter is "
+              "not blocked (rfkill) and that they are advertising.")
+        return
+
+    print()
+    # Strongest first; a device that never reported RSSI sorts last rather than
+    # being treated as best, and a literal 0 is not a reading.
+    ordered = sorted(found.items(),
+                     key=lambda kv: -(kv[1].get("RSSI") if isinstance(kv[1].get("RSSI"), int) else -127))
+    for addr, dev in ordered:
+        bonded = dev.get("Bonded") or dev.get("Paired")
+        name = dev.get("Alias") or dev.get("Name") or "(no name)"
+        rssi = dev.get("RSSI")
+        print("  %-17s  %-24s %-16s %s%s"
+              % (addr, name[:24], dev.get("Icon", "?")[:16],
+                 ("%d dBm" % rssi) if isinstance(rssi, int) else "no RSSI",
+                 "  [bonded]" if bonded else ""))
+    print()
+    unbonded = [a for a, d in ordered if not (d.get("Bonded") or d.get("Paired"))]
+    if unbonded:
+        print("To see what pairing would cost before doing it:")
+        print("  btsec plan NoInputNoOutput DisplayYesNo --mitm")
+        print("To pair, declaring this host's capability and the peer's:")
+        print("  btsec pair %s --io DisplayYesNo --peer-io KeyboardDisplay --mitm"
+              % unbonded[0])
+        print()
+        print("With no --peer-io the association model cannot be predicted from")
+        print("Table 2.8 and is recorded from the observed callback only.")
+
+
 USAGE = """usage: btsec <command> [args]
 
   modes                              adapter modes, cited against GAP
+  scan [--seconds N]                 discover devices to pair with
   bonds                              bonds + recorded security properties
   plan <init-io> <resp-io> [--mitm] [--legacy]
                                     what pairing would select, before doing it
@@ -760,6 +826,14 @@ def main():
     bz = Bluez()
     if cmd == "modes":
         return cmd_modes(bz)
+    if cmd == "scan":
+        seconds = 12
+        if "--seconds" in rest:
+            try:
+                seconds = max(1, min(120, int(rest[rest.index("--seconds") + 1])))
+            except (IndexError, ValueError):
+                sys.exit("--seconds needs a number")
+        return cmd_scan(bz, seconds)
     if cmd == "bonds":
         return cmd_bonds(bz)
     if cmd in ("trust", "untrust"):
