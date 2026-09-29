@@ -8,8 +8,10 @@ import time
 
 from iconfetch import fetch
 
-EWW = ["eww", "-c", os.path.expanduser("~/.config/eww/Phobos-dev")]
+EWW = ["eww", "-c", os.path.dirname(os.path.dirname(os.path.abspath(__file__)))]
 SLOTS = 10
+BOXES = 5
+OSD_HOLD = 2.0
 CANVAS_W = 1920
 CANVAS_H = 1080
 
@@ -109,7 +111,31 @@ def snapshot():
         windowsjson.append([entry(w, rects, focused_id, i + 1) for w in slot])
 
     tasklistjson = [e for slot in windowsjson for e in slot]
-    return windowsjson, tasklistjson
+
+    counts = {}
+    for w in windows:
+        wid = w.get("workspace_id")
+        counts[wid] = counts.get(wid, 0) + 1
+
+    found = {}
+    focused = 1
+    for ws in workspaces:
+        idx = ws.get("idx")
+        if idx is None:
+            continue
+        found[idx] = {
+            "focused": bool(ws.get("is_focused")),
+            "empty": counts.get(ws.get("id"), 0) == 0,
+            "name": idx,
+        }
+        if ws.get("is_focused"):
+            focused = idx
+
+    boxes = [found.get(i, {"focused": False, "empty": True, "name": i})
+             for i in range(1, BOXES + 1)]
+    workspacejson = {"workspaces": boxes, "focused": focused - 1}
+
+    return windowsjson, tasklistjson, workspacejson
 
 
 RELEVANT = {
@@ -126,32 +152,49 @@ RELEVANT = {
 COALESCE = 0.08
 
 
+def eww(*args):
+    subprocess.run(EWW + list(args),
+                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
 def main():
     stream = subprocess.Popen(["niri", "msg", "--json", "event-stream"],
                               stdout=subprocess.PIPE, bufsize=0)
     fd = stream.stdout.fileno()
     last = None
+    last_focus = None
+    hide_at = 0.0
     dirty = False
     quiet_since = 0.0
     pending = b""
 
     def publish():
-        nonlocal last
-        windowsjson, tasklistjson = snapshot()
-        payload = json.dumps(windowsjson)
+        nonlocal last, last_focus, hide_at
+        windowsjson, tasklistjson, workspacejson = snapshot()
+        payload = json.dumps(workspacejson)
         if payload != last:
             print(payload, flush=True)
-            subprocess.run(EWW + ["update", "tasklistjson=" + json.dumps(tasklistjson)],
-                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             last = payload
+            eww("update",
+                "windowsjson=" + json.dumps(windowsjson),
+                "tasklistjson=" + json.dumps(tasklistjson))
+
+        focus = workspacejson["focused"]
+        if last_focus is not None and focus != last_focus:
+            eww("update", "revealwsosd=true")
+            hide_at = time.time() + OSD_HOLD
+        last_focus = focus
 
     publish()
 
     try:
         while True:
+            now = time.time()
             timeout = 0.1
+            if hide_at:
+                timeout = min(timeout, max(0.0, hide_at - now))
             if dirty:
-                timeout = min(timeout, max(0.0, quiet_since + COALESCE - time.time()))
+                timeout = min(timeout, max(0.0, quiet_since + COALESCE - now))
 
             ready, _, _ = select.select([fd], [], [], timeout)
             if ready:
@@ -169,9 +212,13 @@ def main():
                         pass
                 continue
 
-            if dirty and time.time() - quiet_since >= COALESCE:
+            now = time.time()
+            if dirty and now - quiet_since >= COALESCE:
                 publish()
                 dirty = False
+            if hide_at and now >= hide_at:
+                eww("update", "revealwsosd=false")
+                hide_at = 0.0
     except (BrokenPipeError, KeyboardInterrupt):
         pass
     finally:

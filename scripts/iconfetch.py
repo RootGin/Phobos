@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import sys
+from functools import lru_cache
 
 ICON_DIRS = []
 for env in ("XDG_DATA_HOME", "XDG_DATA_DIRS"):
@@ -14,6 +15,7 @@ SIZES = ("scalable", "48x48", "128x128", "256x256", "32x32")
 EXTS = ("svg", "png")
 
 
+@lru_cache(maxsize=256)
 def fetch(icon_name):
     if not icon_name:
         return None
