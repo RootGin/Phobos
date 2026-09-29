@@ -3,11 +3,12 @@
 import json
 import os
 import re
+import select
 import subprocess
 import sys
-import time
 
-POLL = 2.0
+POLL = 10.0
+DEBOUNCE = 0.3
 NOTIFY = ["notify-send", "-a", "Network"]
 DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EWW = ["eww", "-c", DIR]
@@ -137,12 +138,26 @@ def step(snap, confirmed, bad, notified):
         return snap, None, 0, True, not notified
     return snap, None, 0, notified, False
 
+def monitor():
+    return subprocess.Popen(["nmcli", "monitor"], stdout=subprocess.PIPE,
+                            text=True, bufsize=1)
+
+def drain(mon):
+    """Swallow the burst of monitor lines, restarting nmcli if its pipe closed."""
+    while select.select([mon.stdout], [], [], DEBOUNCE)[0]:
+        if not mon.stdout.readline():
+            return monitor()
+    return mon
+
 def loop():
     last = None
     confirmed = None
     bad = 0
     notified = False
+    mon = monitor()
     while True:
+        if select.select([mon.stdout], [], [], POLL)[0]:
+            mon = drain(mon)
         snap = snapshot()
         snap.pop("state_raw", None)
 
@@ -154,7 +169,6 @@ def loop():
         if payload != last:
             print(payload, flush=True)
             last = payload
-        time.sleep(POLL)
 
 def cmd_rescan():
     run(["nmcli", "device", "wifi", "rescan"], timeout=10)
@@ -248,6 +262,12 @@ def selftest():
     out, confirmed, bad, notified, notify = step(off, confirmed, bad, notified)
     out, confirmed, bad, notified, notify = step(off, confirmed, bad, notified)
     assert notify
+    dead = monitor()
+    dead.kill()
+    dead.wait()
+    alive = drain(dead)
+    assert alive.poll() is None
+    alive.kill()
     print("wifi.py selftest: ok")
 
 def main():
