@@ -64,7 +64,7 @@
       :name "Volume"
       :onchange "wpctl set-volume @DEFAULT_AUDIO_SINK@ {}%")
     (slidectl
-      :icon {brightness < 34 ? "./assets/icons/sunlow.svg" : (brightness > 66 ? "./assets/icons/sunhigh.svg" : "./assets/icons/sun.svg")}
+      :icon {brightness < 34 ? "./assets/icons/br-low.svg" : (brightness > 66 ? "./assets/icons/br-high.svg" : "./assets/icons/br-mid.svg")}
       :val brightness
       :name "Brightness"
       :onchange "brightnessctl set {}%")
