@@ -1,8 +1,4 @@
 #!/usr/bin/env python3
-# Emits the workspacejson the bars expect and reveals the workspace OSD while
-# the focused workspace changes. event-stream is a change trigger only; data
-# still comes from a snapshot.
-#
 # The wsosd window must already be open (start.sh opens it) -- calling
 # `eww open wsosd` from here makes eww restart this very deflisten and kill us
 # mid-update.
@@ -17,8 +13,6 @@ EWW = ["eww", "-c", os.path.expanduser("~/.config/eww/Phobos-dev")]
 BOXES = 5
 OSD_HOLD = 2.0
 
-# Includes WindowOpenedOrChanged/WorkspaceActiveWindowChanged -- a plain window
-# open fires those two, and the tasklist goes stale without them.
 RELEVANT = {
     "WindowsChanged",
     "WorkspacesChanged",
@@ -90,7 +84,6 @@ def publish(state, last, last_focus, hide_at):
 
 
 def main():
-    # bufsize=0: a buffered reader hides bytes from select().
     stream = subprocess.Popen(["niri", "msg", "--json", "event-stream"],
                               stdout=subprocess.PIPE, bufsize=0)
     fd = stream.stdout.fileno()

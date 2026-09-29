@@ -20,9 +20,6 @@ get_device_name() {
 }
 
 get_con_status() {
-    # `devices Connected` filters server-side; the old loop was
-    # `devices` + `info <dev>` + grep + awk per known device, ~14 execve every
-    # time the 2s poll asked.
     if bluetoothctl devices Connected | grep -q .; then
         echo "connected"
         return

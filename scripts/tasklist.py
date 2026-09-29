@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-# Emits windowsjson (per-workspace minimap) + tasklistjson (flat window list).
-# event-stream is a change trigger only; data still comes from a snapshot.
 
 import json
 import os
@@ -114,8 +112,6 @@ def snapshot():
     return windowsjson, tasklistjson
 
 
-# Includes WindowOpenedOrChanged/WorkspaceActiveWindowChanged -- a plain window
-# open fires those two, and the tasklist goes stale without them.
 RELEVANT = {
     "WindowsChanged",
     "WorkspacesChanged",
@@ -131,7 +127,6 @@ COALESCE = 0.08
 
 
 def main():
-    # bufsize=0: a buffered reader hides bytes from select().
     stream = subprocess.Popen(["niri", "msg", "--json", "event-stream"],
                               stdout=subprocess.PIPE, bufsize=0)
     fd = stream.stdout.fileno()

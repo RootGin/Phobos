@@ -1,4 +1,4 @@
-(defvar version "0.4.24")
+(defvar version "0.4.25")
 
 (defpoll volumejson :initial '{"volume":0,"volumemute":false}' :interval "2s" "./scripts/volume-status.sh")
 (defpoll brightness :initial "0" :interval "2s" "brightnessctl -m | awk -F, '{print substr($4, 0, length($4)-1)}' | tr -d '%'")
