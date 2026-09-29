@@ -295,7 +295,7 @@ $pm-lock-h: dpi(398px);   // = 3 × $pm-tile-h + 2 × dpi(10px) gaps + 2 × dpi(
 
 .pm-tile {
   padding: dpi(14px) dpi(10px);
-  background: rgba($x0, 0.4);
+  background: $x0;
   transition: background-color 0.2s;
 }
 
@@ -327,7 +327,7 @@ $pm-lock-h: dpi(398px);   // = 3 × $pm-tile-h + 2 × dpi(10px) gaps + 2 × dpi(
 }
 
 .pm-tile.disabled {
-  background: rgba($x0, 0.25);
+  background: rgba($x0, 0.45);
 
   .pm-tile-icon {
     color: $x8;
