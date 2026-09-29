@@ -20,15 +20,13 @@ get_device_name() {
 }
 
 get_con_status() {
-    knownDeviceNumber=$(bluetoothctl devices | awk '{print $2}')
-
-    for deviceNumber in $knownDeviceNumber; do
-        conStatus=$(bluetoothctl info $deviceNumber | grep Connected: | awk '{print $2}')
-        if [ "$conStatus" == "yes" ]; then
-            echo "connected"
-            return
-        fi
-    done
+    # `devices Connected` filters server-side; the old loop was
+    # `devices` + `info <dev>` + grep + awk per known device, ~14 execve every
+    # time the 2s poll asked.
+    if bluetoothctl devices Connected | grep -q .; then
+        echo "connected"
+        return
+    fi
 
     echo "disabled"
 }

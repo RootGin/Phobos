@@ -1,7 +1,6 @@
-(defvar version "0.4.23")
+(defvar version "0.4.24")
 
-(defpoll volumemute :initial "false" :interval "2s" "wpctl get-volume @DEFAULT_AUDIO_SINK@ | grep -q '\\[MUTED\\]' && echo true || echo false")
-(defpoll volume :initial "0" :interval "2s" "wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print int($NF*100)}'")
+(defpoll volumejson :initial '{"volume":0,"volumemute":false}' :interval "2s" "./scripts/volume-status.sh")
 (defpoll brightness :initial "0" :interval "2s" "brightnessctl -m | awk -F, '{print substr($4, 0, length($4)-1)}' | tr -d '%'")
 (deflisten wifi :initial '{"iface":"","radio":"enabled","state":"disconnected","ssid":"","security":"","signal":0,"bucket":"very-weak","connected":false,"connecting":false,"networks":[]}' "./scripts/wifi.py")
 (defpoll bluetooth :initial "disconnected" :interval "2s" "./scripts/bluetooth.sh --con_status")

@@ -67,8 +67,8 @@
         :text "Media"))
     (mediawid)
     (slidectl
-      :icon {volumemute ? "./assets/icons/volumemute.svg" : "./assets/icons/volume.svg"}
-      :val volume
+      :icon {volumejson.volumemute ? "./assets/icons/volumemute.svg" : "./assets/icons/volume.svg"}
+      :val "${volumejson.volume}"
       :name "Volume"
       :onchange "wpctl set-volume @DEFAULT_AUDIO_SINK@ {}%")
     (slidectl

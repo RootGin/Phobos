@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-# Polls niri and emits windowsjson (per-workspace minimap) + tasklistjson
-# (flat window list) in the shapes the bars expect.
-# ponytail: 0.5s poll instead of `niri msg event-stream`.
+# Emits windowsjson (per-workspace minimap) + tasklistjson (flat window list).
+# event-stream is a change trigger only; data still comes from a snapshot.
 
 import json
 import os
+import select
 import subprocess
 import time
 
@@ -12,7 +12,6 @@ from iconfetch import fetch
 
 EWW = ["eww", "-c", os.path.expanduser("~/.config/eww/Phobos-dev")]
 SLOTS = 10
-POLL = 0.5
 CANVAS_W = 1920
 CANVAS_H = 1080
 
@@ -115,9 +114,34 @@ def snapshot():
     return windowsjson, tasklistjson
 
 
+# Includes WindowOpenedOrChanged/WorkspaceActiveWindowChanged -- a plain window
+# open fires those two, and the tasklist goes stale without them.
+RELEVANT = {
+    "WindowsChanged",
+    "WorkspacesChanged",
+    "WindowOpenedOrChanged",
+    "WorkspaceActiveWindowChanged",
+    "WorkspaceActivated",
+    "WorkspaceDeactivated",
+    "WindowFocusChanged",
+    "WindowFocusTimestampChanged",
+}
+
+COALESCE = 0.08
+
+
 def main():
+    # bufsize=0: a buffered reader hides bytes from select().
+    stream = subprocess.Popen(["niri", "msg", "--json", "event-stream"],
+                              stdout=subprocess.PIPE, bufsize=0)
+    fd = stream.stdout.fileno()
     last = None
-    while True:
+    dirty = False
+    quiet_since = 0.0
+    pending = b""
+
+    def publish():
+        nonlocal last
         windowsjson, tasklistjson = snapshot()
         payload = json.dumps(windowsjson)
         if payload != last:
@@ -125,7 +149,38 @@ def main():
             subprocess.run(EWW + ["update", "tasklistjson=" + json.dumps(tasklistjson)],
                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             last = payload
-        time.sleep(POLL)
+
+    publish()
+
+    try:
+        while True:
+            timeout = 0.1
+            if dirty:
+                timeout = min(timeout, max(0.0, quiet_since + COALESCE - time.time()))
+
+            ready, _, _ = select.select([fd], [], [], timeout)
+            if ready:
+                chunk = os.read(fd, 65536)
+                if not chunk:
+                    break
+                pending += chunk
+                while b"\n" in pending:
+                    line, pending = pending.split(b"\n", 1)
+                    try:
+                        if set(json.loads(line)) & RELEVANT:
+                            dirty = True
+                            quiet_since = time.time()
+                    except ValueError:
+                        pass
+                continue
+
+            if dirty and time.time() - quiet_since >= COALESCE:
+                publish()
+                dirty = False
+    except (BrokenPipeError, KeyboardInterrupt):
+        pass
+    finally:
+        stream.kill()
 
 
 if __name__ == "__main__":
