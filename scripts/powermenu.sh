@@ -37,6 +37,11 @@ case "${1:-show}" in
     ;;
 
   toggle)
+    # Never while locked: the lock view shares the powermenu window and
+    # revealpowermenu is still true there, so this would take the "hide" branch,
+    # which deliberately does not close the window when screen-locked -- leaving
+    # it mapped and still holding the keyboard, with nothing on screen to see.
+    [[ "$("${EWW[@]}" get screen-locked)" == "true" ]] && exit 0
     if [[ "$("${EWW[@]}" get revealpowermenu)" == "true" ]]; then
       "$0" hide
     else
