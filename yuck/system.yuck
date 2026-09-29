@@ -86,6 +86,12 @@
       :val {bluetooth != "disabled"} 
       :name "Bluetooth"
       :command "./scripts/bluetooth.sh --toggle")
+    (profilectl
+      :icon {powerprofile == "power-saver" ? "./assets/icons/pp-save.svg" : (powerprofile == "performance" ? "./assets/icons/pp-perf.svg" : "./assets/icons/pp-balance.svg")}
+      :val {powerprofile == "power-saver" ? 0 : (powerprofile == "performance" ? 2 : 1)}
+      :auto powerauto
+      :name {powerprofile == "power-saver" ? "Power saver" : (powerprofile == "performance" ? "Performance" : "Balanced")}
+      :command "./scripts/powerprofile.sh auto")
     (togglectl 
       :icon "./assets/icons/bell.svg"
       :val {dnd == "false"} 
@@ -146,6 +152,51 @@
         :style "margin: 4px;"
         :class "triangle bottomright"))))
    
+(defwidget profilectl [icon name command val auto]
+  (box 
+    :class "window cont"
+    :orientation "h"
+    :space-evenly false 
+    (eventbox
+      :cursor "pointer"
+      :hexpand true
+      :tooltip "${auto == "true" ? "Auto: saver on battery, performance on AC. Click to disable." : "Auto off. Click to enable."}"
+      :onclick command
+      (box 
+        :orientation "h"
+        :space-evenly false
+        (image 
+          :image-width 35
+          :path icon)
+        (label 
+          :text name)
+        (revealer
+          :reveal {auto == "true"}
+          :transition "slideleft"
+          (label
+            :class "auto-tag"
+            :text "AUTO"))))
+    (eventbox
+      :cursor "pointer"
+      :tooltip "Click to cycle profile"
+      :onclick "./scripts/powerprofile.sh cycle"
+      (overlay
+        (box
+          :class "tri p${val}"
+          (box 
+            :width 30
+            :class "knob"))
+        (box 
+          :halign "start"
+          :valign "start"
+          :style "margin: 4px;"
+          :class "triangle topleft")
+        (box 
+          :halign "end"
+          :valign "end"
+          :style "margin: 4px;"
+          :class "triangle bottomright")))))
+
 (defwidget togglectl [icon name command val]
   (box 
     :class "window cont"

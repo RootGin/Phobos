@@ -33,6 +33,37 @@ scale {
   }
 }
 
+.tri {
+  background-color: $x0;
+  min-height: dpi(30px);
+  min-width: dpi(30px);
+  margin: $margin;
+  transition: 500ms;
+  padding: dpi(0px);
+  &.p0 {
+    padding-left: dpi(0px);
+    padding-right: dpi(25px);
+  }
+  &.p1 {
+    padding-left: dpi(12px);
+    padding-right: dpi(13px);
+  }
+  &.p2 {
+    padding-left: dpi(25px);
+    padding-right: dpi(0px);
+  }
+}
+
+$auto-tag-fill: mix($x0, $xbg, 65%);
+
+label.auto-tag {
+  font-size: dpi(15px);
+  color: $x6;
+  @include cut2($auto-tag-fill, dpi(9px));
+  padding: 0 dpi(9px);
+  margin: 0 $margin;
+}
+
 .switchbg {
   background-color: $xfg;
 }

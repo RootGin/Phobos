@@ -1,10 +1,12 @@
-(defvar version "0.4.25")
+(defvar version "0.4.26")
 
 (defpoll volumejson :initial '{"volume":0,"volumemute":false}' :interval "2s" "./scripts/volume-status.sh")
 (defpoll brightness :initial "0" :interval "2s" "brightnessctl -m | awk -F, '{print substr($4, 0, length($4)-1)}' | tr -d '%'")
 (deflisten wifi :initial '{"iface":"","radio":"enabled","state":"disconnected","ssid":"","security":"","signal":0,"bucket":"very-weak","connected":false,"connecting":false,"networks":[]}' "./scripts/wifi.py")
 (defpoll bluetooth :initial "disconnected" :interval "2s" "./scripts/bluetooth.sh --con_status")
 (defpoll dnd :initial "false" :interval "2s" "./scripts/dunstctl.sh is-paused")
+(defpoll powerprofile :initial "performance" :interval "5s" "./scripts/powerprofile.sh")
+(defpoll powerauto :initial "false" :interval "5s" "powerprofilesctl query-battery-aware | grep -q True && echo true || echo false")
 
 (deflisten pcover "./scripts/pollcover.sh")
 (deflisten playerctl :initial '{"song": "", "artist": "", "status": "Stopped"}' "playerctl metadata --format '{\"song\": \"{{title}}\",\"artist\": \"{{artist}}\", \"status\": \"{{status}}\"}' -F")
@@ -38,3 +40,4 @@
 (include "./yuck/media.yuck")
 (include "./yuck/powermenu.yuck")
 (include "./yuck/util.yuck")
+
