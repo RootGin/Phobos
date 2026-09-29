@@ -1,10 +1,10 @@
 (defvar version "0.4.26")
 
-(defpoll volumejson :initial '{"volume":0,"volumemute":false}' :interval "2s" "./scripts/volume-status.sh")
-(defpoll brightness :initial "0" :interval "2s" "brightnessctl -m | awk -F, '{print substr($4, 0, length($4)-1)}' | tr -d '%'")
+(defvar volumejson '{"volume":0,"volumemute":false}')
+(defvar brightness "0")
 (deflisten wifi :initial '{"iface":"","radio":"enabled","state":"disconnected","ssid":"","security":"","signal":0,"bucket":"very-weak","connected":false,"connecting":false,"networks":[]}' "./scripts/wifi.py")
-(defpoll bluetooth :initial "disconnected" :interval "2s" "./scripts/bluetooth.sh --con_status")
-(defpoll dnd :initial "false" :interval "2s" "./scripts/dunstctl.sh is-paused")
+(defvar bluetooth "disconnected")
+(defvar dnd "false")
 (defvar powerprofile "performance")
 (defvar powerauto "false")
 
