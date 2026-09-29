@@ -115,15 +115,64 @@
         :image-width 25
         :path "./assets/icons/chevron-right.svg"))))
 
+(defwidget statrow [icon name value]
+  (box
+    :class "starrow"
+    :orientation "h"
+    :space-evenly false
+    (image
+      :image-width 24
+      :path icon)
+    (label
+      :class "statname"
+      :text name)
+    (box
+      :hexpand true
+      :valign "center"
+      (overlay
+        (box
+          :class "starrow-track"
+          :style "background-image: linear-gradient(to right, currentColor 0%, currentColor ${value}%, transparent ${value}%, transparent 100%);")
+        (box
+          :halign "start"
+          :valign "start"
+          :class "triangle topleft")
+        (box
+          :halign "end"
+          :valign "end"
+          :class "triangle bottomright")))
+    (label
+      :class "hard"
+      :xalign 1
+      :text "${value}%")))
+
+(defwidget sysectstat []
+  (box
+    :class "window cont"
+    :orientation "v"
+    :space-evenly false
+    (statrow
+      :icon "./assets/icons/spec-cpu.svg"
+      :name "CPU"
+      :value "${sysstat.cpu}")
+    (statrow
+      :icon "./assets/icons/spec-ram.svg"
+      :name "RAM"
+      :value "${sysstat.ram}")
+    (statrow
+      :icon "./assets/icons/spec-os.svg"
+      :name "Disk"
+      :value "${diskstat}")))
+
 (defwidget sysectbody []
   (box
     :class "window cont"
     :orientation "v"
     :space-evenly false
+    :height 128
     (box
       :visible {sysect == 0}
-      (label
-        :text "Section 0"))
+      (sysectstat))
     (box
       :visible {sysect == 1}
       (label

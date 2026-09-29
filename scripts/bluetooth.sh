@@ -31,8 +31,10 @@ get_con_status() {
 toggle() {
     if [ "$(bluetoothctl show 2>/dev/null | grep -i "^[[:space:]]*Powered:" | awk '{print $2}')" == "yes" ]; then
         bluetoothctl power off
+        eww -c $ewwPath update bluetooth=disabled
     else
         bluetoothctl power on
+        eww -c $ewwPath update bluetooth=connected
     fi
 }
 

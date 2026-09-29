@@ -1,9 +1,11 @@
-(defvar version "0.4.30")
+(defvar version "0.4.32")
 
 (defvar volumejson '{"volume":0,"volumemute":false}')
 (defvar brightness "0")
+(defvar sysstat '{"cpu":0,"ram":0}')
+(defvar diskstat "0")
 (deflisten wifi :initial '{"iface":"","radio":"enabled","state":"disconnected","ssid":"","security":"","signal":0,"bucket":"very-weak","connected":false,"connecting":false,"networks":[]}' "./scripts/wifi.py")
-(defvar bluetooth "disconnected")
+(defvar bluetooth "disabled")
 (defvar dnd "false")
 (defvar powerprofile "performance")
 (defvar powerauto "false")

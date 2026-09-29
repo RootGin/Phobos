@@ -1,4 +1,37 @@
 
+.starrow {
+  margin: 0 0 $margin;
+
+  label {
+    font-size: dpi(19px);
+    margin: 0 dpi(6px);
+
+    &.statname {
+      min-width: dpi(56px);
+    }
+
+    &.hard {
+      min-width: dpi(52px);
+    }
+  }
+
+  .starrow-track {
+    min-height: dpi(12px);
+    color: $xfg;
+    background-color: $x0;
+    margin: 0 dpi(6px);
+  }
+
+  .triangle {
+    &.topleft {
+      border-width: dpi(12px) dpi(12px) 0 0;
+    }
+    &.bottomright {
+      border-width: 0 0 dpi(12px) dpi(12px);
+    }
+  }
+}
+
 scale {
   trough {
     min-height: dpi(30px);

@@ -1,26 +1,15 @@
 #!/usr/bin/env bash
+# One-shot seeder for the two values nothing outside eww mutates: dnd and
+# bluetooth. Both are pushed on click, so they only need seeding at startup
+# to reflect the state the machine booted into.
 
-CFG="$HOME/.config/eww/Phobos-dev"
 DIR="$(cd "$(dirname "$0")" && pwd)"
+EWW=(eww -c "$HOME/.config/eww/Phobos-dev")
 
-while true; do
-    vol="$("$DIR/volume-status.sh" 2>/dev/null)"
-    [[ "$vol" == \{* ]] || vol='{"volume": 0, "volumemute": false}'
+dnd="$("$DIR/dunstctl.sh" is-paused 2>/dev/null)"
+[[ "$dnd" == true || "$dnd" == false ]] || dnd=false
 
-    bright="$(brightnessctl -m 2>/dev/null | awk -F, '{print $4}' | tr -d '%')"
-    [[ "$bright" =~ ^[0-9]+$ ]] || bright=0
+bt="$("$DIR/bluetooth.sh" --con_status 2>/dev/null)"
+[[ "$bt" == connected || "$bt" == disabled ]] || bt=disabled
 
-    bt="$("$DIR/bluetooth.sh" --con_status 2>/dev/null)"
-    [[ -n "$bt" ]] || bt=disconnected
-
-    dnd="$("$DIR/dunstctl.sh" is-paused 2>/dev/null)"
-    [[ "$dnd" == true || "$dnd" == false ]] || dnd=false
-
-    eww -c "$CFG" update \
-        volumejson="$vol" \
-        brightness="$bright" \
-        bluetooth="$bt" \
-        dnd="$dnd" >/dev/null 2>&1
-
-    sleep 2
-done
+"${EWW[@]}" update dnd="$dnd" bluetooth="$bt" >/dev/null 2>&1
