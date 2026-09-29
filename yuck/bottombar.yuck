@@ -115,7 +115,7 @@
           :transition "slideleft"
           (input
             :onchange "./scripts/apps.py --query '{}'"
-            :onaccept "(cd && ${appsjson.apps[0].desktop}) & ./scripts/hackslide.sh launcherint &"
+            :onaccept "./scripts/apps.py --launch & ./scripts/hackslide.sh launcherint &"
             :width 300)) 
         (revealer
           :reveal {!reveallauncherint}

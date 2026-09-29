@@ -2,7 +2,7 @@
 
 # Taken from Tail-R. Thanks man love your stuff.
 
-ewwPath=$(pwd)
+ewwPath=$(cd "$(dirname "$0")/.." && pwd)
 
 get_device_name() {
     if [ "$(get_con_status)" == "connected" ]; then
@@ -10,17 +10,17 @@ get_device_name() {
 
         for deviceNumber in $knownDeviceNumber; do
             if [ "$(bluetoothctl info $deviceNumber | grep Connected: | awk '{print $2}')" == "yes" ]; then
-                echo $(bluetoothctl info $deviceNumber | grep Name: | awk '{for (i = 2; i <= NF; i++) {printf "%s ", $i}; printf "\n"}') 
+                echo $(bluetoothctl info $deviceNumber | grep Name: | awk '{for (i = 2; i <= NF; i++) {printf "%s ", $i}; printf "\n"}')
                 return
             fi
         done
     fi
-        
+
     echo "--"
 }
 
 get_con_status() {
-    if bluetoothctl devices Connected | grep -q .; then
+    if [ "$(bluetoothctl show 2>/dev/null | grep -i "^[[:space:]]*Powered:" | awk '{print $2}')" == "yes" ]; then
         echo "connected"
         return
     fi
@@ -29,15 +29,11 @@ get_con_status() {
 }
 
 toggle() {
-    if [ "$(get_con_status)" == "connected" ]; then
-        bluetoothctl disconnect
+    if [ "$(bluetoothctl show 2>/dev/null | grep -i "^[[:space:]]*Powered:" | awk '{print $2}')" == "yes" ]; then
+        bluetoothctl power off
     else
-        knownDeviceNumber=$(bluetoothctl devices | awk '{print $2}')
-        
-        for deviceNumber in $knownDeviceNumber; do
-            bluetoothctl connect $deviceNumber 
-        done    
-    fi  
+        bluetoothctl power on
+    fi
 }
 
 update_eww_json() {

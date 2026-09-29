@@ -5,6 +5,7 @@
 import sys
 import os
 import json
+import shlex
 from subprocess import run as shellRun
 from gi.repository import Gio
 from iconfetch import fetch
@@ -132,10 +133,24 @@ def highlight(text, query):
 def update_eww(entries):
     shellRun(["eww", "-c", eww_dir, "update", f"appsjson={json.dumps(entries)}"])
 
+def launch_top():
+    raw = shellRun(["eww", "-c", eww_dir, "get", "appsjson"],
+                   capture_output=True, text=True).stdout.strip()
+    try:
+        apps = json.loads(raw).get("apps") or []
+    except json.JSONDecodeError:
+        return
+    if not apps:
+        return
+    shellRun(shlex.split(apps[0]["desktop"]), start_new_session=True)
+
 if __name__ == "__main__":
     query = " ".join(sys.argv[2:]) if len(sys.argv) > 2 and sys.argv[1] == "--query" else None
 
-    if query is not None:
+    if sys.argv[1:2] == ["--launch"]:
+        launch_top()
+
+    elif query is not None:
         entries = get_cached_entries()
         filtered = filter_entries(entries, query)
         filtered = filter_top(filtered, 10)
