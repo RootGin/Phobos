@@ -295,7 +295,8 @@ $pm-lock-h: dpi(398px);   // = 3 × $pm-tile-h + 2 × dpi(10px) gaps + 2 × dpi(
 
 .pm-tile {
   padding: dpi(14px) dpi(10px);
-  background: $x0;
+  background: rgba($x0, 0.35);
+  border: dpi(1px) solid $x8;
   transition: background-color 0.2s;
 }
 
@@ -319,6 +320,7 @@ $pm-lock-h: dpi(398px);   // = 3 × $pm-tile-h + 2 × dpi(10px) gaps + 2 × dpi(
 
 .pm-tile.this-selected {
   background: $x4;
+  border-color: $x4;
 
   .pm-tile-label,
   .pm-tile-icon {
@@ -327,7 +329,8 @@ $pm-lock-h: dpi(398px);   // = 3 × $pm-tile-h + 2 × dpi(10px) gaps + 2 × dpi(
 }
 
 .pm-tile.disabled {
-  background: rgba($x0, 0.45);
+  background: rgba($x0, 0.18);
+  border-color: rgba($x8, 0.5);
 
   .pm-tile-icon {
     color: $x8;
