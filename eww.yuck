@@ -1,4 +1,4 @@
-(defvar version "0.4.27")
+(defvar version "0.4.28")
 
 (defvar volumejson '{"volume":0,"volumemute":false}')
 (defvar brightness "0")
@@ -8,7 +8,7 @@
 (defvar powerprofile "performance")
 (defvar powerauto "false")
 
-(deflisten pcover "./scripts/pollcover.sh")
+(deflisten pcover "./scripts/coverart.sh")
 (deflisten playerctl :initial '{"song": "", "artist": "", "status": "Stopped"}' "playerctl metadata --format '{\"song\": \"{{title}}\",\"artist\": \"{{artist}}\", \"status\": \"{{status}}\"}' -F")
 
 (deflisten windowsjson 
