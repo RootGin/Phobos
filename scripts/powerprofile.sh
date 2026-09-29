@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# No args: print active profile (the defpoll data source).
 # cycle:  power-saver -> balanced -> performance -> power-saver
 # auto:   toggle battery-aware (saver on battery, performance on AC)
+# sync:   push current state into eww (called once at daemon start)
+# No args: print active profile.
 #
 # The lock is load-bearing, not defensive: cycle and auto are read-modify-write
 # (read current state -> decide next -> write), so two rapid clicks would both
@@ -17,6 +18,14 @@ flock 9
 EWW="${EWW_CMD:-eww -c $HOME/.config/eww/Phobos-dev}"
 
 case "$1" in
+  sync)
+    $EWW update powerprofile="$(powerprofilesctl get)"
+    if powerprofilesctl query-battery-aware | grep -q True; then
+      $EWW update powerauto=true
+    else
+      $EWW update powerauto=false
+    fi
+    ;;
   cycle)
     case "$(powerprofilesctl get)" in
       power-saver) set=balanced ;;

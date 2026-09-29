@@ -5,8 +5,8 @@
 (deflisten wifi :initial '{"iface":"","radio":"enabled","state":"disconnected","ssid":"","security":"","signal":0,"bucket":"very-weak","connected":false,"connecting":false,"networks":[]}' "./scripts/wifi.py")
 (defpoll bluetooth :initial "disconnected" :interval "2s" "./scripts/bluetooth.sh --con_status")
 (defpoll dnd :initial "false" :interval "2s" "./scripts/dunstctl.sh is-paused")
-(defpoll powerprofile :initial "performance" :interval "5s" "./scripts/powerprofile.sh")
-(defpoll powerauto :initial "false" :interval "5s" "powerprofilesctl query-battery-aware | grep -q True && echo true || echo false")
+(defvar powerprofile "performance")
+(defvar powerauto "false")
 
 (deflisten pcover "./scripts/pollcover.sh")
 (deflisten playerctl :initial '{"song": "", "artist": "", "status": "Stopped"}' "playerctl metadata --format '{\"song\": \"{{title}}\",\"artist\": \"{{artist}}\", \"status\": \"{{status}}\"}' -F")
