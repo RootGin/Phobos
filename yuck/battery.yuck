@@ -3,9 +3,9 @@
 (defwindow battint
   :geometry (geometry
               :x 0
-              :y -56
+              :y 0
               :width 0
-              :height 70
+              :height 0
               :anchor "top right")
   :stacking "overlay"
   :exclusive false
@@ -13,6 +13,7 @@
   (box
     :orientation "h"
     :space-evenly false
+    :halign "end"
     (revealer
       :halign "end"
       :reveal revealbattint
@@ -20,7 +21,6 @@
       (box
         :orientation "v"
         :space-evenly false
-        :style "margin-right: 20px;"
 
         (box
           :height 20
@@ -42,54 +42,7 @@
           :class "window"
           (box
             :style "margin: -20px 0px;"
-            (battwid)))))
-
-    (battbar)))
-
-(defwidget battbar []
-  (box
-    :orientation "h"
-    :space-evenly false
-    :valign "start"
-    (box
-      :orientation "v"
-      :space-evenly false
-      :valign "start"
-      (box
-        :class "window"
-        :vexpand true)
-      (box
-        :class "triangle topright"))
-    (box
-      :orientation "h"
-      :space-evenly false
-      :spacing 20
-      :valign "start"
-      :class "window bar"
-      (batticon)
-      (label
-        :class "large"
-        :text {formattime(EWW_TIME, '%-d/%-m/%Y')})
-      (box
-        :orientation "h"
-        :space-evenly false
-        :valign "center"
-        :class "animtime"
-        (animdigit
-          :class "hard large"
-          :cur {substring(formattime(EWW_TIME, '%H'), 0, 1)})
-        (animdigit
-          :class "hard large"
-          :cur {substring(formattime(EWW_TIME, '%H'), 1, 1)})
-        (label
-          :class "hard large"
-          :text ":")
-        (animdigit
-          :class "hard large"
-          :cur {substring(formattime(EWW_TIME, '%M'), 0, 1)})
-        (animdigit
-          :class "hard large"
-          :cur {substring(formattime(EWW_TIME, '%M'), 1, 1)})))))
+            (battwid)))))))
 
 (defwidget batticon []
   (image
