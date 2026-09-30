@@ -17,5 +17,9 @@ if [[ $STAT == "true" || $2 == "close" ]]; then
 else
     eww -c $PWD open $WINDOW
     eww -c $PWD update $CTRL=true
+    if [[ "$WINDOW" == "systemint" ]]; then
+        "$PWD/scripts/sysstat-poll.sh" --once
+        "$PWD/scripts/vpn.py" status
+    fi
 fi
 

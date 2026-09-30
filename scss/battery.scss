@@ -1,0 +1,18 @@
+.batrow {
+  margin: 0 0 dpi(2px);
+
+  label {
+    font-size: dpi(19px);
+    margin: 0 dpi(6px);
+
+    &.batname {
+      min-width: dpi(110px);
+    }
+  }
+}
+
+label.batsect {
+  font-size: dpi(19px);
+  color: $x8;
+  margin: 0 dpi(6px) dpi(4px) dpi(6px);
+}

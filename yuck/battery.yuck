@@ -1,0 +1,185 @@
+(defvar revealbattint false)
+
+(defwindow battint
+  :geometry (geometry
+              :x 0
+              :y -56
+              :width 0
+              :height 70
+              :anchor "top right")
+  :stacking "overlay"
+  :exclusive false
+  :monitor '["<primary>", 0]'
+  (box
+    :orientation "h"
+    :space-evenly false
+    (revealer
+      :halign "end"
+      :reveal revealbattint
+      :transition "slideleft"
+      (box
+        :orientation "v"
+        :space-evenly false
+        :style "margin-right: 20px;"
+
+        (box
+          :height 20
+          :orientation "h"
+          :space-evenly false
+          (box
+            :orientation "v"
+            :space-evenly false
+            (box
+              :class "triangle bottomright")
+            (box
+              :class "window"
+              :vexpand true))
+          (box
+            :class "window"
+            :hexpand true))
+
+        (box
+          :class "window"
+          (box
+            :style "margin: -20px 0px;"
+            (battwid)))))
+
+    (battbar)))
+
+(defwidget battbar []
+  (box
+    :orientation "h"
+    :space-evenly false
+    :valign "start"
+    (box
+      :orientation "v"
+      :space-evenly false
+      :valign "start"
+      (box
+        :class "window"
+        :vexpand true)
+      (box
+        :class "triangle topright"))
+    (box
+      :orientation "h"
+      :space-evenly false
+      :spacing 20
+      :valign "start"
+      :class "window bar"
+      (batticon)
+      (label
+        :class "large"
+        :text {formattime(EWW_TIME, '%-d/%-m/%Y')})
+      (box
+        :orientation "h"
+        :space-evenly false
+        :valign "center"
+        :class "animtime"
+        (animdigit
+          :class "hard large"
+          :cur {substring(formattime(EWW_TIME, '%H'), 0, 1)})
+        (animdigit
+          :class "hard large"
+          :cur {substring(formattime(EWW_TIME, '%H'), 1, 1)})
+        (label
+          :class "hard large"
+          :text ":")
+        (animdigit
+          :class "hard large"
+          :cur {substring(formattime(EWW_TIME, '%M'), 0, 1)})
+        (animdigit
+          :class "hard large"
+          :cur {substring(formattime(EWW_TIME, '%M'), 1, 1)})))))
+
+(defwidget batticon []
+  (image
+    :image-width 35
+    :path "./assets/icons/bat${ EWW_BATTERY.BAT0.status != 'Discharging' ? 'c' : (EWW_BATTERY.BAT0.capacity < 25 ? '0' : (EWW_BATTERY.BAT0.capacity < 50 ? '1' : (EWW_BATTERY.BAT0.capacity < 75 ? '2' : '3'))) }.svg"))
+
+(defwidget batthead []
+  (box
+    :class "window cont"
+    :orientation "h"
+    :space-evenly false
+    (batticon)
+    (label
+      :text "Battery")))
+
+(defwidget batrow [name value]
+  (box
+    :class "batrow"
+    :orientation "h"
+    :space-evenly false
+    (label
+      :class "batname"
+      :text name)
+    (label
+      :class "hard batval"
+      :xalign 1
+      :hexpand true
+      :text value)))
+
+(defwidget batrows []
+  (box
+    :class "window cont"
+    :orientation "v"
+    :space-evenly false
+    (batrow
+      :name "Status"
+      :value "${battjson.status}")
+    (batrow
+      :name "Charge"
+      :value "${battjson.charge}")
+    (batrow
+      :name "Time"
+      :value "${battjson.time}")
+    (batrow
+      :name "Draw"
+      :value "${battjson.draw}")
+    (batrow
+      :name "Health"
+      :value "${battjson.health}")
+    (batrow
+      :name "Cycles"
+      :value "${battjson.cycles}")))
+
+(defwidget batopts []
+  (box
+    :class "window cont"
+    :orientation "v"
+    :space-evenly false
+    (label
+      :class "batsect"
+      :xalign 0
+      :text "Options")
+    (overlay
+      (scale
+        :value "${battjson.thr}"
+        :min 5
+        :max 95
+        :onchange "./scripts/battery.py threshold {}")
+      (box
+        :halign "start"
+        :valign "start"
+        :style "margin: 4px;"
+        :class "triangle topleft")
+      (box
+        :halign "end"
+        :valign "end"
+        :style "margin: 4px;"
+        :class "triangle bottomright"))
+    (label
+      :class "hard"
+      :xalign 1
+      :text "Alert below ${battjson.thr}%")))
+
+(defwidget battwid []
+  (box
+    :orientation "v"
+    :space-evenly false
+    :width 404
+    :vexpand true
+    :class "window cont trans"
+    (batthead)
+    (batrows)
+    (batopts)))

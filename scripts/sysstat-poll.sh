@@ -7,17 +7,26 @@
 CFG="$(cd "$(dirname "$0")/.." && pwd)"
 EWW=(eww -c "$CFG")
 
+on_screen() {
+    [[ "$("${EWW[@]}" get revealsystemint 2>/dev/null)" == "true" ]] || return 1
+    [[ "$("${EWW[@]}" get sysect 2>/dev/null)" == "0" ]]
+}
+
 tick() {
-    [[ "$("${EWW[@]}" get revealsystemint 2>/dev/null)" == "true" ]] || return
-    [[ "$("${EWW[@]}" get sysect 2>/dev/null)" == "0" ]] || return
+    on_screen || return
     "${EWW[@]}" update sysstat="$("$CFG/scripts/sysstat.py")" >/dev/null 2>&1
 }
 
 tick_disk() {
-    [[ "$("${EWW[@]}" get revealsystemint 2>/dev/null)" == "true" ]] || return
-    [[ "$("${EWW[@]}" get sysect 2>/dev/null)" == "0" ]] || return
+    on_screen || return
     "${EWW[@]}" update diskstat="$("$CFG/scripts/diskstat.py")" >/dev/null 2>&1
 }
+
+if [[ "$1" == "--once" ]]; then
+    tick
+    tick_disk
+    exit 0
+fi
 
 while true; do
     tick

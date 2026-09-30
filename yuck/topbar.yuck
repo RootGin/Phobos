@@ -28,7 +28,7 @@
         :hexpand true
         (label 
           :visible false
-          :text "${playerctl} ${pcover} ${inputpipe} ${wifi}"))
+          :text "${playerctl} ${pcover} ${inputpipe} ${wifi} ${battjson}"))
       (box
         :orientation "v"
         :space-evenly false
@@ -43,9 +43,12 @@
         :spacing 20
         :class "window bar"
         :tooltip "${EWW_BATTERY.BAT0.capacity}%"
-        (image 
-          :image-width 35
-          :path "./assets/icons/bat${ EWW_BATTERY.BAT0.status != 'Discharging' ? 'c' : (EWW_BATTERY.BAT0.capacity < 25 ? '0' : (EWW_BATTERY.BAT0.capacity < 50 ? '1' : (EWW_BATTERY.BAT0.capacity < 75 ? '2' : '3'))) }.svg")
+(eventbox
+        :cursor "pointer"
+        :timeout "10s"
+        :tooltip "Battery details"
+        :onclick "./scripts/hackslide.sh battint &"
+        (batticon))
         (label 
           :class "large"
           :text {formattime(EWW_TIME, '%-d/%-m/%Y')}) 

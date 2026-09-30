@@ -1,0 +1,305 @@
+(defvar btsel "")        ; selected device address; empty shows the list only
+
+; Fields are pulled out of each element in the `for` and passed as plain
+; attributes, the same way nw_row does it. A `dev.name` inside a widget body
+; does not resolve: the attribute is a yuck object, not the struct behind it.
+
+(defwidget bt_sig [bucket]
+  (box
+    :class "bt-sig ${bucket}"
+    :orientation "h"
+    :space-evenly false
+    :valign "end"
+    (box :class "bt-bar b1" :valign "end")
+    (box :class "bt-bar b2" :valign "end")
+    (box :class "bt-bar b3" :valign "end")
+    (box :class "bt-bar b4" :valign "end")))
+
+; One word from the script, so no string matching happens in yuck.
+(defwidget bt_sec [sec]
+  (label
+    :class "bt-secbadge ${sec}"
+    :text {sec == "auth" ? "Authenticated" :
+           sec == "unauth" ? "Unauthenticated" :
+           sec == "unverified" ? "Unverified" :
+           "Unknown"}))
+
+(defwidget bt_row [addr name sec bucket bonded connected trusted]
+  (eventbox
+    :cursor "pointer"
+    :timeout "10s"
+    :tooltip {connected ? "Connected. Click for details." : (bonded ? "Bonded. Click for details." : "Not bonded. Click to pair.")}
+    :onclick "${EWW_CMD} update btsel='${addr}' &"
+    (box
+      :class "bt-row ${connected ? 'connected' : (bonded ? 'bonded' : 'idle')} ${btsel == addr ? 'sel' : ''}"
+      :orientation "h"
+      :space-evenly false
+      :hexpand true
+      (image
+        :class "bt-row-ico"
+        :image-width 24
+        :path "./assets/icons/bluetooth.svg")
+      (label
+        :class "bt-row-name"
+        :xalign 0
+        :truncate true
+        :limit-width 22
+        :hexpand true
+        :text name)
+      (bt_sec :sec sec)
+      (bt_sig :bucket bucket)
+      (label
+        :class "bt-row-state"
+        :text {connected ? "Connected" : (bonded ? (trusted ? "Trusted" : "Bonded") : "Pair")}))))
+
+(defwidget bt_panehead [scanning]
+  (box
+    :class "bt-panehead"
+    :orientation "h"
+    :space-evenly false
+    (image :class "bt-phead-ico" :image-width 24 :path "./assets/icons/bluetooth.svg")
+    (label :class "bt-phead-t" :text "Devices")
+    (box :hexpand true)
+    (label
+      :class "bt-connecting"
+      :visible scanning
+      :text "Scanning...")
+    (eventbox
+      :class "bt-scan"
+      :cursor {scanning || !btsec.powered ? "default" : "pointer"}
+      :timeout "10s"
+      :tooltip "Scan for nearby devices"
+      :onclick {scanning || !btsec.powered ? "true" : "./scripts/btsec.py scan --seconds 14 &"}
+      (image :class "bt-scan-ico" :image-width 22 :path "./assets/icons/scan.svg"))))
+
+(defwidget bt_panel1 []
+  (box
+    :class "bt-card bt-listcard"
+    :orientation "v"
+    :space-evenly false
+    :hexpand false
+    :vexpand true
+    (bt_panehead :scanning {btsec.discovering})
+    (box
+      :class "bt-listwrap"
+      :vexpand true
+      :visible {arraylength(btsec.devices) > 0}
+      (scroll
+        :class "bt-scroll"
+        :vexpand true
+        :hscroll false
+        :vscroll true
+        (box
+          :class "bt-list"
+          :orientation "v"
+          :space-evenly false
+          (for dev in {btsec.devices}
+            (bt_row
+              :addr {dev.addr}
+              :name {dev.name}
+              :sec {dev.sec}
+              :bucket {dev.bucket}
+              :bonded {dev.bonded}
+              :connected {dev.connected}
+              :trusted {dev.trusted})))))
+    (box
+      :class "bt-empty"
+      :orientation "v"
+      :vexpand true
+      :space-evenly false
+      :visible {arraylength(btsec.devices) == 0 && btsec.discovering}
+      (box :vexpand true)
+      (image :image-width 48 :path "./assets/icons/scan.svg")
+      (label :class "bt-empty-t" :text "Looking for devices...")
+      (box :vexpand true))
+    (box
+      :class "bt-empty"
+      :orientation "v"
+      :vexpand true
+      :space-evenly false
+      :visible {arraylength(btsec.devices) == 0 && !btsec.discovering}
+      (box :vexpand true)
+      (image :image-width 48 :path "./assets/icons/bluetooth.svg")
+      (label :class "bt-empty-t" :text {btsec.powered ? "No devices yet, press scan to look" : "Bluetooth is off"})
+      (box :vexpand true))))
+
+; The detail pane is rendered once per device and shown only for the selected
+; one: eww has no "find in array", and this matches the :visible idiom used
+; everywhere else in the config.
+(defwidget bt_detail [addr name sec model level bonded connected trusted]
+  (box
+    :visible {addr == btsel}
+    :class "bt-dcol"
+    :orientation "v"
+    :space-evenly false
+    :hexpand true
+    (box
+      :class "bt-card bt-dhead"
+      :orientation "h"
+      :space-evenly false
+      :hexpand true
+      (box
+        :class "bt-dico"
+        (image :image-width 26 :path "./assets/icons/bluetooth.svg"))
+      (box
+        :class "bt-dhead-txt"
+        :orientation "v"
+        :space-evenly false
+        :hexpand true
+        (label :class "bt-dhead-name" :xalign 0 :truncate true :text name)
+        (label
+          :class "bt-dhead-sub"
+          :xalign 0
+          :text {connected ? "Connected" : (bonded ? (trusted ? "Bonded and trusted" : "Bonded, not trusted") : "Not bonded")})))
+    (box :class "bt-vgap")
+
+    (box
+      :class "bt-card bt-seccard"
+      :orientation "v"
+      :space-evenly false
+      :hexpand true
+      (label :class "bt-cardtitle" :xalign 0 :text "Security")
+      (box :class "bt-vgap-sm")
+      (box
+        :class "bt-frow"
+        (label :class "bt-flabel" :text "Key")
+        (bt_sec :sec sec))
+      (box
+        :class "bt-frow"
+        :visible {model != ""}
+        (label :class "bt-flabel" :text "Method")
+        (label :class "bt-fval" :text model))
+      (box
+        :class "bt-frow"
+        :visible {level > 0}
+        (label :class "bt-flabel" :text "SM1 level")
+        (label :class "bt-fval" :text "${level}"))
+      (box
+        :class "bt-frow"
+        (label :class "bt-flabel" :text "Address")
+        (label :class "bt-fval mono" :text addr))
+      (label
+        :class "bt-note"
+        :visible {sec == "unauth"}
+        :text "An unauthenticated key has no MITM protection, and every key distributed with it inherits that. Treat this bond accordingly.")
+      (label
+        :class "bt-note"
+        :visible {sec == "unknown"}
+        :text "BlueZ does not report key strength, and this bond was not created by btsec, so it cannot be recovered.")
+      (label
+        :class "bt-note"
+        :visible {sec == "unverified"}
+        :text "The observed association model disagreed with the prediction. Treat as unauthenticated until re-paired."))
+    (box :class "bt-vgap")
+
+    (box
+      :class "bt-card"
+      :orientation "h"
+      :space-evenly false
+      :hexpand true
+      (eventbox
+        :class "bt-btn"
+        :visible {!connected}
+        :cursor "pointer"
+        :onclick "./scripts/btsec.py connect '${addr}' &"
+        (label :text {bonded ? "Connect" : "Not bonded"}))
+      (eventbox
+        :class "bt-btn ghost"
+        :visible {connected}
+        :cursor "pointer"
+        :onclick "./scripts/btsec.py disconnect '${addr}' &"
+        (label :text "Disconnect"))
+      (box :hexpand true)
+      (eventbox
+        :class "bt-btn ghost"
+        :cursor "pointer"
+        :tooltip {trusted ? "Stop trusting this device" : "Trust this device. BlueZ will then reconnect it without asking."}
+        :onclick "./scripts/btsec.py ${trusted ? 'untrust' : 'trust'} '${addr}' &"
+        (label :text {trusted ? "Untrust" : "Trust"}))
+      (eventbox
+        :class "bt-btn danger"
+        :cursor "pointer"
+        :tooltip "Forget this device and its stored keys"
+        :onclick "${EWW_CMD} update btsel= & ./scripts/btsec.py forget '${addr}' &"
+        (label :text "Forget")))))
+
+(defwindow btpanel []
+  :monitor '["<primary>", 0]'
+  :geometry (geometry
+              :x 0
+              :y 0
+              :width "1184px"
+              :height "672px"
+              :anchor "center")
+  :stacking "overlay"
+  :exclusive false
+  :focusable true
+  :namespace "phobos-bluetooth"
+  (box
+    :class "bt-screen bt-root"
+    :orientation "h"
+    :space-evenly false
+    (revealer
+      :class "bt-leadpad"
+      :reveal {btsel == ""}
+      :transition "slideleft"
+      (box :class "bt-leadpad-in"))
+    (box
+      :class "bt-lcol"
+      :orientation "v"
+      :space-evenly false
+      :vexpand true
+      (box
+        :class "bt-titlebar"
+        :orientation "h"
+        :space-evenly false
+        (box
+          :class "bt-card bt-title"
+          :orientation "h"
+          :space-evenly false
+          (image :class "bt-head-ico" :image-width 24 :path "./assets/icons/bluetooth.svg")
+          (label :class "bt-head-title" :text "Bluetooth Manager"))
+        (box :hexpand true)
+        (eventbox
+          :class "bt-close"
+          :cursor "pointer"
+          :onclick "${EWW_CMD} update btsel= & sleep 0.3 && ${EWW_CMD} close btpanel &"
+          (box
+            :class "bt-card bt-closecard"
+            (label :class "bt-close-x" :text "X"))))
+      (box
+        :class "bt-body"
+        :orientation "v"
+        :space-evenly false
+        :vexpand true
+        (bt_panel1)))
+    (revealer
+      :class "bt-dslide"
+      :reveal {btsel != ""}
+      :transition "slideright"
+      :vexpand true
+      (box
+        :class "bt-dwrap"
+        :orientation "v"
+        :space-evenly false
+        :vexpand true
+        (scroll
+          :class "bt-scroll"
+          :vexpand true
+          :hscroll false
+          :vscroll true
+          (box
+            :class "bt-dcol"
+            :orientation "v"
+            :space-evenly false
+            :hexpand true
+            (for dev in {btsec.devices}
+              (bt_detail
+                :addr {dev.addr}
+                :name {dev.name}
+                :sec {dev.sec}
+                :model {dev.model}
+                :level {dev.level}
+                :bonded {dev.bonded}
+                :connected {dev.connected}
+                :trusted {dev.trusted}))))))))

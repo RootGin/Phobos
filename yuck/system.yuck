@@ -73,11 +73,9 @@
       :label {wifi.connected ? wifi.ssid : "Wifi"}
       :state {wifi.state}
       :on {wifi.radio == "enabled"})
-    (togglectl 
-      :icon "./assets/icons/bluetooth.svg"
-      :val {bluetooth != "disabled"} 
-      :name "Bluetooth"
-      :command "./scripts/bluetooth.sh --toggle")
+    (btnav
+      :label {btsec.powered ? "Bluetooth" : "Bluetooth off"}
+      :on {btsec.powered})
     (profilectl
       :icon {powerprofile == "power-saver" ? "./assets/icons/pp-save.svg" : (powerprofile == "performance" ? "./assets/icons/pp-perf.svg" : "./assets/icons/pp-balance.svg")}
       :val {powerprofile == "power-saver" ? 0 : (powerprofile == "performance" ? 2 : 1)}
@@ -104,13 +102,13 @@
       :hexpand true)
     (eventbox
       :cursor "pointer"
-      :onclick "${EWW_CMD} update sysect=${(sysect + 2) % 3}"
+      :onclick "${EWW_CMD} update sysect=${(sysect + 2) % 3} & sleep 0.2; ./scripts/sysstat-poll.sh --once; ./scripts/vpn.py status"
       (image
         :image-width 25
         :path "./assets/icons/chevron-left.svg"))
     (eventbox
       :cursor "pointer"
-      :onclick "${EWW_CMD} update sysect=${(sysect + 1) % 3}"
+      :onclick "${EWW_CMD} update sysect=${(sysect + 1) % 3} & sleep 0.2; ./scripts/sysstat-poll.sh --once; ./scripts/vpn.py status"
       (image
         :image-width 25
         :path "./assets/icons/chevron-right.svg"))))
@@ -164,6 +162,41 @@
       :name "Disk"
       :value "${diskstat}")))
 
+(defwidget vpnrow []
+  (box
+    :class "starrow"
+    :orientation "h"
+    :space-evenly false
+    (image
+      :image-width 24
+      :path "./assets/icons/shield.svg")
+    (label
+      :class "statname"
+      :text "VPN")
+    (label
+      :class "vpnt-state ${vpnt.state}"
+      :text {vpnt.state == "connected" && vpnt.server != "" ? vpnt.server : (vpnt.state == "connected" ? "Connected" : (vpnt.state == "off" ? "Off" : "Disconnected"))})
+    (box
+      :hexpand true)
+    (eventbox
+      :cursor "pointer"
+      :visible {vpnt.state != "off"}
+      :timeout "10s"
+      :tooltip "Disconnect and turn the Proton VPN integration off"
+      :onclick "./scripts/vpn.py exit &"
+      (image
+        :image-width 22
+        :path "./assets/icons/pm-exit.svg"))
+    (eventbox
+      :cursor "pointer"
+      :timeout "10s"
+      :tooltip {vpnt.state == "off" ? "Turn the Proton VPN integration on" : (vpnt.state == "connected" ? "Disconnect from the Proton VPN server" : "Connect to the fastest Proton VPN server")}
+      :onclick {vpnt.state == "off" ? "./scripts/vpn.py toggle &" : (vpnt.state == "connected" ? "./scripts/vpn.py disconnect &" : "./scripts/vpn.py connect &")}
+      (box
+        :class "vpnbtn"
+        (label
+          :text {vpnt.state == "off" ? "Enable" : (vpnt.state == "connected" ? "Disconnect" : "Connect")})))))
+
 (defwidget sysectbody []
   (box
     :class "window cont"
@@ -175,12 +208,47 @@
       (sysectstat))
     (box
       :visible {sysect == 1}
-      (label
-        :text "Section 1"))
+      (box
+        :class "window cont"
+        :orientation "v"
+        :space-evenly false
+        (vpnrow)))
     (box
       :visible {sysect == 2}
       (label
         :text "Section 2"))))
+
+(defwidget btnav [label on]
+  (box
+    :class "window cont btnav"
+    :orientation "h"
+    :space-evenly false
+    (eventbox
+      :cursor "pointer"
+      :hexpand true
+      :timeout "10s"
+      :tooltip "Open the Bluetooth manager"
+      :onclick "./scripts/hackslide.sh systemint close & ${EWW_CMD} open btpanel &"
+      (box
+        :orientation "h"
+        :space-evenly false
+        (image
+          :image-width 35
+          :path "./assets/icons/bluetooth.svg")
+        (label :truncate true :limit-width 14 :text label)))
+    (box
+      :hexpand true)
+    (eventbox
+      :cursor "pointer"
+      :timeout "10s"
+      :tooltip {on ? "Turn Bluetooth off" : "Turn Bluetooth on"}
+      :onclick {on ? "./scripts/btsec.py power off &" : "./scripts/btsec.py power on &"}
+      (overlay
+        (box
+          :class "switch ${on ? 'on' : 'off'}"
+          (box :width 30 :class "knob"))
+        (box :halign "start" :valign "start" :style "margin: 4px;" :class "triangle topleft")
+        (box :halign "end" :valign "end" :style "margin: 4px;" :class "triangle bottomright")))))
 
 (defwidget wifinav [icon label state on]
   (box

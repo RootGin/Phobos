@@ -21,6 +21,9 @@ Specifications are cited as [Vol 3] Part <letter>, section <n>.
 
 import json
 import os
+import re
+import select
+import subprocess
 import sys
 import time
 
@@ -238,7 +241,7 @@ class Bluez:
         a = {"path": ADAPTER}
         for p in ("Address", "Name", "Alias", "AddressType", "PowerState"):
             a[p.lower()] = self.get(ADAPTER, "org.bluez.Adapter1", p)
-        for p in ("Powered", "Connectable", "Discoverable", "Pairable"):
+        for p in ("Powered", "Connectable", "Discoverable", "Pairable", "Discovering"):
             a[p.lower()] = self.get(ADAPTER, "org.bluez.Adapter1", p)
         return a
 
@@ -462,6 +465,11 @@ def selftest():
     assert failure_action(UNAUTHENTICATED, True)[0] == "notify"
     assert failure_action(AUTHENTICATED, False)[0] == "notify-then-repair"
     assert failure_action(AUTHENTICATED, True)[0] == "notify"
+
+    assert classify({}) == "unknown"
+    assert classify({"property": AUTHENTICATED}) == "auth"
+    assert classify({"property": UNAUTHENTICATED}) == "unauth"
+    assert classify({"property": "unverified (observed X, predicted Y)"}) == "unverified"
 
     assert len(TABLE_2_8) == 25
     assert IO_CAPABILITY["NoInputNoOutput"] == 0x03
@@ -724,6 +732,14 @@ def agent_watch(agent, addr, bz, loop):
     return True
 
 
+def cmd_power(bz, on):
+    if on:
+        bz.set(ADAPTER, "org.bluez.Adapter1", "Powered", "b", True)
+    else:
+        bz.set(ADAPTER, "org.bluez.Adapter1", "Powered", "b", False)
+    print("Bluetooth %s" % ("on" if on else "off"))
+
+
 def cmd_scan(bz, seconds):
     """Find devices to pair with. Discovery is the prerequisite for everything
     else here, and the address is the only thing a later command accepts."""
@@ -785,8 +801,254 @@ def cmd_scan(bz, seconds):
         print("Table 2.8 and is recorded from the observed callback only.")
 
 
+# --- Stream mode ---------------------------------------------------------------
+#
+# A `deflisten` source for the eww panel: one long-lived dbus-monitor child
+# scoped to org.bluez, with a slow poll for whatever the signal does not carry.
+# Emits only when the payload actually changes.
+
+POLL = 10.0
+DEBOUNCE = 0.3
+SCALARS = ("boolean", "byte", "int16", "uint16", "int32", "uint32", "string", "object")
+DEV_PATH = re.compile(r"/org/bluez/hci\d+/dev_([0-9A-Fa-f_]+)")
+KEY = re.compile(r'^\s*string "(\w+)"\s*$')
+VAR = re.compile(r"^\s*variant\s+(\S+)\s+(.*)$")
+
+BUCKET = ((-55, "excellent"), (-67, "good"), (-80, "weak"))
+
+
+def bucket(rssi):
+    for threshold, name in BUCKET:
+        if rssi >= threshold:
+            return name
+    return "very-weak"
+
+
+def monitor():
+    return subprocess.Popen(
+        ["dbus-monitor", "--system", "type='signal',sender='org.bluez'"],
+        stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, bufsize=1)
+
+
+def fold_block(block, cache):
+    """Fold one dbus-monitor signal into the device cache.
+
+    Read as `string "Prop"` followed by `variant <type> <value>`, which is the
+    shape both InterfacesAdded dict entries and PropertiesChanged deltas take.
+    The device path is not always in the header: PropertiesChanged carries it in
+    `path=`, but InterfacesAdded comes from the ObjectManager root (`path=/`) and
+    names the device in an `object path` line in the *body*, so the whole block is
+    searched. Names are lowercased on the way in, because BlueZ capitalises them
+    and every consumer here reads snake_case.
+    """
+    match = None
+    for line in block:
+        match = DEV_PATH.search(line)
+        if match:
+            break
+    if not match:
+        return False
+    addr = match.group(1).replace("_", ":").upper()
+    dev = cache.setdefault(addr, {"addr": addr, "seen": 0.0})
+    dev["seen"] = time.time()
+    key = None
+    dirty = False
+    for line in block[1:]:
+        km = KEY.match(line)
+        if km:
+            key = km.group(1)
+            continue
+        vm = VAR.match(line)
+        if not vm or not key:
+            continue
+        kind, val = vm.group(1), vm.group(2).strip()
+        if kind not in SCALARS:
+            key = None
+            continue
+        if kind in ("string", "object"):
+            val = val.split('"')[-2] if '"' in val else val
+        elif kind == "boolean":
+            val = val == "true"
+        else:
+            try:
+                val = int(val)
+            except ValueError:
+                key = None
+                continue
+        dev[key.lower()] = val
+        dirty = True
+        key = None
+    return dirty
+
+
+def drain(mon, cache):
+    """Swallow a burst of signals into whole blocks; restart if the pipe closed."""
+    block = []
+    touched = False
+    while select.select([mon.stdout], [], [], DEBOUNCE)[0]:
+        line = mon.stdout.readline()
+        if not line:
+            if block:
+                touched |= fold_block(block, cache)
+            return monitor(), True
+        if line.startswith("signal "):
+            if block:
+                touched |= fold_block(block, cache)
+            block = [line]
+        elif block:
+            block.append(line)
+    if block:
+        touched |= fold_block(block, cache)
+    return mon, touched
+
+
+def read_device(addr):
+    """One `bluetoothctl info` call, worth name, alias, icon and RSSI.
+
+    Name/alias because a device already known to BlueZ arrives from a rescan with
+    neither, and RSSI because BlueZ only re-reports it when it reads it. The RSSI
+    line is "0xffa9 (-87)": the signed value is the bracketed one, and matching
+    bare digits reads the leading 0 of the hex form as a 0 dBm reading.
+    """
+    out = {}
+    try:
+        text = subprocess.run(["bluetoothctl", "info", addr],
+                              capture_output=True, text=True, timeout=10).stdout
+    except Exception:
+        return out
+    for line in text.splitlines():
+        m = re.match(r"\s*(Name|Alias|RSSI|Icon):\s*(.*)$", line)
+        if not m:
+            continue
+        key, val = m.group(1).lower(), m.group(2).strip()
+        if key == "rssi":
+            v = re.search(r"\((-?\d+)\)", val) or re.match(r"(?:rssi\s+)?(-?\d+)$", val)
+            if v and int(v.group(1)) < 0:
+                out["rssi"] = int(v.group(1))
+        elif val and key not in out:
+            out[key] = val
+    return out
+
+
+def classify(entry):
+    """Normalise a recorded bond down to one word the UI can switch on.
+
+    eww has no "contains" for strings, so matching the full Security Property
+    text in yuck would also miss the unverified case that Agent.report() writes.
+    Deriving the class here keeps that comparison in one place.
+    """
+    if not entry:
+        return "unknown"
+    prop = entry.get("property", "")
+    if prop == AUTHENTICATED:
+        return "auth"
+    if prop == UNAUTHENTICATED:
+        return "unauth"
+    return "unverified"
+
+
+def payload(cache, bz, now):
+    """Merge the signal cache, the security database and live adapter state."""
+    adapter = bz.adapter()
+    recorded = load_db()
+
+    conn = next((a for a, d in cache.items() if d.get("connected")), "")
+    if conn:
+        cache[conn].update(read_device(conn))
+
+    devices = []
+    for addr, dev in cache.items():
+        entry = recorded.get(addr, {})
+        rssi = dev.get("rssi", -100)
+        name = (dev.get("alias") or dev.get("name") or "").strip() or addr
+        devices.append({
+            "addr": addr,
+            "name": name,
+            "paired": bool(dev.get("paired")),
+            "bonded": bool(dev.get("bonded")),
+            "trusted": bool(dev.get("trusted")),
+            "connected": addr == conn,
+            "blocked": bool(dev.get("blocked")),
+            "legacy": bool(dev.get("legacypairing")),
+            "rssi": rssi,
+            "bucket": bucket(rssi),
+            "icon": dev.get("icon", ""),
+            "model": entry.get("model", ""),
+            "property": entry.get("property", ""),
+            "sec": classify(entry),
+            "level": entry.get("level") or 0,
+            "secure": bool(entry.get("secure_connections")),
+        })
+    devices.sort(key=lambda d: (not d["connected"], not d["bonded"], -d["rssi"]))
+
+    return {
+        "powered": adapter["powered"],
+        "adapter": adapter["name"],
+        "discovering": adapter["discovering"],
+        "devices": devices,
+    }
+
+
+def stream():
+    bz = Bluez()
+    cache = {}
+    mon = monitor()
+    last = None
+    while True:
+        if select.select([mon.stdout], [], [], POLL)[0]:
+            mon, _ = drain(mon, cache)
+        # The signal never reports Pairable/Discoverable or a device's trust flag
+        # changing, so the adapter is re-read every tick regardless.
+        blob = json.dumps(payload(cache, bz, time.time()))
+        if blob != last:
+            print(blob, flush=True)
+            last = blob
+
+
+def cmd_connect(bz, addr):
+    """Connect a bonded device. Pairing is deliberately a separate command: this
+    one refuses anything not already bonded, so it can never be the thing that
+    silently produces an unauthenticated key."""
+    dev = find_device(bz, addr)
+    if not (dev.get("Bonded") or dev.get("Paired")):
+        sys.exit("%s is not bonded; run `btsec pair %s` first" % (addr, addr))
+    try:
+        bz.adapter_call("ConnectDevice",
+                        GLib.Variant("(os)", (dev["path"], "KeyboardDisplay")), None)
+        print("connecting to %s" % addr)
+    except GLib.Error as exc:
+        sys.exit("connect failed: %s" % exc.message)
+    write_pending_if_any(addr, "connect")
+
+
+def cmd_disconnect(bz, addr=None):
+    path = find_device(bz, addr)["path"] if addr else None
+    try:
+        if path:
+            bz.call(path, "org.bluez.Device1", "Disconnect", None, None)
+            print("disconnected %s" % addr)
+        else:
+            bz.call(ADAPTER, "org.bluez.Adapter1", "DisconnectDevice", None, None)
+            print("disconnected all devices")
+    except GLib.Error as exc:
+        sys.exit("disconnect failed: %s" % exc.message)
+
+
+def write_pending_if_any(addr, op):
+    db = load_db()
+    entry = db.get(addr.upper())
+    if not entry:
+        return
+    kind, _ = failure_action(entry.get("property", UNAUTHENTICATED), True)
+    if kind == "auto-repair-ok":
+        print("note: Table 2.9 allows re-pairing automatically for this bond, "
+              "but that is a user decision here -- nothing was re-paired.")
+
+
 USAGE = """usage: btsec <command> [args]
 
+  stream                             deflisten source for the eww panel
+  power on | off                     adapter power
   modes                              adapter modes, cited against GAP
   scan [--seconds N]                 discover devices to pair with
   bonds                              bonds + recorded security properties
@@ -795,6 +1057,8 @@ USAGE = """usage: btsec <command> [args]
   policy                             Table 2.9 failure handling
   pair <addr> --io <cap> [--peer-io <cap>] [--mitm] [--legacy]
                                     pair as the agent, recording the model used
+  connect <addr>                     connect a bonded device
+  disconnect [<addr>]                disconnect one device, or all
   trust <addr> | untrust <addr>      explicit trust marking
   forget <addr>                      remove the device and its record
   selftest                           self-check
@@ -809,6 +1073,8 @@ def main():
         print(USAGE)
         return
     cmd, rest = args[0], args[1:]
+    if cmd == "stream":
+        return stream()
     if cmd == "selftest":
         return selftest()
     if cmd == "policy":
@@ -826,6 +1092,10 @@ def main():
     bz = Bluez()
     if cmd == "modes":
         return cmd_modes(bz)
+    if cmd == "power":
+        if not rest or rest[0] not in ("on", "off"):
+            sys.exit("power needs 'on' or 'off'")
+        return cmd_power(bz, rest[0] == "on")
     if cmd == "scan":
         seconds = 12
         if "--seconds" in rest:
@@ -844,6 +1114,12 @@ def main():
         if not rest:
             sys.exit("forget needs a device address")
         return cmd_forget(bz, rest[0])
+    if cmd == "connect":
+        if not rest:
+            sys.exit("connect needs a device address")
+        return cmd_connect(bz, rest[0])
+    if cmd == "disconnect":
+        return cmd_disconnect(bz, rest[0] if rest else None)
     if cmd == "pair":
         if not rest:
             sys.exit("pair needs a device address")

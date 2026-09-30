@@ -1,0 +1,297 @@
+// The Bluetooth panel deliberately looks like the network panel. Rather than
+// copy the shell rules, this file @extends them: SCSS resolves that at compile
+// time into a combined selector, so the two panels cannot drift apart and
+// restyling the network shell restyles this one too. Anything Bluetooth-specific
+// is written out rather than extended.
+
+.bt-screen {
+  background-color: $xbg;
+  padding: $padding;
+}
+
+.bt-root {
+  background-color: transparent;
+  padding: 0;
+}
+
+.bt-lcol {
+  background-color: $xbg;
+  padding: $padding;
+}
+
+.bt-leadpad-in {
+  min-width: dpi(316px);
+}
+
+.bt-titlebar {
+  @extend .nw-titlebar;
+}
+
+.bt-head-ico {
+  @extend .nw-head-ico;
+}
+
+.bt-head-title {
+  @extend .nw-head-title;
+}
+
+.bt-title {
+  @extend .nw-title;
+}
+
+.bt-closecard {
+  @extend .nw-closecard;
+}
+
+.bt-close-x {
+  @extend .nw-close-x;
+}
+
+.bt-close {
+  @extend .nw-close;
+}
+
+.bt-body {
+  min-height: dpi(560px);
+}
+
+.bt-vgap {
+  @extend .nw-vgap;
+}
+
+.bt-vgap-sm {
+  min-height: dpi(6px);
+}
+
+.bt-listcard {
+  min-width: dpi(508px);
+}
+
+.bt-card {
+  @extend .nw-card;
+}
+
+.bt-btn {
+  @extend .nw-btn;
+
+  &.ghost {
+    background-color: rgba($x8, 0.45);
+
+    label {
+      color: $x6;
+    }
+
+    &:hover {
+      background-color: $x6;
+
+      label {
+        color: $xbg;
+      }
+    }
+  }
+
+  &.danger {
+    background-color: rgba($x1, 0.18);
+
+    label {
+      color: $x1;
+    }
+
+    &:hover {
+      background-color: $x1;
+
+      label {
+        color: $xbg;
+      }
+    }
+  }
+}
+
+.bt-empty {
+  @extend .nw-empty;
+}
+
+.bt-empty-t {
+  @extend .nw-empty-t;
+}
+
+.bt-panehead {
+  @extend .nw-panehead;
+}
+
+.bt-phead-ico {
+  @extend .nw-phead-ico;
+}
+
+.bt-phead-t {
+  @extend .nw-phead-t;
+}
+
+.bt-connecting {
+  @extend .nw-connecting;
+}
+
+.bt-scan {
+  @extend .nw-scan;
+}
+
+.bt-scan-ico {
+  @extend .nw-scan-ico;
+}
+
+.bt-listwrap {
+  min-height: dpi(360px);
+}
+
+.bt-scroll {
+  min-height: dpi(120px);
+}
+
+.bt-row {
+  padding: dpi(9px) dpi(8px);
+  border-radius: dpi(6px);
+  margin-bottom: dpi(2px);
+
+  &:hover {
+    background-color: rgba($x7, 0.06);
+  }
+
+  .bt-row-ico {
+    color: $x4;
+    margin-right: $margin;
+  }
+
+  .bt-row-name {
+    font-size: dpi(21px);
+    color: $x7;
+  }
+
+  .bt-row-state {
+    @extend .nw-sec;
+  }
+
+  .bt-sig {
+    @extend .nw-sig;
+  }
+
+  &.bonded {
+    .bt-row-ico {
+      color: $x6;
+    }
+  }
+
+  &.connected {
+    background-color: rgba($x4, 0.16);
+
+    .bt-row-ico {
+      color: $x6;
+    }
+
+    .bt-row-name,
+    .bt-row-state {
+      color: $x6;
+    }
+  }
+
+  &.sel {
+    background-color: rgba($x4, 0.28);
+
+    .bt-row-name,
+    .bt-row-state,
+    .bt-secbadge {
+      color: $xbg;
+    }
+  }
+}
+
+// The security property of the bond, and the reason this panel exists: a bond
+// BlueZ made looks exactly like one btsec made, unless it is written down.
+.bt-secbadge {
+  font-size: dpi(15px);
+  padding: 0 dpi(9px);
+  margin: 0 $margin;
+  @include cut2(mix($x0, $xbg, 65%), dpi(9px));
+
+  &.auth {
+    color: $x2;
+    @include cut2(rgba($x2, 0.22), dpi(9px));
+  }
+
+  &.unauth {
+    color: $x1;
+    @include cut2(rgba($x1, 0.22), dpi(9px));
+  }
+
+  &.unverified {
+    color: $x3;
+    @include cut2(rgba($x3, 0.22), dpi(9px));
+  }
+
+  &.unknown {
+    color: $x8;
+  }
+}
+
+.bt-dwrap {
+  min-width: dpi(616px);
+  background-color: $xbg;
+  padding: $padding;
+}
+
+.bt-dcol {
+  padding: dpi(2px) 0;
+}
+
+.bt-dhead {
+  padding: dpi(10px) dpi(14px);
+}
+
+.bt-dico {
+  @extend .nw-dico;
+}
+
+.bt-dhead-name {
+  @extend .nw-dhead-ssid;
+}
+
+.bt-dhead-sub {
+  @extend .nw-dhead-sub;
+}
+
+.bt-seccard {
+  padding: dpi(12px) dpi(14px) dpi(14px) dpi(14px);
+}
+
+.bt-cardtitle {
+  font-size: dpi(19px);
+  color: $x7;
+}
+
+.bt-frow {
+  padding: dpi(3px) 0;
+
+  .bt-flabel {
+    min-width: dpi(96px);
+    font-size: dpi(17px);
+    color: rgba($x7, 0.5);
+    margin-right: $margin;
+  }
+
+  .bt-fval {
+    font-size: dpi(18px);
+    color: $x7;
+
+    &.mono {
+      color: $x6;
+    }
+  }
+}
+
+.bt-note {
+  font-size: dpi(16px);
+  color: $x3;
+  margin-top: dpi(8px);
+  padding: dpi(8px) dpi(10px);
+  background-color: rgba($x3, 0.12);
+  @include cut2(rgba($x3, 0.12), dpi(10px));
+}

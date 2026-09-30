@@ -146,3 +146,33 @@ label.auto-tag {
     opacity: 0.55;
   }
 }
+
+.vpnt-state {
+  min-width: dpi(70px);
+
+  &.connected {
+    color: $x2;
+  }
+  &.disconnected {
+    color: $x3;
+  }
+  &.off {
+    color: $x8;
+  }
+}
+
+.vpnbtn {
+  padding: dpi(3px) dpi(10px);
+  border-radius: dpi(3px);
+  background-color: $x0;
+  transition: background-color 200ms;
+
+  label {
+    font-size: dpi(16px);
+    color: $x15;
+  }
+
+  &:hover {
+    background-color: $x4;
+  }
+}

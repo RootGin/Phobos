@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import glob
 import json
 import os
 import select
@@ -23,9 +24,25 @@ TRANSLATE = {
 }
 
 
+def niri_env():
+    """niri's CLI only reads NIRI_SOCKET and never falls back to a glob, so a
+    restart renames the socket and every inherited copy goes stale — the eww
+    daemon holds the old one and each `niri` call then fails. Re-resolve the
+    newest socket per call so an niri restart self-heals."""
+    env = dict(os.environ)
+    runtime = env.get("XDG_RUNTIME_DIR") or "/run/user/%d" % os.getuid()
+    socks = glob.glob(os.path.join(runtime, "niri.wayland-*.sock"))
+    if socks:
+        env["NIRI_SOCKET"] = max(socks, key=os.path.getmtime)
+    return env
+
+
+NIRI_ENV = niri_env()
+
+
 def niri(*args):
     try:
-        out = subprocess.run(["niri", "msg", "--json", *args],
+        out = subprocess.run(["niri", "msg", "--json", *args], env=niri_env(),
                              capture_output=True, text=True, timeout=2)
         if out.returncode != 0 or not out.stdout.strip():
             return []
@@ -159,6 +176,7 @@ def eww(*args):
 
 def main():
     stream = subprocess.Popen(["niri", "msg", "--json", "event-stream"],
+                              env=NIRI_ENV,
                               stdout=subprocess.PIPE, bufsize=0)
     fd = stream.stdout.fileno()
     last = None
