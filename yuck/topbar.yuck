@@ -42,11 +42,11 @@
         :space-evenly false 
         :spacing 20
         :class "window bar"
-        :tooltip "${EWW_BATTERY.BAT0.capacity}%"
+        :tooltip "${battjson.tip}"
 (eventbox
         :cursor "pointer"
         :timeout "10s"
-        :tooltip "Battery details"
+        :tooltip "${battjson.tip}"
         :onclick "./scripts/hackslide.sh battint &"
         (batticon))
         (label 

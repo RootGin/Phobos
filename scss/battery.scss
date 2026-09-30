@@ -1,18 +1,121 @@
-.batrow {
-  margin: 0 0 dpi(2px);
+// The panel is built from the same parts the rest of the shell uses: a solid
+// `.window` panel, `$x0` cards inside it, the shared `scale` styling and the
+// powermenu's segmented meter (extended, not copied — see bt.scss for why).
 
-  label {
+$batt-card-w: dpi(364px);
+
+.batt-card {
+  background-color: $xbg;
+  padding: $padding;
+  min-width: $batt-card-w;
+}
+
+.batt-hero {
+  padding-bottom: dpi(6px);
+
+  label.batt-pct {
+    font-size: dpi(34px);
+    color: $xfg;
+    margin: 0 dpi(10px);
+  }
+
+  label.batt-state {
+    font-size: dpi(17px);
+    color: $x6;
+    margin: dpi(2px) 0 dpi(6px) 0;
+  }
+
+  label.batt-model {
+    font-size: dpi(14px);
+    color: $x8;
+  }
+}
+
+.batt-segs {
+  margin-bottom: dpi(2px);
+}
+
+
+.batt-seg {
+  @extend .pm-seg;
+  min-width: dpi(15px);
+  min-height: dpi(14px);
+  margin-right: dpi(2px);
+}
+
+.batt-facts {
+  margin-top: dpi(4px);
+}
+
+.batt-fact {
+  background-color: $x0;
+  min-height: dpi(48px);
+  padding: dpi(6px) dpi(10px);
+  margin: 0 0 dpi(4px) 0;
+
+  label.batt-fact-name {
+    font-size: dpi(14px);
+    color: $x8;
+  }
+
+  label.batt-fact-val {
     font-size: dpi(19px);
-    margin: 0 dpi(6px);
+    color: $xfg;
+  }
+}
 
-    &.batname {
-      min-width: dpi(110px);
+.batt-extras {
+  background-color: $x0;
+  padding: dpi(4px) dpi(10px);
+  margin-top: dpi(2px);
+}
+
+.batt-extra {
+  padding: dpi(2px) 0;
+
+  label.batt-extra-name {
+    font-size: dpi(15px);
+    color: $x7;
+    margin-right: dpi(8px);
+  }
+
+  label.batt-extra-val {
+    font-size: dpi(15px);
+    color: $x8;
+  }
+}
+
+.batt-opts {
+  margin-top: dpi(10px);
+}
+
+label.batt-sect {
+  font-size: dpi(15px);
+  color: $x8;
+  margin: 0 0 dpi(4px) 0;
+}
+
+label.batt-opt-name {
+  font-size: dpi(19px);
+  color: $xfg;
+}
+
+.batt-scale {
+  trough {
+    min-width: dpi(140px);
+    min-height: dpi(14px);
+    margin: 0 dpi(8px) 0 0;
+
+    slider {
+      min-width: dpi(14px);
+      min-height: dpi(14px);
     }
   }
 }
 
-label.batsect {
+label.batt-thr {
   font-size: dpi(19px);
-  color: $x8;
-  margin: 0 dpi(6px) dpi(4px) dpi(6px);
+  color: $x7;
+  min-width: dpi(46px);
+  margin: 0;
 }

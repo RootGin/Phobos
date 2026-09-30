@@ -1,4 +1,4 @@
-(defvar version "0.4.43")
+(defvar version "0.4.45")
 
 (defvar EWW_CMD "eww -c .")
 
@@ -14,7 +14,7 @@
 (defvar powerprofile "performance")
 (defvar powerauto "false")
 
-(deflisten battjson :initial '{"status":"","charge":"","time":"","draw":"","health":"","cycles":"","thr":20}' "./scripts/battery.py")
+(deflisten battjson :initial '{"thr":20,"ac":false,"main":{"name":"","cap":0,"present":false,"state":"","charge":"","time":"","draw":"","health":"","cycles":"","model":""},"extra":[],"segments":[],"brief":"","tip":""}' "./scripts/battery.py")
 
 (deflisten pcover "./scripts/coverart.sh")
 (deflisten playerctl :initial '{"song": "", "artist": "", "status": "Stopped"}' "playerctl metadata --format '{\"song\": \"{{title}}\",\"artist\": \"{{artist}}\", \"status\": \"{{status}}\"}' -F")

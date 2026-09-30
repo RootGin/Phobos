@@ -5,7 +5,7 @@
               :x 0
               :y 0
               :width 0
-              :height 0
+              :height 360
               :anchor "top right")
   :stacking "overlay"
   :exclusive false
@@ -49,64 +49,128 @@
     :image-width 35
     :path "./assets/icons/bat${ EWW_BATTERY.BAT0.status != 'Discharging' ? 'c' : (EWW_BATTERY.BAT0.capacity < 25 ? '0' : (EWW_BATTERY.BAT0.capacity < 50 ? '1' : (EWW_BATTERY.BAT0.capacity < 75 ? '2' : '3'))) }.svg"))
 
-(defwidget batthead []
+(defwidget battsegs []
   (box
-    :class "window cont"
+    :class "batt-segs"
     :orientation "h"
     :space-evenly false
-    (batticon)
-    (label
-      :text "Battery")))
+    (for seg in {battjson.segments}
+      (box
+        :class "batt-seg ${seg}"))))
 
-(defwidget batrow [name value]
+(defwidget batthero []
   (box
-    :class "batrow"
-    :orientation "h"
+    :class "batt-hero"
+    :orientation "v"
     :space-evenly false
+    (box
+      :orientation "h"
+      :space-evenly false
+      :valign "center"
+      (batticon)
+      (label
+        :class "batt-pct"
+        :text "${battjson.main.charge}")
+      (box
+        :hexpand true)
+      (label
+        :class "batt-model"
+        :truncate true
+        :limit-width 14
+        :text "${battjson.main.model}"))
+    (box
+      :orientation "h"
+      :space-evenly false
+      :valign "center"
+      (label
+        :class "batt-state"
+        :text "${battjson.main.state}"))
+    (battsegs)))
+
+(defwidget battfact [name value]
+  (box
+    :class "batt-fact"
+    :orientation "v"
+    :space-evenly false
+    :hexpand true
     (label
-      :class "batname"
+      :class "batt-fact-name"
+      :xalign 0
       :text name)
     (label
-      :class "hard batval"
-      :xalign 1
-      :hexpand true
+      :class "batt-fact-val"
+      :xalign 0
       :text value)))
 
-(defwidget batrows []
+(defwidget battfacts []
   (box
-    :class "window cont"
+    :class "batt-facts"
     :orientation "v"
     :space-evenly false
-    (batrow
-      :name "Status"
-      :value "${battjson.status}")
-    (batrow
-      :name "Charge"
-      :value "${battjson.charge}")
-    (batrow
-      :name "Time"
-      :value "${battjson.time}")
-    (batrow
-      :name "Draw"
-      :value "${battjson.draw}")
-    (batrow
-      :name "Health"
-      :value "${battjson.health}")
-    (batrow
-      :name "Cycles"
-      :value "${battjson.cycles}")))
+    (box
+      :orientation "h"
+      :space-evenly false
+      :spacing 4
+      (battfact
+        :name "Time left"
+        :value "${battjson.main.time}")
+      (battfact
+        :name "Draw"
+        :value "${battjson.main.draw}"))
+    (box
+      :orientation "h"
+      :space-evenly false
+      :spacing 4
+      (battfact
+        :name "Health"
+        :value "${battjson.main.health}")
+      (battfact
+        :name "Cycles"
+        :value "${battjson.main.cycles}"))))
 
-(defwidget batopts []
+(defwidget battextra [name model charge state]
   (box
-    :class "window cont"
+    :class "batt-extra"
+    :orientation "h"
+    :space-evenly false
+    (image
+      :image-width 24
+      :path "./assets/icons/bat${ charge == "100%" || state == "Full" ? 'c' : (state == "Charging" ? 'c' : '1') }.svg")
+    (label
+      :class "batt-extra-name"
+      :truncate true
+      :limit-width 14
+      :text model)
+    (box
+      :hexpand true)
+    (label
+      :class "batt-extra-val"
+      :truncate true
+      :limit-width 18
+      :text "${charge} · ${state}")))
+
+(defwidget battextras []
+  (box
+    :class "batt-extras"
     :orientation "v"
     :space-evenly false
-    (label
-      :class "batsect"
-      :xalign 0
-      :text "Options")
+    :visible {battjson.extra != []}
+    (for bat in {battjson.extra}
+      (battextra
+        :name "${bat.name}"
+        :model {bat.model != "" ? bat.model : bat.name}
+        :charge "${bat.charge}"
+        :state "${bat.state}"))))
+
+(defwidget battslider []
+  (box
+    :class "batt-slider"
+    :orientation "h"
+    :space-evenly false
+    :valign "center"
     (overlay
       (scale
+        :class "batt-scale"
         :value "${battjson.thr}"
         :min 5
         :max 95
@@ -122,17 +186,36 @@
         :style "margin: 4px;"
         :class "triangle bottomright"))
     (label
-      :class "hard"
-      :xalign 1
-      :text "Alert below ${battjson.thr}%")))
+      :class "batt-thr"
+      :text "${battjson.thr}%")))
+
+(defwidget battopts []
+  (box
+    :class "batt-opts"
+    :orientation "v"
+    :space-evenly false
+    (label
+      :class "batt-sect"
+      :xalign 0
+      :text "Options")
+    (box
+      :orientation "h"
+      :space-evenly false
+      :valign "center"
+      (label
+        :class "batt-opt-name"
+        :text "Low-battery alert")
+      (box
+        :hexpand true)
+      (battslider))))
 
 (defwidget battwid []
   (box
+    :class "batt-card"
     :orientation "v"
     :space-evenly false
-    :width 404
-    :vexpand true
-    :class "window cont trans"
-    (batthead)
-    (batrows)
-    (batopts)))
+    :width 364
+    (batthero)
+    (battfacts)
+    (battextras)
+    (battopts)))
