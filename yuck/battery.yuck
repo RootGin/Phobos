@@ -5,7 +5,7 @@
               :x 0
               :y 0
               :width 0
-              :height 360
+              :height 280
               :anchor "top right")
   :stacking "overlay"
   :exclusive false
@@ -134,12 +134,12 @@
     :orientation "h"
     :space-evenly false
     (image
-      :image-width 24
+      :image-width 20
       :path "./assets/icons/bat${ charge == "100%" || state == "Full" ? 'c' : (state == "Charging" ? 'c' : '1') }.svg")
     (label
       :class "batt-extra-name"
       :truncate true
-      :limit-width 14
+      :limit-width 13
       :text model)
     (box
       :hexpand true)
@@ -214,7 +214,7 @@
     :class "batt-card"
     :orientation "v"
     :space-evenly false
-    :width 364
+    :width 330
     (batthero)
     (battfacts)
     (battextras)

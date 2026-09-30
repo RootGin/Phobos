@@ -2,113 +2,113 @@
 // `.window` panel, `$x0` cards inside it, the shared `scale` styling and the
 // powermenu's segmented meter (extended, not copied — see bt.scss for why).
 
-$batt-card-w: dpi(364px);
+$batt-card-w: dpi(330px);
 
 .batt-card {
   background-color: $xbg;
-  padding: $padding;
+  padding: dpi(6px);
   min-width: $batt-card-w;
 }
 
 .batt-hero {
-  padding-bottom: dpi(6px);
+  padding-bottom: dpi(4px);
 
   label.batt-pct {
-    font-size: dpi(34px);
+    font-size: dpi(26px);
     color: $xfg;
-    margin: 0 dpi(10px);
+    margin: 0 dpi(8px);
   }
 
   label.batt-state {
-    font-size: dpi(17px);
+    font-size: dpi(15px);
     color: $x6;
-    margin: dpi(2px) 0 dpi(6px) 0;
+    margin: dpi(1px) 0 dpi(4px) 0;
   }
 
   label.batt-model {
-    font-size: dpi(14px);
+    font-size: dpi(13px);
     color: $x8;
   }
 }
 
 .batt-segs {
-  margin-bottom: dpi(2px);
+  margin-bottom: dpi(1px);
 }
 
 
 .batt-seg {
   @extend .pm-seg;
-  min-width: dpi(15px);
-  min-height: dpi(14px);
+  min-width: dpi(13px);
+  min-height: dpi(10px);
   margin-right: dpi(2px);
 }
 
 .batt-facts {
-  margin-top: dpi(4px);
+  margin-top: dpi(2px);
 }
 
 .batt-fact {
   background-color: $x0;
-  min-height: dpi(48px);
-  padding: dpi(6px) dpi(10px);
-  margin: 0 0 dpi(4px) 0;
+  min-height: dpi(38px);
+  padding: dpi(4px) dpi(8px);
+  margin: 0 0 dpi(3px) 0;
 
   label.batt-fact-name {
-    font-size: dpi(14px);
+    font-size: dpi(12px);
     color: $x8;
   }
 
   label.batt-fact-val {
-    font-size: dpi(19px);
+    font-size: dpi(16px);
     color: $xfg;
   }
 }
 
 .batt-extras {
   background-color: $x0;
-  padding: dpi(4px) dpi(10px);
-  margin-top: dpi(2px);
+  padding: dpi(3px) dpi(8px);
+  margin-top: dpi(1px);
 }
 
 .batt-extra {
-  padding: dpi(2px) 0;
+  padding: dpi(1px) 0;
 
   label.batt-extra-name {
-    font-size: dpi(15px);
+    font-size: dpi(13px);
     color: $x7;
-    margin-right: dpi(8px);
+    margin-right: dpi(6px);
   }
 
   label.batt-extra-val {
-    font-size: dpi(15px);
+    font-size: dpi(13px);
     color: $x8;
   }
 }
 
 .batt-opts {
-  margin-top: dpi(10px);
+  margin-top: dpi(6px);
 }
 
 label.batt-sect {
-  font-size: dpi(15px);
+  font-size: dpi(13px);
   color: $x8;
-  margin: 0 0 dpi(4px) 0;
+  margin: 0 0 dpi(2px) 0;
 }
 
 label.batt-opt-name {
-  font-size: dpi(19px);
+  font-size: dpi(16px);
   color: $xfg;
 }
 
 .batt-scale {
   trough {
-    min-width: dpi(140px);
+    min-width: dpi(120px);
   }
 }
 
 label.batt-thr {
-  font-size: dpi(19px);
+  font-size: dpi(16px);
   color: $x7;
-  min-width: dpi(46px);
+  min-width: dpi(40px);
   margin: 0;
 }
