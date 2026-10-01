@@ -25,7 +25,12 @@ auto_on() {
         [ "$(cat "$AUTO_FILE")" = true ]
         return
     fi
-    powerprofilesctl query-battery-aware | grep -q True
+    if powerprofilesctl query-battery-aware | grep -q True; then
+        remember true
+        return 0
+    fi
+    remember false
+    return 1
 }
 
 remember() {

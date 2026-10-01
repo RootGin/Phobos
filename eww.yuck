@@ -1,4 +1,4 @@
-(defvar version "0.4.57")
+(defvar version "0.4.58")
 
 (defvar EWW_CMD "eww -c .")
 
@@ -11,8 +11,8 @@
 (deflisten btsec :initial '{"powered":false,"adapter":"","discovering":false,"devices":[]}'
   "./scripts/btsec.py stream")
 (defvar dnd "false")
-(defvar powerprofile "performance")
-(defvar powerauto "false")
+(defpoll powerprofile :interval "10s" "powerprofilesctl get 2>/dev/null || echo balanced")
+(defpoll powerauto :interval "5s" "cat ~/.local/state/phobos/powerauto 2>/dev/null || echo false")
 
 (deflisten battjson :initial '{"thr":20,"ac":false,"main":{"name":"","cap":0,"present":false,"state":"","charge":"","time":"","draw":"","health":"","cycles":"","model":""},"extra":[],"segments":[],"brief":"","tip":""}' "./scripts/battery.py")
 
