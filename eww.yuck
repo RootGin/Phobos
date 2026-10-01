@@ -1,9 +1,9 @@
-(defvar version "0.4.55")
+(defvar version "0.4.56")
 
 (defvar EWW_CMD "eww -c .")
 
 (defvar volumejson '{"volume":0,"volumemute":false}')
-(defvar brightness "0")
+(defpoll brightness :interval "1s" "brightnessctl -m | awk -F, '{print $4}' | tr -d '%'")
 (defvar sysstat '{"cpu":0,"ram":0}')
 (defvar diskstat "0")
 (defvar vpnt '{"state":"off","server":"","ip":""}')

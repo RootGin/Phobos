@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-# Volume only. Brightness used to ride along here, but it is a udev `backlight`
-# event source now (scripts/brightness-watch.sh) — a 2s poll would redraw the bar
-# and its 3-state icon for nothing.
+# Volume only. Brightness is a defpoll in eww.yuck and nothing outside eww
+# mutates it, so it needs no seeder here.
 CFG="$(cd "$(dirname "$0")/.." && pwd)"
 EWW=(eww -c "$CFG")
 
