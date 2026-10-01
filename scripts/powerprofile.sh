@@ -3,10 +3,13 @@
 # daemon: PPD only follows AC transitions when it happens to start after
 # upower, and its unit declares no such dependency, so on a normal boot it never
 # sees the plug event. `watch` follows AC over udev and re-applies the profile.
+# PPD keeps no battery-aware setting across reboots, so `sync` reads the user's
+# intent from $AUTO_FILE and re-enables it.
 
 EWW="${EWW_CMD:-eww -c $(cd "$(dirname "$0")/.." && pwd)}"
 SELF="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
 LOCK=/tmp/phobos-powerprofile.lock
+AUTO_FILE="$HOME/.local/state/phobos/powerauto"
 
 on_ac() {
     local d
@@ -17,32 +20,51 @@ on_ac() {
     return 1
 }
 
-push() { $EWW update "$@" >/dev/null 2>&1 & disown; }
+auto_on() {
+    if [ -f "$AUTO_FILE" ]; then
+        [ "$(cat "$AUTO_FILE")" = true ]
+        return
+    fi
+    powerprofilesctl query-battery-aware | grep -q True
+}
+
+remember() {
+    mkdir -p "$(dirname "$AUTO_FILE")"
+    printf '%s\n' "$1" >"$AUTO_FILE"
+}
+
+push() {
+    local i
+    for ((i = 0; i < 30; i++)); do
+        $EWW update "$@" >/dev/null 2>&1 && return 0
+        sleep 1
+    done
+}
 
 # every command but `watch` takes the lock, so a cycle/auto click can't interleave
 # with the watcher's re-apply; `watch` would otherwise hold it for its whole life
-[ "$1" = watch ] || { exec 9>"$LOCK"; flock 9; }
+case "$1" in watch | sync) ;; *) exec 9>"$LOCK"; flock 9 ;; esac
 
-# a no-op unless auto is on, so a manual `cycle` still sticks
+# idempotent: re-applies the profile auto implies, and republishes both vars
 follow_ac() {
-    powerprofilesctl query-battery-aware | grep -q True || return 0
-    if on_ac; then want=performance; else want=power-saver; fi
-    [ "$(powerprofilesctl get)" = "$want" ] && return 0
-    powerprofilesctl set "$want" && push powerprofile="$want"
+    if auto_on; then
+        powerprofilesctl configure-battery-aware --enable 2>/dev/null
+        if on_ac; then want=performance; else want=power-saver; fi
+        [ "$(powerprofilesctl get)" = "$want" ] || powerprofilesctl set "$want"
+        push powerauto=true powerprofile="$(powerprofilesctl get)"
+    else
+        push powerauto=false
+    fi
 }
 
 case "$1" in
     watch)
+        "$SELF" follow-ac
         while true; do
-            last=$(on_ac && echo 1 || echo 0)
-            "$SELF" follow-ac
             udevadm monitor --subsystem-match=power_supply 2>/dev/null |
             while read -r line; do
                 case "$line" in *power_supply*) ;; *) continue ;; esac
                 sleep 1
-                now=$(on_ac && echo 1 || echo 0)
-                [ "$now" = "$last" ] && continue
-                last=$now
                 "$SELF" follow-ac
             done
         done
@@ -61,21 +83,20 @@ case "$1" in
         fi
         ;;
     auto)
-        if powerprofilesctl query-battery-aware | grep -q True; then
-            powerprofilesctl configure-battery-aware --disable && push powerauto=false
+        if auto_on; then
+            powerprofilesctl configure-battery-aware --disable 2>/dev/null
+            remember false
+            push powerauto=false
         else
-            powerprofilesctl configure-battery-aware --enable && push powerauto=true
+            powerprofilesctl configure-battery-aware --enable 2>/dev/null
+            remember true
             if on_ac; then want=performance; else want=power-saver; fi
-            if powerprofilesctl set "$want"; then push powerprofile="$want"; fi
+            powerprofilesctl set "$want"
+            push powerauto=true powerprofile="$want"
         fi
         ;;
     sync)
-        push powerprofile="$(powerprofilesctl get)"
-        if powerprofilesctl query-battery-aware | grep -q True; then
-            push powerauto=true
-        else
-            push powerauto=false
-        fi
+        "$SELF" follow-ac
         ;;
 esac
 powerprofilesctl get
