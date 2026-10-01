@@ -1,4 +1,4 @@
-(defvar version "0.4.65")
+(defvar version "0.4.66")
 
 (defvar EWW_CMD "eww -c .")
 
@@ -11,6 +11,7 @@
 (deflisten btsec :initial '{"powered":false,"adapter":"","discovering":false,"devices":[]}'
   "./scripts/btsec.py stream")
 (deflisten dnd :initial "false" "./scripts/dunstctl.sh is-paused")
+(defvar showdate "false")
 (defpoll powerprofile :interval "10s" "powerprofilesctl get 2>/dev/null || echo balanced")
 (deflisten powerauto :initial "false" "./scripts/powerprofile.sh emit-auto")
 

@@ -49,29 +49,43 @@
         :tooltip "${battjson.tip}"
         :onclick "./scripts/hackslide.sh battint &"
         (batticon))
-        (label 
-          :class "large"
-          :text {formattime(EWW_TIME, '%-d/%-m/%Y')}) 
-        (box 
-          :orientation "h"
-          :space-evenly false
-          :valign "center"
-          :class "animtime"
-          (animdigit 
-            :class "hard large"
-            :cur {substring(formattime(EWW_TIME, '%H'), 0, 1)})
-          (animdigit 
-            :class "hard large"
-            :cur {substring(formattime(EWW_TIME, '%H'), 1, 1)})
-          (label 
-            :class "hard large"
-            :text ":")
-          (animdigit  
-            :class "hard large"
-            :cur {substring(formattime(EWW_TIME, '%M'), 0, 1)})
-          (animdigit
-            :class "hard large"
-            :cur {substring(formattime(EWW_TIME, '%M'), 1, 1)}))))))
+        (eventbox
+          :cursor "pointer"
+          :timeout "10s"
+          :tooltip "Click to swap time / date"
+          :onclick "./scripts/clockswap.sh &"
+          (box
+            :orientation "h"
+            :space-evenly false
+            :valign "center"
+            :class "animtime"
+            (revealer
+              :transition "slideleft"
+              :reveal {showdate == "false"}
+              (box
+                :orientation "h"
+                :space-evenly false
+                (animdigit 
+                  :class "hard large"
+                  :cur {substring(formattime(EWW_TIME, '%H'), 0, 1)})
+                (animdigit 
+                  :class "hard large"
+                  :cur {substring(formattime(EWW_TIME, '%H'), 1, 1)})
+                (label 
+                  :class "hard large"
+                  :text ":")
+                (animdigit  
+                  :class "hard large"
+                  :cur {substring(formattime(EWW_TIME, '%M'), 0, 1)})
+                (animdigit
+                  :class "hard large"
+                  :cur {substring(formattime(EWW_TIME, '%M'), 1, 1)})))
+            (revealer
+              :transition "slideleft"
+              :reveal {showdate == "true"}
+              (label 
+                :class "large"
+                :text {formattime(EWW_TIME, '%-d/%-m/%Y')}))))))))
 
 (defwidget topleftstruct [] 
   (box 
