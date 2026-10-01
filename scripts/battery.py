@@ -3,9 +3,9 @@
 import glob
 import json
 import os
+import select
 import subprocess
 import sys
-import time
 
 CFG = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EWW = ["eww", "-c", CFG]
@@ -15,6 +15,8 @@ THR_FILE = os.path.expanduser("~/.local/state/phobos/battery-threshold")
 DEFAULT_THR = 20
 LO, HI = 0, 40
 SEGMENTS = 20
+POLL = 15.0
+DEBOUNCE = 0.3
 
 
 def rd(base, name, default=""):
@@ -166,27 +168,37 @@ def cmd_threshold(value):
     publish(snapshot())
 
 
+def monitor():
+    return subprocess.Popen(["udevadm", "monitor", "--subsystem-match=power_supply"],
+                            stdout=subprocess.PIPE, text=True, bufsize=1)
+
+
+def drain(mon):
+    """Swallow the burst of monitor lines, restarting udevadm if its pipe closed."""
+    while select.select([mon.stdout], [], [], DEBOUNCE)[0]:
+        if not mon.stdout.readline():
+            return monitor()
+    return mon
+
+
 def stream():
-    def emit(previous):
+    """udevadm fires on every capacity/status write, but upower's rate-based
+    time estimate lands a tick later, so fall back to a slow tick of our own."""
+    last = None
+    previous = -1
+    mon = monitor()
+    while True:
+        if select.select([mon.stdout], [], [], POLL)[0]:
+            mon = drain(mon)
         payload = snapshot()
         cap = payload["main"]["cap"]
         if previous >= payload["thr"] and cap < payload["thr"]:
             alert(payload)
-        return cap
-
-    capacity = emit(-1)
-    print(json.dumps(snapshot()), flush=True)
-    while True:
-        mon = subprocess.Popen(
-            ["udevadm", "monitor", "--subsystem-match=power_supply"],
-            stdout=subprocess.PIPE, text=True)
-        for line in mon.stdout:
-            if "power_supply" not in line:
-                continue
-            capacity = emit(capacity)
-            print(json.dumps(snapshot()), flush=True)
-        mon.wait()
-        time.sleep(1)
+        previous = cap
+        out = json.dumps(payload)
+        if out != last:
+            print(out, flush=True)
+            last = out
 
 
 def selftest():
@@ -196,7 +208,7 @@ def selftest():
     assert set(snap["main"]) == {"name", "cap", "status", "present", "state",
                                  "charge", "time", "draw", "health", "cycles",
                                  "model"}
-    assert snap["main"]["time"] == "--" or ":" in snap["main"]["time"]
+    assert snap["main"]["time"] == "--" or any(c.isdigit() for c in snap["main"]["time"])
     assert LO <= snap["thr"] <= HI
     print("battery.py selftest: ok", json.dumps(snap))
 
