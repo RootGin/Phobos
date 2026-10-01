@@ -18,31 +18,7 @@
       :halign "end"
       :reveal revealbattint
       :transition "slideleft"
-      (box
-        :orientation "v"
-        :space-evenly false
-
-        (box
-          :height 20
-          :orientation "h"
-          :space-evenly false
-          (box
-            :orientation "v"
-            :space-evenly false
-            (box
-              :class "triangle bottomright")
-            (box
-              :class "window"
-              :vexpand true))
-          (box
-            :class "window"
-            :hexpand true))
-
-        (box
-          :class "window"
-          (box
-            :style "margin: -20px 0px;"
-            (battwid)))))))
+      (battwid))))
 
 (defwidget batticon []
   (image
@@ -91,7 +67,7 @@
     :class "batt-fact"
     :orientation "v"
     :space-evenly false
-    :width 157
+    :width 142
     :height 38
     (label
       :class "batt-fact-name"
@@ -216,7 +192,7 @@
     :class "batt-card"
     :orientation "v"
     :space-evenly false
-    :width 330
+    :width 300
     (batthero)
     (battfacts)
     (battextras)
