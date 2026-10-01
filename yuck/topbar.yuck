@@ -43,6 +43,36 @@
         :spacing 20
         :class "window bar"
         :tooltip "${battjson.tip}"
+(revealer
+          :transition "slideleft"
+          :reveal {trayopen == "true"}
+          (box
+            :orientation "h"
+            :space-evenly false
+            :spacing 8
+            :class "tray-tasks"
+            :valign "center"
+            (for t in {tasklistjson}
+              (eventbox
+                :cursor "pointer"
+                :tooltip {t.name}
+                :onclick "niri msg action focus-window --id ${t.id}"
+                (image
+                  :class "tray-task"
+                  :image-width 22
+                  :path {t.path})))))
+        (eventbox
+          :cursor "pointer"
+          :timeout "10s"
+          :tooltip "Running tasks"
+          :onclick "./scripts/tray.sh &"
+          (transform
+            :transform-origin-x "50%"
+            :transform-origin-y "50%"
+            :rotate {trayspin * 20}
+            (image
+              :image-width 24
+              :path "./assets/icons/tray.svg")))
 (eventbox
         :cursor "pointer"
         :timeout "10s"

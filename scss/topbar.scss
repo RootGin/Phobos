@@ -5,6 +5,18 @@
   }
 }
 
+.tray-tasks {
+  margin-right: dpi(4px);
+}
+
+.tray-task {
+  opacity: 0.75;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
 .tb-gap {
   margin-bottom: dpi(20px);
 }
