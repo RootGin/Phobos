@@ -1,8 +1,8 @@
-(defvar version "0.4.62")
+(defvar version "0.4.63")
 
 (defvar EWW_CMD "eww -c .")
 
-(defvar volumejson '{"volume":0,"volumemute":false}')
+(defpoll volumejson :interval "2s" "./scripts/volume-status.sh")
 (deflisten brightness :initial "0" "./scripts/brightness-watch.sh")
 (defvar sysstat '{"cpu":0,"ram":0}')
 (defvar diskstat "0")
