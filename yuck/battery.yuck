@@ -67,7 +67,7 @@
     :class "batt-fact"
     :orientation "v"
     :space-evenly false
-    :width 104
+    :width 143
     :height 38
     (label
       :class "batt-fact-name"

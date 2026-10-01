@@ -2,7 +2,7 @@
 // `.window` panel, `$x0` cards inside it, the shared `scale` styling and the
 // powermenu's segmented meter (extended, not copied — see bt.scss for why).
 
-$batt-card-w: dpi(240px);
+$batt-card-w: dpi(318px);
 
 .batt-card {
   @include cut2($xbg, dpi(18px), $flip: true);
@@ -37,7 +37,7 @@ $batt-card-w: dpi(240px);
 
 
 .batt-seg {
-  min-width: dpi(11px);
+  min-width: dpi(13px);
   min-height: dpi(10px);
   margin-right: dpi(2px);
   background: $x8;
@@ -115,7 +115,7 @@ label.batt-opt-name {
 
 .batt-scale {
   trough {
-    min-width: dpi(90px);
+    min-width: dpi(130px);
     min-height: dpi(12px);
     margin: dpi(4px);
 
