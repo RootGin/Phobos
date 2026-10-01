@@ -5,7 +5,7 @@
 $batt-card-w: dpi(300px);
 
 .batt-card {
-  @include cut2($xbg, dpi(18px));
+  @include cut2($xbg, dpi(18px), $flip: true);
   padding: dpi(6px);
   min-width: $batt-card-w;
 }
