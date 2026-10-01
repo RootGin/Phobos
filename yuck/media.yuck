@@ -140,31 +140,26 @@
     :transform-origin-x "50%"
     :transform-origin-y "50%"
     :rotate -2
-    (overlay
-      (box 
-        :halign "center"
-        :valign "center"
-        :width 128
-        :height 128
-        :class "snote"
-        :orientation "v"
-        :space-evenly false
-        (label 
+    (box 
+      :halign "center"
+      :valign "center"
+      :width 110
+      :height 110
+      (overlay
+        (image 
           :halign "start"
           :valign "start"
-          :justify "center"
-          :wrap true
-          :text "Please \\ndo not \\nfeed")
-        (image 
-          :image-width 35
-          :path "./assets/arrow.png"))
-      (box 
-        :halign "start"
-        :valign "end"
-        :style "margin: 7px 18px;"
-        :class "triangle bottomleft")
-      (box 
-        :halign "start"
-        :valign "end"
-        :style "margin: 7px 18px;"
-        :class "notecorner"))))
+          :path "./assets/note.svg")
+        (box 
+          :class "snote"
+          :orientation "v"
+          :space-evenly false
+          (label 
+            :halign "start"
+            :valign "start"
+            :justify "center"
+            :wrap true
+            :text "Please \\ndo not \\nfeed")
+          (image 
+            :image-width 35
+            :path "./assets/arrow.png"))))))

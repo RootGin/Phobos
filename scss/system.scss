@@ -125,19 +125,11 @@ label.auto-tag {
 }
 
 .snote {
-  background-color: lightskyblue;
-  margin: $margin;
   padding: $padding;
   label {
     font-size: dpi(20px);
     color: black;
   }
-}
-
-.notecorner {
-   border-style: solid;
-   border-width: 0 dpi(20px) dpi(20px) 0;
-   border-color: transparent #4d9fd1 transparent transparent;
 }
 
 .wifinav {
