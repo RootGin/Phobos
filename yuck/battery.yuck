@@ -176,19 +176,20 @@
     (box
       :orientation "v"
       :space-evenly false
-      (label
-        :class "batt-opt-name"
-        :text "Low-battery alert")
       (box
         :orientation "h"
         :space-evenly false
         :valign "center"
-        (battslider)
+        (label
+          :class "batt-opt-name"
+          :xalign 0
+          :text "Low-battery alert")
         (box
           :hexpand true)
         (label
           :class "batt-thr"
-          :text "${battjson.thr}%")))))
+          :text "${battjson.thr}%"))
+      (battslider))))
 
 (defwidget battwid []
   (box

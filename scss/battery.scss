@@ -88,7 +88,7 @@ $batt-card-w: dpi(318px);
 }
 
 .batt-opts {
-  margin-top: dpi(6px);
+  margin-top: dpi(8px);
 }
 
 label.batt-sect {
@@ -99,7 +99,7 @@ label.batt-sect {
 
 label.batt-opt-name {
   font-size: dpi(16px);
-  color: $xfg;
+  color: $x8;
 }
 
 .batt-track {
@@ -115,9 +115,9 @@ label.batt-opt-name {
 
 .batt-scale {
   trough {
-    min-width: dpi(130px);
+    min-width: dpi(298px);
     min-height: dpi(12px);
-    margin: dpi(4px);
+    margin: dpi(6px) dpi(4px) dpi(2px) dpi(4px);
 
     slider {
       min-width: dpi(12px);
@@ -128,7 +128,6 @@ label.batt-opt-name {
 
 label.batt-thr {
   font-size: dpi(16px);
-  color: $x7;
-  min-width: dpi(40px);
+  color: $x4;
   margin: 0;
 }
