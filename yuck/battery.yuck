@@ -67,7 +67,7 @@
     :class "batt-fact"
     :orientation "v"
     :space-evenly false
-    :width 141
+    :width 104
     :height 38
     (label
       :class "batt-fact-name"
@@ -116,7 +116,7 @@
     (label
       :class "batt-extra-name"
       :truncate true
-      :limit-width 13
+      :limit-width 11
       :text model)
     (box
       :hexpand true)
@@ -162,10 +162,7 @@
         :halign "end"
         :valign "end"
         :style "margin: 4px;"
-        :class "triangle bottomright"))
-    (label
-      :class "batt-thr"
-      :text "${battjson.thr}%")))
+        :class "triangle bottomright"))))
 
 (defwidget battopts []
   (box
@@ -177,22 +174,27 @@
       :xalign 0
       :text "Options")
     (box
-      :orientation "h"
+      :orientation "v"
       :space-evenly false
-      :valign "center"
       (label
         :class "batt-opt-name"
         :text "Low-battery alert")
       (box
-        :hexpand true)
-      (battslider))))
+        :orientation "h"
+        :space-evenly false
+        :valign "center"
+        (battslider)
+        (box
+          :hexpand true)
+        (label
+          :class "batt-thr"
+          :text "${battjson.thr}%")))))
 
 (defwidget battwid []
   (box
     :class "batt-card"
     :orientation "v"
     :space-evenly false
-    :width 300
     (batthero)
     (battfacts)
     (battextras)
