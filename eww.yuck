@@ -1,4 +1,4 @@
-(defvar version "0.4.64")
+(defvar version "0.4.65")
 
 (defvar EWW_CMD "eww -c .")
 

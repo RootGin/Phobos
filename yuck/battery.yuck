@@ -147,24 +147,12 @@
     :orientation "h"
     :space-evenly false
     :valign "center"
-    (overlay
-      :class "batt-track"
-      (scale
-        :class "batt-scale"
-        :value "${battjson.thr}"
-        :min 0
-        :max 40
-        :onchange "./scripts/battery.py threshold {}")
-      (box
-        :halign "start"
-        :valign "start"
-        :style "margin: 4px;"
-        :class "triangle topleft")
-      (box
-        :halign "end"
-        :valign "end"
-        :style "margin: 4px;"
-        :class "triangle bottomright"))))
+    (scale
+      :class "batt-scale"
+      :value "${battjson.thr}"
+      :min 0
+      :max 40
+      :onchange "./scripts/battery.py threshold {}")))
 
 (defwidget battopts []
   (box
