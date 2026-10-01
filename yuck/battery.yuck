@@ -32,6 +32,7 @@
     :space-evenly false
     (for seg in {battjson.segments}
       (box
+        :hexpand true
         :class "batt-seg ${seg}"))))
 
 (defwidget batthero []
@@ -67,8 +68,7 @@
     :class "batt-fact"
     :orientation "v"
     :space-evenly false
-    :width 143
-    :height 38
+    :hexpand true
     (label
       :class "batt-fact-name"
       :xalign 0
@@ -87,6 +87,7 @@
     (box
       :orientation "h"
       :space-evenly false
+      :hexpand true
       :spacing 4
       (battfact
         :name "Time left"
@@ -97,6 +98,7 @@
     (box
       :orientation "h"
       :space-evenly false
+      :hexpand true
       :spacing 4
       (battfact
         :name "Health"

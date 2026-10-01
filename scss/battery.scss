@@ -3,10 +3,12 @@
 // powermenu's segmented meter (extended, not copied — see bt.scss for why).
 
 $batt-card-w: dpi(318px);
+$batt-pad: dpi(6px);
+$batt-inner: $batt-card-w - 2 * $batt-pad;
 
 .batt-card {
   @include cut2($xbg, dpi(18px), $flip: true);
-  padding: dpi(6px);
+  padding: $batt-pad;
   min-width: $batt-card-w;
 }
 
@@ -35,12 +37,15 @@ $batt-card-w: dpi(318px);
   margin-bottom: dpi(1px);
 }
 
-
 .batt-seg {
-  min-width: dpi(13px);
+  min-width: dpi(6px);
   min-height: dpi(10px);
   margin-right: dpi(2px);
   background: $x8;
+
+  &:last-child {
+    margin-right: 0;
+  }
 
   &.on {
     background: $x4;
@@ -115,13 +120,22 @@ label.batt-opt-name {
 
 .batt-scale {
   trough {
-    min-width: dpi(298px);
-    min-height: dpi(12px);
-    margin: dpi(6px) dpi(4px) dpi(2px) dpi(4px);
+    min-width: $batt-inner;
+    min-height: dpi(10px);
+    margin: dpi(6px) 0 dpi(2px) 0;
+    border-radius: 0;
 
     slider {
-      min-width: dpi(12px);
-      min-height: dpi(12px);
+      min-width: dpi(6px);
+      min-height: dpi(14px);
+      margin: dpi(-2px);
+      background-color: $x4;
+      border-radius: 0;
+    }
+
+    highlight {
+      background-color: $x4;
+      border-radius: 0;
     }
   }
 }
