@@ -57,6 +57,7 @@
                 :cursor "pointer"
                 :tooltip {t.name}
                 :onclick "niri msg action focus-window --id ${t.id}"
+                :onrightclick "niri msg action close-window --id ${t.id}"
                 (image
                   :class "tray-task"
                   :image-width 22
