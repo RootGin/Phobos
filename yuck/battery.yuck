@@ -91,7 +91,8 @@
     :class "batt-fact"
     :orientation "v"
     :space-evenly false
-    :hexpand true
+    :width 157
+    :height 38
     (label
       :class "batt-fact-name"
       :xalign 0
@@ -106,6 +107,7 @@
     :class "batt-facts"
     :orientation "v"
     :space-evenly false
+    :spacing 3
     (box
       :orientation "h"
       :space-evenly false

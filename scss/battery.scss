@@ -49,9 +49,7 @@ $batt-card-w: dpi(330px);
 
 .batt-fact {
   background-color: $x0;
-  min-height: dpi(38px);
   padding: dpi(4px) dpi(8px);
-  margin: 0 0 dpi(3px) 0;
 
   label.batt-fact-name {
     font-size: dpi(12px);
