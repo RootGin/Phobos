@@ -67,7 +67,6 @@
       :orientation "h"
       :space-evenly false
       :valign "center"
-      (batticon)
       (label
         :class "batt-pct"
         :text "${battjson.main.charge}")
@@ -169,11 +168,12 @@
     :space-evenly false
     :valign "center"
     (overlay
+      :class "batt-track"
       (scale
         :class "batt-scale"
         :value "${battjson.thr}"
-        :min 5
-        :max 95
+        :min 0
+        :max 40
         :onchange "./scripts/battery.py threshold {}")
       (box
         :halign "start"

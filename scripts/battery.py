@@ -13,7 +13,7 @@ VAR = "battjson"
 SUPPLY = "/sys/class/power_supply"
 THR_FILE = os.path.expanduser("~/.local/state/phobos/battery-threshold")
 DEFAULT_THR = 20
-LO, HI = 5, 95
+LO, HI = 0, 40
 SEGMENTS = 20
 
 
@@ -32,12 +32,28 @@ def num(base, name):
         return 0
 
 
-def fmt_time(sec):
-    sec = int(sec)
-    if sec <= 60:
+def upower_time(name, status):
+    """upower's own rate-based estimate; it omits the field when unknown."""
+    key = {"Discharging": "time to empty:",
+           "Charging": "time to full:"}.get(status)
+    if not key:
         return "--"
-    h, m = sec // 3600, (sec % 3600) // 60
-    return ("%dh %02dm" % (h, m)) if h else ("%dm" % m)
+    try:
+        listing = subprocess.run(["upower", "-e"], capture_output=True,
+                                 text=True, timeout=10).stdout
+        dev = next((l.strip() for l in listing.splitlines()
+                    if "/battery_" + name in l), None)
+        if not dev:
+            return "--"
+        info = subprocess.run(["upower", "-i", dev], capture_output=True,
+                              text=True, timeout=10).stdout
+    except (OSError, subprocess.SubprocessError):
+        return "--"
+    for line in info.splitlines():
+        if line.strip().lower().startswith(key):
+            value = line.split(":", 1)[1].strip()
+            return value if value and value != "--" else "--"
+    return "--"
 
 
 def threshold():
@@ -72,12 +88,7 @@ def read_battery(path, ac):
     level = rd(path, "capacity_level", "")
     full = energy(path, "charge_full")
     design = energy(path, "charge_full_design")
-    now = energy(path, "charge_now")
     pw = num(path, "power_now")
-
-    left = 0
-    if pw > 0 and now:
-        left = (now / pw) if status == "Discharging" else ((full - now) / pw)
 
     state = status
     if status == "Not charging":
@@ -88,10 +99,11 @@ def read_battery(path, ac):
     return {
         "name": os.path.basename(path),
         "cap": cap,
+        "status": status,
         "present": rd(path, "present", "1") == "1",
         "state": state,
         "charge": ("%d%%" % cap) if cap else (level or "--"),
-        "time": fmt_time(left),
+        "time": upower_time(os.path.basename(path), status),
         "draw": "%.2f W" % (pw / 1e6) if pw > 0 else "--",
         "health": "%.1f%%" % (full / design * 100) if full and design else "--",
         "cycles": rd(path, "cycle_count", "--"),
@@ -178,14 +190,13 @@ def stream():
 
 
 def selftest():
-    assert fmt_time(3600 * 2 + 60 * 14) == "2h 14m"
-    assert fmt_time(60 * 14) == "14m"
-    assert fmt_time(59) == "--"
     snap = snapshot()
     assert set(snap) == {"thr", "ac", "main", "extra", "segments", "brief", "tip"}
     assert len(snap["segments"]) == SEGMENTS
-    assert set(snap["main"]) == {"name", "cap", "present", "state", "charge", "time",
-                                 "draw", "health", "cycles", "model"}
+    assert set(snap["main"]) == {"name", "cap", "status", "present", "state",
+                                 "charge", "time", "draw", "health", "cycles",
+                                 "model"}
+    assert snap["main"]["time"] == "--" or ":" in snap["main"]["time"]
     assert LO <= snap["thr"] <= HI
     print("battery.py selftest: ok", json.dumps(snap))
 

@@ -100,9 +100,27 @@ label.batt-opt-name {
   color: $xfg;
 }
 
+.batt-track {
+  .triangle {
+    &.topleft {
+      border-width: dpi(12px) dpi(12px) 0 0;
+    }
+    &.bottomright {
+      border-width: 0 0 dpi(12px) dpi(12px);
+    }
+  }
+}
+
 .batt-scale {
   trough {
     min-width: dpi(120px);
+    min-height: dpi(12px);
+    margin: dpi(4px);
+
+    slider {
+      min-width: dpi(12px);
+      min-height: dpi(12px);
+    }
   }
 }
 
