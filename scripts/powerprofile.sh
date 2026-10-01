@@ -50,15 +50,14 @@ push() {
 # with the watcher's re-apply; `watch` would otherwise hold it for its whole life
 case "$1" in watch | sync) ;; *) exec 9>"$LOCK"; flock 9 ;; esac
 
-# idempotent: re-applies the profile auto implies, and republishes both vars
+# idempotent: re-applies the profile auto implies. `powerauto` is a deflisten
+# (one-shot emit-auto) and `powerprofile` a poll, so neither var needs a push here.
 follow_ac() {
     if auto_on; then
         powerprofilesctl configure-battery-aware --enable 2>/dev/null
         if on_ac; then want=performance; else want=power-saver; fi
         [ "$(powerprofilesctl get)" = "$want" ] || powerprofilesctl set "$want"
-        push powerauto=true powerprofile="$(powerprofilesctl get)"
-    else
-        push powerauto=false
+        push powerprofile="$(powerprofilesctl get)"
     fi
 }
 
@@ -100,8 +99,10 @@ case "$1" in
             push powerauto=true powerprofile="$want"
         fi
         ;;
+    emit-auto)
+        auto_on && echo true || echo false
+        ;;
     sync)
         "$SELF" follow-ac
         ;;
 esac
-powerprofilesctl get

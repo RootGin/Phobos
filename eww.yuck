@@ -1,4 +1,4 @@
-(defvar version "0.4.59")
+(defvar version "0.4.60")
 
 (defvar EWW_CMD "eww -c .")
 
@@ -12,7 +12,7 @@
   "./scripts/btsec.py stream")
 (defvar dnd "false")
 (defpoll powerprofile :interval "10s" "powerprofilesctl get 2>/dev/null || echo balanced")
-(defpoll powerauto :interval "5s" "cat ~/.local/state/phobos/powerauto 2>/dev/null || echo false")
+(deflisten powerauto :initial "false" "./scripts/powerprofile.sh emit-auto")
 
 (deflisten battjson :initial '{"thr":20,"ac":false,"main":{"name":"","cap":0,"present":false,"state":"","charge":"","time":"","draw":"","health":"","cycles":"","model":""},"extra":[],"segments":[],"brief":"","tip":""}' "./scripts/battery.py")
 
