@@ -34,16 +34,19 @@ $noti-leg: dpi(26px);
 .end-noti-appname {
   margin: 0;
   padding: dpi(2px) dpi(9px);
-  color: $x6;
+  color: lighten($x6, 12%);
   font-family: $noti-mono;
   font-size: dpi(14px);
   font-weight: normal;
   letter-spacing: dpi(2px);
-  @include cut2(rgba($x6, 0.18), dpi(7px));
+  @include cut2(rgba($x6, 0.26), dpi(7px));
 }
 
 .end-noti-body {
   margin-top: dpi(10px);
+  padding: dpi(10px) dpi(12px);
+  background-color: transparent;
+  @include cut2($xbg, dpi(10px));
 }
 
 .end-noti-image {
@@ -72,7 +75,7 @@ $noti-leg: dpi(26px);
 }
 
 .end-noti-box-critical .end-noti-summary {
-  color: $x9;
+  color: lighten($x1, 10%);
 }
 
 .end-noti-text {
@@ -85,7 +88,7 @@ $noti-leg: dpi(26px);
 }
 
 .end-noti-body-text {
-  color: mix($x7, $x0, 14%);
+  color: mix($x7, $x0, 72%);
   font-size: dpi(16px);
   font-weight: normal;
 }
@@ -105,7 +108,7 @@ $noti-leg: dpi(26px);
     font-size: dpi(15px);
     font-weight: normal;
     letter-spacing: dpi(1px);
-    @include cut2($xbg, dpi(8px));
+    @include cut2($x8, dpi(8px));
   }
 
   &:hover label,
