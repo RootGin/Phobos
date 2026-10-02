@@ -2,7 +2,7 @@
 // Imported from eww.scss AFTER theme + _scale, so $x0–$x15, $xbg, $xfg and dpi() are in scope.
 
 $noti-mono: "Fairfax HD";
-$noti-leg: dpi(22px);
+$noti-leg: dpi(26px);
 
 .end-noti-box-low,
 .end-noti-box-normal,
@@ -12,32 +12,15 @@ $noti-leg: dpi(22px);
 }
 
 .end-noti-card {
-  background-color: $x0;
+  background-color: transparent;
   padding: dpi(14px) dpi(16px);
+  @include cut2($x0, $noti-leg);
 }
 
-.end-noti-wedge {
-  border-style: solid;
-  border-color: transparent;
-
-  &.topleft {
-    border-width: $noti-leg $noti-leg 0 0;
-    border-color: $xbg transparent transparent transparent;
-  }
-
-  &.bottomright {
-    border-width: 0 0 $noti-leg $noti-leg;
-    border-color: transparent transparent $xbg transparent;
-  }
-
-  &.hist {
-    &.topleft {
-      border-color: mix($xbg, $x0, 45%) transparent transparent transparent;
-    }
-    &.bottomright {
-      border-color: transparent transparent mix($xbg, $x0, 45%) transparent;
-    }
-  }
+.end-history-card {
+  background-color: transparent;
+  padding: dpi(10px) dpi(12px);
+  @include cut2(mix($x0, $xbg, 65%), $noti-leg);
 }
 
 .end-noti-header {
@@ -134,11 +117,6 @@ $noti-leg: dpi(22px);
 
 .end-history-frame {
   background-color: transparent;
-}
-
-.end-history-card {
-  background-color: mix($x0, $xbg, 65%);
-  padding: dpi(10px) dpi(12px);
 }
 
 .end-history-box {

@@ -45,12 +45,11 @@
     :valign "start"
     (box
       :class `end-noti-box-${notification.urgency}`
-      (overlay
+      (box
+        :class "end-noti-card"
+        :orientation "vertical"
+        :space-evenly false
         (box
-          :class "end-noti-card"
-          :orientation "vertical"
-          :space-evenly false
-          (box
             :class "end-noti-header"
             :orientation "horizontal"
             :space-evenly false
@@ -109,20 +108,18 @@
               :class "end-noti-button"
               :onclick "${end-binary} action ${notification.id} ${action.id}"
               (label :text {action.text})))))
-      (box :class "end-noti-wedge topleft" :halign "start" :valign "start")
-      (box :class "end-noti-wedge bottomright" :halign "end" :valign "end")))))
+    )))
 
 (defwidget end-history[history]
   (eventbox
     :onclick "${end-binary} history close"
     (box
       :class "end-history-box"
-      (overlay
+      (box
+        :class "end-history-card"
+        :orientation "vertical"
+        :space-evenly false
         (box
-          :class "end-history-card"
-          :orientation "vertical"
-          :space-evenly false
-          (box
             :class "end-history-title-bar"
             :orientation "horizontal"
             :space-evenly false
@@ -164,5 +161,4 @@
                 :wrap true
                 :truncate true
                 :markup {history.body})))
-        (box :class "end-noti-wedge hist topleft" :halign "start" :valign "start")
-        (box :class "end-noti-wedge hist bottomright" :halign "end" :valign "end"))))))
+      ))))
