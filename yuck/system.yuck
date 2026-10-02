@@ -86,7 +86,7 @@
       :icon "./assets/icons/bell.svg"
       :val {dnd == "false"} 
       :name "Notifications"
-      :command "setsid -f /home/rootgin/.config/eww/Phobos-dev/scripts/dunstctl.sh set-paused toggle")))
+      :command "setsid -f /home/rootgin/.config/eww/Phobos-dev/scripts/endctl.sh dnd-toggle")))
 
 (defwidget sysecthead []
   (box

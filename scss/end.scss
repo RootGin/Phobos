@@ -1,0 +1,153 @@
+// Notifications — end-rs widgets, restyled to the Phobos look.
+// Imported from eww.scss AFTER theme + _scale, so $x0–$x15, $xbg, $xfg and dpi() are in scope.
+
+$noti-mono: "Fairfax HD";
+$noti-leg: dpi(18px);
+
+.end-noti-box-low,
+.end-noti-box-normal,
+.end-noti-box-critical {
+  padding: dpi(14px) dpi(16px);
+  margin-bottom: dpi(10px);
+  background-color: $xbg;
+  box-shadow: dpi(4px) dpi(4px) dpi(16px) rgba(#000000, 0.5);
+  @include cut2($xbg, $noti-leg);
+}
+
+.end-noti-chamfer {
+  background-color: transparent;
+}
+
+.end-noti-chamfer .triangle.topleft {
+  border-width: 0;
+  border-color: transparent;
+}
+
+.end-noti-header {
+  background-color: transparent;
+}
+
+.end-noti-appicon {
+  margin-right: dpi(8px);
+}
+
+.end-noti-appname {
+  color: $x6;
+  font-family: $noti-mono;
+  font-size: dpi(15px);
+  font-weight: normal;
+  letter-spacing: dpi(2px);
+  margin: 0;
+}
+
+.end-noti-body {
+  margin-top: dpi(10px);
+}
+
+.end-noti-image {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  margin-right: dpi(12px);
+}
+
+.end-noti-content {
+  margin-right: 0;
+  padding-left: dpi(12px);
+  border-left: dpi(3px) solid $x8;
+}
+
+.end-noti-box-low .end-noti-content {
+  border-left-color: $x8;
+}
+
+.end-noti-box-normal .end-noti-content {
+  border-left-color: $x4;
+}
+
+.end-noti-box-critical .end-noti-content {
+  border-left-color: $x1;
+}
+
+.end-noti-box-critical .end-noti-summary {
+  color: $x9;
+}
+
+.end-noti-text {
+  color: $x7;
+  margin: 0;
+}
+
+.end-noti-summary {
+  font-size: dpi(19px);
+}
+
+.end-noti-body-text {
+  color: mix($x7, $xbg, 14%);
+  font-size: dpi(16px);
+  font-weight: normal;
+}
+
+.end-noti-buttons {
+  margin-top: dpi(12px);
+  margin-left: 0;
+}
+
+.end-noti-button {
+  margin-right: dpi(10px);
+
+  label {
+    margin: 0;
+    padding: dpi(5px) dpi(12px);
+    color: $x7;
+    font-size: dpi(15px);
+    font-weight: normal;
+    letter-spacing: dpi(1px);
+    @include cut2($x0, dpi(8px));
+  }
+
+  &:hover label,
+  label:hover {
+    color: $xbg;
+    @include cut2($x4, dpi(8px));
+  }
+}
+
+.end-history-frame {
+  background-color: transparent;
+}
+
+.end-history-box {
+  padding: dpi(10px) dpi(12px);
+  margin-bottom: dpi(8px);
+  background-color: $xbg;
+  box-shadow: dpi(3px) dpi(3px) dpi(12px) rgba(#000000, 0.4);
+  @include cut2(mix($xbg, $x0, 55%), $noti-leg);
+}
+
+.end-history-title-bar {
+  background-color: transparent;
+}
+
+.end-history-body-box {
+  margin-top: dpi(6px);
+}
+
+.end-history-box {
+  .end-noti-appname {
+    color: $x8;
+    font-size: dpi(14px);
+  }
+
+  .end-noti-image {
+    margin-right: dpi(10px);
+  }
+
+  .end-noti-summary {
+    font-size: dpi(17px);
+  }
+
+  .end-noti-body-text {
+    font-size: dpi(15px);
+  }
+}

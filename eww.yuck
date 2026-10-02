@@ -1,4 +1,4 @@
-(defvar version "0.4.68")
+(defvar version "0.4.69")
 
 (defvar EWW_CMD "eww -c .")
 
@@ -10,7 +10,7 @@
 (deflisten wifi :initial '{"iface":"","radio":"enabled","state":"disconnected","ssid":"","security":"","signal":0,"bucket":"very-weak","connected":false,"connecting":false,"networks":[]}' "./scripts/wifi.py")
 (deflisten btsec :initial '{"powered":false,"adapter":"","discovering":false,"devices":[]}'
   "./scripts/btsec.py stream")
-(deflisten dnd :initial "false" "./scripts/dunstctl.sh is-paused")
+(defpoll dnd :interval "2s" "./scripts/endctl.sh dnd-status")
 (defvar showdate "false")
 (defvar trayopen "false")
 (defvar trayspin 0)
@@ -51,4 +51,5 @@
 (include "./yuck/battery.yuck")
 (include "./yuck/powermenu.yuck")
 (include "./yuck/util.yuck")
+(include "./yuck/end.yuck")
 

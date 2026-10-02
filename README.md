@@ -28,7 +28,7 @@ CLI tools the `scripts/` layer shells out to:
 - `wpctl` — PipeWire/PulseAudio volume
 - `brightnessctl` — backlight
 - `playerctl` — MPRIS now-playing
-- `dunstctl` — dunst notifications (DND toggle)
+- `end-rs` — eww-native notification daemon (DND toggle, history, close)
 - `bluetoothctl` — Bluetooth toggle
 - `niri msg` — workspaces, window list, focus/quit actions (replaces `swaymsg`/`i3ipc`)
 
