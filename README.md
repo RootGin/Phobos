@@ -28,7 +28,7 @@ CLI tools the `scripts/` layer shells out to:
 - `wpctl` — PipeWire/PulseAudio volume
 - `brightnessctl` — backlight
 - `playerctl` — MPRIS now-playing
-- `end-rs` — eww-native notification daemon (DND toggle, history, close)
+- `end-rs` — eww-native notification daemon; see **Notifications** below for setup
 - `bluetoothctl` — Bluetooth toggle
 - `niri msg` — workspaces, window list, focus/quit actions (replaces `swaymsg`/`i3ipc`)
 
@@ -49,6 +49,39 @@ is what keeps the workspace watcher running.
 Wallpaper, borders, keybinds and workspace switching belong to niri — there is no window-manager
 binding in this repo.
 
+## Notifications (end-rs)
+
+end-rs owns notifications and DND. Two things must be true or it silently does nothing.
+
+**1. Point it at this config.** end-rs has no config-dir option — it always execs `eww` with no
+`-c`, so the bare path would target `~/.config/eww`, which has no `eww.yuck`. Put the flag in
+`eww_binary_path` (end-rs runs it through `sh -c`, so the flags can live in the string):
+
+```toml
+# ~/.config/end-rs/config.toml
+eww_binary_path = "/run/current-system/sw/bin/eww -c /path/to/Phobos-dev"
+```
+
+The `eww_*_window` / `_widget` / `_var` keys must keep matching the `defwindow` and `defwidget`
+names in `yuck/end.yuck`. `update_history = false` leaves the history panel empty.
+
+**2. Run exactly one daemon.** `end-rs daemon` deletes and rebinds `/tmp/rust_ipc_socket` *before*
+it claims the D-Bus name, so a second instance replaces the socket and then dies on
+`ZBus(NameTaken)` — leaving every `close` / `action` / `history` call failing with
+`Failed to connect to the daemon.` A systemd user unit handles this (`Restart=on-failure`); if you
+also start it from a launcher, guard it:
+
+```sh
+pgrep -x end-rs >/dev/null || setsid -f end-rs daemon
+```
+
+Recovery from the broken state: `systemctl --user restart end-rs.service`.
+
+DND is polled, not pushed — `eww.yuck` runs `defpoll dnd` at 2s against `scripts/endctl.sh
+dnd-status`, which reads `$XDG_STATE_HOME/phobos/dnd` and clears the notification list when DND
+turns on. `endctl.sh` also wraps `close`, `action` and `history` so widgets don't call `end-rs`
+directly.
+
 ## Layout
 
 ```
@@ -58,6 +91,7 @@ themes/nord.scss         the palette — $xbg/$xfg and the $x0–$x15 slots, sin
 scss/_scale.scss         $scale + dpi(), so every px value scales with the resolution
 scss/_octagon.scss       the chamfer mixins: octagon (4 cut corners) and cut2 (2)
 yuck/<name>.yuck         one window per file, included from eww.yuck
+yuck/end.yuck            notification + history widgets — hand-edited on top of `end-rs generate`
 scss/<name>.scss         style partial mirroring the yuck/ name
 yuck/util.yuck           shared chrome widgets (floatwin, subbox, subboxl)
 scripts/                 the tools layer: every subprocess this config runs
@@ -90,6 +124,11 @@ anything themselves; they display what a script told them.
   get a dead button. niri has no runtime binding modes and eww 0.6 has no raw key events, so while
   the menu is open `scripts/helper/powermenu-keys.py` reads the keyboard event devices directly
   for Esc / arrows / Enter — without grabbing them, so nothing outside the menu is affected.
+- **dunst → end-rs.** Upstream drove notifications with `dunstctl`; this fork uses
+  [end-rs](https://github.com/Dr-42/end-rs), which draws the notification card and history as eww
+  widgets (`yuck/end.yuck` + `scss/end.scss`) instead of a separate GUI, so a notification is
+  styled with the same `cut2` chamfers and palette as the rest of the shell. DND state moved to
+  `scripts/endctl.sh`. See **Notifications** above for the two setup steps it needs.
 - **The chamfer motif extended.** Upstream cuts corners with border triangles; this fork also
   cuts the corners of *filled* cards with quadrant gradients (`octagon` for four corners,
   `cut2` for the two-corner window silhouette), because GTK3 has no `clip-path`.
