@@ -11,7 +11,7 @@
 (deflisten btsec :initial '{"powered":false,"adapter":"","discovering":false,"devices":[]}'
   "./scripts/btsec.py stream")
 (defpoll dnd :interval "2s" "./scripts/endctl.sh dnd-status")
-(defpoll nightlight :interval "2s" "./scripts/nightlight.sh status")
+(deflisten nightlight :initial "false" "./scripts/nightlight.sh status")
 (defvar showdate "false")
 (defvar trayopen "false")
 (defvar trayspin 0)
