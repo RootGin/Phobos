@@ -28,7 +28,7 @@
         :hexpand true
         (label 
           :visible false
-          :text "${playerctl} ${pcover} ${inputpipe} ${wifi} ${battjson} ${dnd}"))
+          :text "${playerctl} ${pcover} ${inputpipe} ${wifi} ${battjson} ${dnd} ${nightlight}"))
       (box
         :orientation "v"
         :space-evenly false

@@ -62,11 +62,15 @@
       :icon {volumejson.volumemute ? "./assets/icons/volumemute.svg" : "./assets/icons/volume.svg"}
       :val "${volumejson.volume}"
       :name "Volume"
+      :headclick ""
+      :headtip "Volume"
       :onchange "wpctl set-volume @DEFAULT_AUDIO_SINK@ {}%")
     (slidectl
-      :icon {brightness < 34 ? "./assets/icons/br-low.svg" : (brightness > 66 ? "./assets/icons/br-high.svg" : "./assets/icons/br-mid.svg")}
+      :icon {nightlight == "true" ? "./assets/icons/moon.svg" : (brightness < 34 ? "./assets/icons/br-low.svg" : (brightness > 66 ? "./assets/icons/br-high.svg" : "./assets/icons/br-mid.svg"))}
       :val brightness
       :name "Brightness"
+      :headclick "setsid -f /home/rootgin/.config/eww/Phobos-dev/scripts/nightlight.sh toggle"
+      :headtip {nightlight == "true" ? "Night light on (4000K) — click to turn off" : "Night light off — click to turn on"}
       :onchange "brightnessctl set {}%")
     (wifinav 
       :icon {wifi.connected ? "./assets/icons/wifi.svg" : (wifi.state == "airplane-mode" || wifi.state == "no-interface" ? "./assets/icons/wifioff.svg" : "./assets/icons/wifi.svg")}
@@ -276,19 +280,24 @@
         (box :halign "start" :valign "start" :style "margin: 4px;" :class "triangle topleft")
         (box :halign "end" :valign "end" :style "margin: 4px;" :class "triangle bottomright")))))
 
-(defwidget slidectl [icon onchange val name]
+(defwidget slidectl [icon onchange val name headclick headtip]
   (box 
     :orientation "v"
     :space-evenly false 
-    (box 
-      :orientation "h"
-      :space-evenly false
-      :class "window cont"
-      (image 
-        :image-width 35
-        :path icon)
-      (label 
-        :text name))
+    (eventbox
+      :cursor {headclick == "" ? "default" : "pointer"}
+      :timeout "10s"
+      :tooltip headtip
+      :onclick headclick
+      (box 
+        :orientation "h"
+        :space-evenly false
+        :class "window cont"
+        (image 
+          :image-width 35
+          :path icon)
+        (label 
+          :text name)))
     (overlay
       (scale 
         :value val
