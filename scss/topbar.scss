@@ -47,3 +47,19 @@
   background-color: $x8;
   border-radius: dpi(4px);
 }
+
+// Width of the notification-history panel, mirrored from `:width 404` in
+// yuck/history.yuck — the open topbar section has to end up exactly as wide as
+// the table below it, so its edges line up with the panel's.
+$panel-w: dpi(404px);
+$ring-w: dpi(24px);
+$notif-gap: dpi(10px);
+// Hidden children of the section still take up ~55px of layout before the ring
+// icon (measured). The title has to give that much back for the section to land
+// on $panel-w.
+$section-slack: dpi(55px);
+
+.notiftitle {
+  margin: 0 0 0 $notif-gap;
+  min-width: $panel-w - 2 * (2 * $padding) - $ring-w - $notif-gap - $section-slack;
+}

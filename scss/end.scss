@@ -20,7 +20,7 @@ $noti-leg: dpi(26px);
 .end-history-card {
   background-color: transparent;
   padding: dpi(10px) dpi(12px);
-  @include cut2(mix($x0, $xbg, 65%), $noti-leg);
+  @include cut2(mix($x0, $xbg, 25%), $noti-leg);
 }
 
 .end-noti-header {

@@ -1,4 +1,4 @@
-(defvar version "0.4.73")
+(defvar version "0.4.76")
 
 (defvar EWW_CMD "eww -c .")
 
@@ -18,6 +18,8 @@
 (deflisten powerauto :initial "false" "./scripts/powerprofile.sh emit-auto")
 
 (deflisten battjson :initial '{"thr":20,"ac":false,"main":{"name":"","cap":0,"present":false,"state":"","charge":"","time":"","draw":"","health":"","cycles":"","model":""},"extra":[],"segments":[],"brief":"","tip":""}' "./scripts/battery.py")
+
+(deflisten notifjson :initial "[]" "./scripts/notiflog.py")
 
 (deflisten pcover "./scripts/coverart.sh")
 (deflisten playerctl :initial '{"song": "", "artist": "", "status": "Stopped"}' "playerctl metadata --format '{\"song\": \"{{title}}\",\"artist\": \"{{artist}}\", \"status\": \"{{status}}\"}' -F")
@@ -52,4 +54,5 @@
 (include "./yuck/powermenu.yuck")
 (include "./yuck/util.yuck")
 (include "./yuck/end.yuck")
+(include "./yuck/history.yuck")
 

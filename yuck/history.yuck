@@ -1,0 +1,67 @@
+;; Notification history — dedicated side panel, slides in from the right edge.
+;; Rows come from ${notifjson}, fed by scripts/notiflog.py.
+
+(defvar revealhistoryint false)
+
+(defwindow historyint
+  :monitor '["<primary>", 0]'
+  :geometry (geometry
+              :x 0
+              :y 0
+              :width 0
+              :height "954px"
+              :anchor "top right")
+  :stacking "overlay"
+  :exclusive false
+  (revealer
+    :halign "end"
+    :reveal revealhistoryint
+    :transition "slideleft"
+    (box
+      :class "history-panel"
+      :width 404
+      :height 954
+      :orientation "v"
+      :space-evenly false
+      (label
+        :class "history-empty"
+        :text "Nothing yet"
+        :visible {notifjson == "[]"})
+      (scroll
+        :hscroll false
+        :vscroll true
+        :vexpand true
+        (box
+          :orientation "v"
+          :space-evenly false
+          (for n in {notifjson}
+            (historyrow :n n)))))))
+
+(defwidget historyrow[n]
+  (box
+    :class "histrow"
+    :orientation "v"
+    :space-evenly false
+    (box
+      :class "histrow-head"
+      :orientation "h"
+      :space-evenly false
+      (label
+        :class "histrow-time"
+        :text {n.t})
+      (label
+        :class "histrow-app"
+        :text {n.app}))
+    (label
+      :class "histrow-sum"
+      :wrap true
+      :xalign 0
+      :yalign 0
+      :markup {n.summary})
+    (label
+      :class "histrow-body"
+      :visible {n.body != ""}
+      :wrap true
+      :xalign 0
+      :yalign 0
+      :markup {n.body})))

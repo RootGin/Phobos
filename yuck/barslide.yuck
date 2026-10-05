@@ -4,11 +4,11 @@
 (defwindow barslide 
   :geometry (geometry 
               :x 0 
-              :y -70 
+              :y -77 
               :width 400
               :height 85
               :anchor "top left")
-  :stacking "bottom"
+  :stacking "overlay"
   :exclusive false 
   :monitor '["<primary>", 0]'
   (box

@@ -26,13 +26,13 @@ set_dnd() {
         *) echo "endctl: bad dnd value: $1" >&2; return 1 ;;
     esac
     push_dnd
+    [ "$(dnd_state)" = true ] && "${EWWC[@]}" update end-notifications='' >/dev/null 2>&1
+    return 0
 }
 
 case "$1" in
     dnd-status)
-        state=$(dnd_state)
-        [ "$state" = true ] && "${EWWC[@]}" update end-notifications='' 2>/dev/null
-        echo "$state"
+        dnd_state
         ;;
     dnd-set)     set_dnd "$2" ;;
     dnd-toggle)  set_dnd toggle ;;

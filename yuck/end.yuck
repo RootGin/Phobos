@@ -21,7 +21,7 @@
   :windowtype "dialog"
   :passthrough true
   :wm-ignore true
-  (literal :content end-notifications))
+  (box :visible {dnd == "false"} (literal :content end-notifications)))
 
 (defwindow history-frame
   :monitor 0
@@ -30,14 +30,15 @@
     :x "0px"
     :y "0px"
     :width "450px"
-    :height "0px"
+    :height "520px"
     :anchor "top center")
   :stacking "overlay"
   :exclusive false
   :windowtype "dialog"
   :passthrough true
   :wm-ignore true
-  (scroll :hscroll false :vscroll true (literal :content end-histories)))
+  (scroll :hscroll false :vscroll true :vexpand true
+    (box :orientation "v" :space-evenly false (literal :content end-histories))))
 
 (defwidget end-notification[notification]
   (eventbox

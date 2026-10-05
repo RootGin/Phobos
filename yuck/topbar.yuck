@@ -28,7 +28,7 @@
         :hexpand true
         (label 
           :visible false
-          :text "${playerctl} ${pcover} ${inputpipe} ${wifi} ${battjson}"))
+          :text "${playerctl} ${pcover} ${inputpipe} ${wifi} ${battjson} ${dnd}"))
       (box
         :orientation "v"
         :space-evenly false
@@ -45,7 +45,7 @@
         :tooltip "${battjson.tip}"
 (revealer
           :transition "slideleft"
-          :reveal {trayopen == "true"}
+          :reveal {trayopen == "true" && !revealhistoryint}
           (box
             :orientation "h"
             :space-evenly false
@@ -63,6 +63,7 @@
                   :image-width 22
                   :path {t.path})))))
         (eventbox
+          :visible {!revealhistoryint}
           :cursor "pointer"
           :timeout "10s"
           :tooltip "Running tasks"
@@ -74,7 +75,30 @@
             (image
               :image-width 24
               :path "./assets/icons/tray.svg")))
+(box
+        :orientation "h"
+        :space-evenly false
+        :spacing 0
+        :hexpand true
+        (eventbox
+          :cursor "pointer"
+          :timeout "10s"
+          :tooltip "Notification history"
+          :onclick "./scripts/panel-toggle.sh revealhistoryint &"
+          (image
+            :image-width 24
+            :path "./assets/icons/ring.svg"))
+        (revealer
+          :transition "slideright"
+          :reveal revealhistoryint
+          (label
+            :class "large notiftitle"
+            :xalign 0
+            :text "Notification"))
+        (box
+          :hexpand true))
 (eventbox
+        :visible {!revealhistoryint}
         :cursor "pointer"
         :timeout "10s"
         :tooltip "${battjson.tip}"
@@ -92,7 +116,7 @@
             :class "animtime"
             (revealer
               :transition "slideleft"
-              :reveal {showdate == "false"}
+              :reveal {showdate == "false" && !revealhistoryint}
               (box
                 :orientation "h"
                 :space-evenly false
@@ -113,7 +137,7 @@
                   :cur {substring(formattime(EWW_TIME, '%M'), 1, 1)})))
             (revealer
               :transition "slideleft"
-              :reveal {showdate == "true"}
+              :reveal {showdate == "true" && !revealhistoryint}
               (label 
                 :class "large"
                 :text {formattime(EWW_TIME, '%-d/%-m/%Y')}))))))))

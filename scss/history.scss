@@ -1,0 +1,51 @@
+// Notification history side panel — slides in from the right edge.
+// Imported from eww.scss AFTER theme + _scale, so $x0–$x15, $xbg, $xfg and dpi() are in scope.
+
+.history-panel {
+  background-color: $xbg;
+  border-left: dpi(2px) solid mix($x4, $xbg, 45%);
+}
+
+.history-empty {
+  margin: dpi(30px) dpi(14px);
+  color: $x8;
+  font-size: dpi(17px);
+}
+
+.histrow {
+  padding: dpi(9px) dpi(14px);
+  border-bottom: dpi(1px) solid mix($x8, $xbg, 70%);
+
+  .histrow-head {
+    margin-bottom: dpi(3px);
+  }
+
+  .histrow-time {
+    margin-right: dpi(10px);
+    min-width: dpi(52px);
+    color: $x6;
+    font-family: "Fairfax HD";
+    font-size: dpi(14px);
+    letter-spacing: dpi(1px);
+  }
+
+  .histrow-app {
+    color: $x8;
+    font-family: "Fairfax HD";
+    font-size: dpi(14px);
+    letter-spacing: dpi(1px);
+  }
+
+  .histrow-sum {
+    color: $x7;
+    font-size: dpi(16px);
+    font-weight: normal;
+  }
+
+  .histrow-body {
+    margin-top: dpi(3px);
+    color: $x8;
+    font-size: dpi(14px);
+    font-weight: normal;
+  }
+}
