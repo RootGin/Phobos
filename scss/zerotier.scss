@@ -1,0 +1,36 @@
+.zt-input {
+  font-size: dpi(14px);
+  font-weight: normal;
+  color: $x7;
+  background-color: transparent;
+  border: dpi(1px) solid $x8;
+  border-radius: dpi(3px);
+  padding: dpi(1px) dpi(6px);
+  margin: 0 dpi(10px) 0 dpi(6px);
+  min-width: dpi(100px);
+
+  &:focus {
+    color: $x6;
+    border-color: $x6;
+  }
+}
+
+.zt-state {
+  min-width: dpi(70px);
+
+  &.on {
+    color: $x2;
+  }
+  &.idle {
+    color: $x3;
+  }
+  &.off {
+    color: $x8;
+  }
+}
+
+.ztrow .zt-input {
+  min-height: dpi(18px);
+  margin-top: 0;
+  margin-bottom: 0;
+}

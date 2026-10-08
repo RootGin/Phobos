@@ -15,11 +15,13 @@ if [[ $STAT == "true" || $2 == "close" ]]; then
         eww -c $PWD close $WINDOW
     fi
 else
-    eww -c $PWD open $WINDOW
-    eww -c $PWD update $CTRL=true
     if [[ "$WINDOW" == "systemint" ]]; then
         "$PWD/scripts/sysstat-poll.sh" --once
         "$PWD/scripts/vpn.py" status
+        "$PWD/scripts/zerotier.py" status
+        "$PWD/scripts/netbird.py" status
     fi
+    eww -c $PWD open $WINDOW
+    eww -c $PWD update $CTRL=true
 fi
 

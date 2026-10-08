@@ -1,0 +1,13 @@
+.nb-state {
+  min-width: dpi(70px);
+
+  &.on {
+    color: $x2;
+  }
+  &.idle {
+    color: $x3;
+  }
+  &.off {
+    color: $x8;
+  }
+}

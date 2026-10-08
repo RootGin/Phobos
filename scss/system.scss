@@ -2,12 +2,28 @@
 .starrow {
   margin: 0 0 $margin;
 
+  .switch,
+  .vpnbtn {
+    min-width: dpi(24px);
+    min-height: dpi(24px);
+    margin: 0 $margin;
+  }
+
+  .switch {
+    &.on {
+      padding-right: dpi(19px);
+    }
+    &.off {
+      padding-left: dpi(19px);
+    }
+  }
+
   label {
     font-size: dpi(19px);
     margin: 0 dpi(6px);
 
     &.statname {
-      min-width: dpi(56px);
+      min-width: dpi(82px);
     }
 
     &.hard {
@@ -154,15 +170,11 @@ label.auto-tag {
 }
 
 .vpnbtn {
-  padding: dpi(3px) dpi(10px);
+  min-width: dpi(30px);
+  min-height: dpi(30px);
   border-radius: dpi(3px);
   background-color: $x0;
   transition: background-color 200ms;
-
-  label {
-    font-size: dpi(16px);
-    color: $x15;
-  }
 
   &:hover {
     background-color: $x4;

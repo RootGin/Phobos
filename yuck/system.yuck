@@ -10,6 +10,7 @@
               :anchor "bottom right")
   :stacking "overlay"
   :exclusive false 
+  :focusable "ondemand"
   :monitor '["<primary>", 0]'
   (box 
     :orientation "v"
@@ -106,13 +107,13 @@
       :hexpand true)
     (eventbox
       :cursor "pointer"
-      :onclick "${EWW_CMD} update sysect=${(sysect + 2) % 3} & sleep 0.2; ./scripts/sysstat-poll.sh --once; ./scripts/vpn.py status"
+      :onclick "${EWW_CMD} update sysect=${(sysect + 2) % 3} & sleep 0.2; ./scripts/sysstat-poll.sh --once; ./scripts/vpn.py status; ./scripts/zerotier.py status; ./scripts/netbird.py status"
       (image
         :image-width 25
         :path "./assets/icons/chevron-left.svg"))
     (eventbox
       :cursor "pointer"
-      :onclick "${EWW_CMD} update sysect=${(sysect + 1) % 3} & sleep 0.2; ./scripts/sysstat-poll.sh --once; ./scripts/vpn.py status"
+      :onclick "${EWW_CMD} update sysect=${(sysect + 1) % 3} & sleep 0.2; ./scripts/sysstat-poll.sh --once; ./scripts/vpn.py status; ./scripts/zerotier.py status; ./scripts/netbird.py status"
       (image
         :image-width 25
         :path "./assets/icons/chevron-right.svg"))))
@@ -176,9 +177,13 @@
       :path "./assets/icons/shield.svg")
     (label
       :class "statname"
+      :xalign 0
       :text "VPN")
     (label
       :class "vpnt-state ${vpnt.state}"
+      :xalign 0
+      :truncate true
+      :limit-width 15
       :text {vpnt.state == "connected" && vpnt.server != "" ? vpnt.server : (vpnt.state == "connected" ? "Connected" : (vpnt.state == "off" ? "Off" : "Disconnected"))})
     (box
       :hexpand true)
@@ -186,20 +191,25 @@
       :cursor "pointer"
       :visible {vpnt.state != "off"}
       :timeout "10s"
-      :tooltip "Disconnect and turn the Proton VPN integration off"
-      :onclick "./scripts/vpn.py exit &"
-      (image
-        :image-width 22
-        :path "./assets/icons/pm-exit.svg"))
+      :tooltip {vpnt.state == "connected" ? "Disconnect from the Proton VPN server" : "Connect to the fastest Proton VPN server"}
+      :onclick {vpnt.state == "connected" ? "./scripts/vpn.py disconnect &" : "./scripts/vpn.py connect &"}
+      (box
+        :class "vpnbtn"
+        :valign "center"
+        (image
+          :image-width 18
+          :valign "center"
+          :path {vpnt.state == "connected" ? "./assets/icons/unlink.svg" : "./assets/icons/link.svg"})))
     (eventbox
       :cursor "pointer"
       :timeout "10s"
-      :tooltip {vpnt.state == "off" ? "Turn the Proton VPN integration on" : (vpnt.state == "connected" ? "Disconnect from the Proton VPN server" : "Connect to the fastest Proton VPN server")}
-      :onclick {vpnt.state == "off" ? "./scripts/vpn.py toggle &" : (vpnt.state == "connected" ? "./scripts/vpn.py disconnect &" : "./scripts/vpn.py connect &")}
+      :tooltip {vpnt.state == "off" ? "Turn the Proton VPN integration on" : "Disconnect and turn the Proton VPN integration off"}
+      :onclick {vpnt.state == "off" ? "./scripts/vpn.py toggle &" : "./scripts/vpn.py exit &"}
       (box
-        :class "vpnbtn"
-        (label
-          :text {vpnt.state == "off" ? "Enable" : (vpnt.state == "connected" ? "Disconnect" : "Connect")})))))
+        :class "switch ${vpnt.state == 'off' ? 'off' : 'on'}"
+        (box
+          :width 24
+          :class "knob")))))
 
 (defwidget sysectbody []
   (box
@@ -216,7 +226,9 @@
         :class "window cont"
         :orientation "v"
         :space-evenly false
-        (vpnrow)))
+        (vpnrow)
+        (nbrow)
+        (ztrow)))
     (box
       :visible {sysect == 2}
       (label

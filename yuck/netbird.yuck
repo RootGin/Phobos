@@ -1,0 +1,46 @@
+(defvar nbt '{"ok":false,"on":false,"state":"off","tone":"off","text":"Not installed"}')
+
+(defwidget nbrow []
+  (box
+    :class "starrow nbrow"
+    :orientation "h"
+    :space-evenly false
+    (image
+      :image-width 24
+      :path "./assets/icons/globe.svg")
+    (label
+      :class "statname"
+      :xalign 0
+      :text "NetBird")
+    (label
+      :class "nb-state ${nbt.tone}"
+      :xalign 0
+      :truncate true
+      :limit-width 15
+      :text {nbt.text})
+    (box
+      :hexpand true)
+    (eventbox
+      :cursor "pointer"
+      :visible {nbt.state != "off"}
+      :timeout "10s"
+      :tooltip {nbt.state == "connected" ? "Leave the NetBird network" : "Join the NetBird network"}
+      :onclick {nbt.state == "connected" ? "./scripts/netbird.py down &" : "./scripts/netbird.py up &"}
+      (box
+        :class "vpnbtn"
+        :valign "center"
+        (image
+          :image-width 18
+          :valign "center"
+          :path {nbt.state == "connected" ? "./assets/icons/unlink.svg" : "./assets/icons/link.svg"})))
+    (eventbox
+      :cursor "pointer"
+      :visible {nbt.ok}
+      :timeout "10s"
+      :tooltip {nbt.on ? "Turn the NetBird daemon off" : "Turn the NetBird daemon on"}
+      :onclick "./scripts/netbird.py power &"
+      (box
+        :class "switch ${nbt.on ? 'on' : 'off'}"
+        (box
+          :width 24
+          :class "knob")))))

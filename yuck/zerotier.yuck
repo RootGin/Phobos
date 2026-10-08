@@ -1,0 +1,51 @@
+(defvar ztjson '{"ok":false,"on":false,"tone":"off","state":"Not installed","net":[],"last":""}')
+
+(defwidget ztrow []
+  (box
+    :class "starrow ztrow"
+    :orientation "h"
+    :space-evenly false
+    (image
+      :image-width 24
+      :path "./assets/icons/ipnet.svg")
+    (label
+      :class "statname"
+      :xalign 0
+      :text "ZeroTier")
+    (input
+      :class "zt-input"
+      :visible {ztjson.ok && arraylength(ztjson.net) == 0}
+      :hexpand true
+      :value {ztjson.last}
+      :onaccept "./scripts/zerotier.py join '{}' &")
+    (label
+      :class "zt-state ${ztjson.tone}"
+      :xalign 0
+      :visible {arraylength(ztjson.net) > 0 || !ztjson.ok}
+      :text {ztjson.state})
+    (box
+      :hexpand true)
+    (eventbox
+      :cursor "pointer"
+      :visible {ztjson.ok && arraylength(ztjson.net) > 0}
+      :timeout "10s"
+      :tooltip "Leave this ZeroTier network"
+      :onclick "./scripts/zerotier.py leave '${ztjson.net[0]?.id}' &"
+      (box
+        :class "vpnbtn"
+        :valign "center"
+        (image
+          :image-width 18
+          :valign "center"
+          :path "./assets/icons/unlink.svg")))
+    (eventbox
+      :cursor "pointer"
+      :visible {ztjson.ok}
+      :timeout "10s"
+      :tooltip {ztjson.on ? "Turn ZeroTier off" : "Turn ZeroTier on"}
+      :onclick "./scripts/zerotier.py power &"
+      (box
+        :class "switch ${ztjson.on ? 'on' : 'off'}"
+        (box
+          :width 24
+          :class "knob")))))
